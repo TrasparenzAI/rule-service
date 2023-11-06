@@ -1,0 +1,152 @@
+rules_root: amministrazione-trasparente
+anchor_expression: <a.*href\s?=['"]*(?<href>[^'"]*)[^>]*>((?<text>(.(?!\<\/a\>))*.))<\/a>
+
+rules:
+  amministrazione-trasparente:
+      term: Amministrazione Trasparente
+      childs:
+        disposizioni-generali:
+          term: Disposizione Generali
+          childs:
+            programma-trasparenza-integrita:
+              term: Programma per la Trasparenza e l'integrità
+            atti-generali:
+              term: Atti generali
+            oneri-informativi-cittadini-imprese:
+              term: Oneri informativi per cittadini e imprese
+            organi-indirizzo-politico-amministrativo:
+              term: Organi di indirizzo politico-amministrativo
+        organizzazione:
+          term: Organizzazione
+          childs:
+            sanzioni-mancata-comunicazione-dati:
+              term: Sanzioni per mancata comunicazione dei dati
+            rendiconti-gruppi-consiliari-regionali-provinciali:
+              term: Rendiconti gruppi consiliari regionali, provinciali
+            articolazione-degli-uffici:
+              term: Articolazione degli uffici
+            telefono-posta-elettronica:
+              term: Telefono e posta elettronica
+        consulenti-collaboratori:
+          term: Consulenti e collaboratori
+          childs:
+            incarichi-amministrativi-vertice:
+              term: Incarichi amministrativi di vertice
+            dirigenti:
+              term: Dirigenti
+        personale:
+          term: Personale
+          childs:
+            posizioni-organizzative:
+              term: Posizioni organizzative
+            dotazione-organica:
+              term: Dotazione organica
+            personale-non-tempo-indeterminato:
+              term: Personale non a tempo indeterminato
+            tassi-assenza:
+              term: Tassi di assenza
+            incarichi-conferiti-autorizzati-dipendenti:
+              term: Incarichi conferiti e autorizzati ai dipendenti
+            contrattazione-collettiva:
+              term: Contrattazione collettiva
+            contrattazione-integrativa:
+              term: Contrattazione integrativa
+            oiv:
+              term: OIV
+        bandi-concorso:
+          term: Bandi di concorso
+        performance:
+          term: Performance
+          childs:
+            piano-performance:
+              term: Piano della Performance
+            relazione-performance:
+              term: Relazione sulla Performance
+            ammontare-complessivo-premi:
+              term: Ammontare complessivo dei premi
+            dati-relativi-premi:
+              term: Dati relativi ai premi
+            benessere-organizzativo:
+              term: Benessere organizzativo
+        enti-controllati:
+          term: Enti controllati
+          childs:
+            enti-pubblici-vigilati:
+              term: Enti pubblici vigilati
+            societa-partecipate:
+              term: Società partecipate
+            enti-diritto-privato-controllati:
+              term: Enti di diritto privato controllati
+            rappresentazione-grafica:
+              term: Rappresentazione grafica
+        attivita-procedimenti:
+          term: Attività e procedimenti
+          childs:
+            dati-aggregati-attivita-amministrativa:
+              term: Dati aggregati attività amministrativa
+            tipologie-procedimento:
+              term: Tipologie di procedimento
+            monitoraggio-tempi-procedimentali:
+              term: Monitoraggio tempi procedimentali
+            dichiarazioni-sostitutive-acquisizione-ufficio-dati:
+              term: Dichiarazioni sostitutive e acquisizione d'ufficio dei dati
+        provvedimenti:
+          term: Provvedimenti
+          childs:
+            provvedimenti-dirigenti:
+              term: Provvedimenti dirigenti
+            provvedimenti-organi-indirizzo-politico:
+              term: Provvedimenti organi indirizzo-politico
+        controlli-imprese:
+          term: Controlli sulle imprese
+        bandi-gara-contratti:
+          term: Bandi di gara e contratti
+        sovvenzioni-contributi-sussidi-vantaggi-economici:
+          term: Sovvenzioni, contributi, sussidi, vantaggi economici
+          childs:
+            criteri-modalita:
+              term: Criteri e modalità
+            atti-concessione:
+              term: Atti di concessione
+        bilanci:
+          term: Bilanci
+          childs:
+            bilancio-preventivo-consuntivo:
+              term: Bilancio preventivo e consuntivo
+            piano-indicatori-risultati-attesi-bilancio:
+              term: Piano degli indicatori e risultati attesi di bilancio
+        beni-immobili-gestione-patrimonio:
+          term: Beni immobili e gestione patrimonio
+          childs:
+            patrimonio-immobiliare:
+              term: Patrimonio immobiliare
+            canoni-locazione-affitto:
+              term: Canoni di locazione o affitto
+        controlli-rilievi-amministrazione:
+          term: Controlli e rilievi sull'amministrazione
+        servizi-erogati:
+          term: Servizi erogati
+          childs:
+            carta-servizi-standard-qualita:
+              term: Carta dei servizi e standard di qualità
+            costi-contabilizzati:
+              term: Costi contabilizzati
+            tempi-medi-erogazione-servizi:
+              term: Tempi medi di erogazione dei servizi
+            liste-attesa:
+              term: Liste di attesa
+        pagamenti-amministrazione:
+          term: Pagamenti dell'amministrazione
+        opere-pubbliche:
+          term: Opere pubbliche
+        pianificazione-governo-territorio:
+          term: Pianificazione e governo del territorio
+        informazioni-ambientali:
+          term: Informazioni ambientali
+        strutture-sanitarie-private-accreditate:
+          term: Strutture sanitarie private accreditate
+        interventi-straordinari-emergenza:
+          term: Interventi straordinari e di emergenza
+        altri-contenuti:
+          term: Altri contenuti
+
