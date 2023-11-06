@@ -1,5 +1,8 @@
 rules_root: amministrazione-trasparente
 anchor_expression: <a.*href\s?=['"]*(?<href>[^'"]*)[^>]*>((?<text>(.(?!\<\/a\>))*.))<\/a>
+springdoc:
+  api-docs:
+    path: /api-docs
 
 rules:
   amministrazione-trasparente:
