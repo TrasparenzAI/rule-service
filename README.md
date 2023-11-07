@@ -18,7 +18,10 @@ l'immagine per l'esecuzione tramite _docker_
 docker build . --tag rule-service:latest
 docker run -p 8080:8080 -ti rule-service:latest
 ```
-É possibile visualizzare l'albero delle regole in formato _json_ alla URL: http://localhost:8080/v1/rules
+La documentazione relativa ai servizi REST è consultabile [qui](http://localhost:8080/api-docs) ed è possibile interagire
+con i servizi attraverso **Swagger** alla seguente URL http://localhost:8080/swagger-ui.html
+
+É possibile visualizzare l'albero delle regole in formato _json_ da: http://localhost:8080/v1/rules
 
 Oppure verificare la regola _root_ ad esempio attraverso una [cURL](https://it.wikipedia.org/wiki/Curl) con un html di esempio:
 ```bash
