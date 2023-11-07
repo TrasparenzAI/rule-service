@@ -69,7 +69,7 @@ public class LuceneSearch {
         return Arrays.stream(topDocs.scoreDocs).map(scoreDoc -> {
             try {
                 final Document doc = dirSearcher.doc(scoreDoc.doc);
-                log.info("Search document for \"{}\" and find \"{}\" width score: {}", keyword, doc.get(LuceneSearch.CONTENT), scoreDoc.score);
+                log.debug("Search document for \"{}\" and find \"{}\" width score: {}", keyword, doc.get(LuceneSearch.CONTENT), scoreDoc.score);
                 return new LuceneResult(doc.get(LuceneSearch.URL), doc.get(LuceneSearch.CONTENT), scoreDoc.score);
             } catch (IOException e) {
                 throw new RuntimeException(e);

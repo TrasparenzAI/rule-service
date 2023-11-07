@@ -20,7 +20,22 @@ docker run -p 8080:8080 -ti rule-service:latest
 ```
 É possibile visualizzare l'albero delle regole in formato _json_ alla URL: http://localhost:8080/v1/rules
 
-Oppure verificare la regola _root_ ad esempio attraverso una [cURL](https://it.wikipedia.org/wiki/Curl)
+Oppure verificare la regola _root_ ad esempio attraverso una [cURL](https://it.wikipedia.org/wiki/Curl) con un html di esempio:
 ```
 curl -X POST http://localhost:8080/v1/rules -H 'Content-type:application/json' --data 'PGh0bWw+CiAgICA8aGVhZD4KICAgICAgICA8dGl0bGU+R2VuZXJpY2EgQW1taW5pc3RyYXppb25lPC90aXRsZT4KICAgIDwvaGVhZD4KICAgIDxib2R5PgogICAgICAgIDxwPlBhcnNlZCBIVE1MIGludG8gYSBkb2MuPC9wPgogICAgICAgIDxhIGhyZWY9Ii9hbW1pbmlzdHJhemlvbmUiPkFtbWluaXN0cmF6aW9uZSBUcmFzcGFyYW50ZTwvYT4KICAgICAgICA8YSBocmVmPSIvcHJvZ3JhbW1hdHJhc3BhcmVuemEiPlByb2dyYW1tYSBwZXIgbGEgVHJhc3BhcmVuemE8L2E+CiAgICA8L2JvZHk+CjwvaHRtbD4='| jq .
+```
+In alternativa scaricare il contenuto del Sito istituzionale di una Pubblica Amministrazione
+```
+curl "https://www.anticorruzione.it"|base64 > base64.html
+curl -X POST http://localhost:8080/v1/rules -H 'Content-type:application/json' --data @base64.html |jq .
+```
+La risposta _json_ del servizio: 
+```json
+{
+  "url": "https://www.anticorruzione.it/amministrazione-trasparente",
+  "ruleName": "amministrazione-trasparente",
+  "isLeaf": false,
+  "status": 200,
+  "score": 3.6377878
+}
 ```
