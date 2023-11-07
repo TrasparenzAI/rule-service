@@ -17,6 +17,8 @@
 
 package it.cnr.anac.transparency.rules.util;
 
+import it.cnr.anac.transparency.rules.domain.Anchor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.analysis.it.ItalianAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -34,9 +36,11 @@ import org.apache.lucene.store.ByteBuffersDirectory;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 public class LuceneSearch {
 
     public static final String URL = "url";
@@ -44,13 +48,13 @@ public class LuceneSearch {
 
     private final IndexSearcher dirSearcher;
 
-    public LuceneSearch(Map<String, String> values) throws IOException {
+    public LuceneSearch(List<Anchor> values) throws IOException {
         ByteBuffersDirectory directory = new ByteBuffersDirectory();
         try (IndexWriter directoryWriter = new IndexWriter(directory, new IndexWriterConfig(new ItalianAnalyzer()))) {
-            for (Map.Entry<String, String> entry : values.entrySet()) {
+            for (Anchor anchor : values) {
                 Document doc = new Document();
-                doc.add(new StoredField(URL, entry.getKey()));
-                doc.add(new TextField(CONTENT, entry.getValue(), Field.Store.YES));
+                doc.add(new StoredField(URL, anchor.getHref()));
+                doc.add(new TextField(CONTENT, anchor.getContent(), Field.Store.YES));
                 directoryWriter.addDocument(doc);
             }
         }
@@ -58,13 +62,15 @@ public class LuceneSearch {
         dirSearcher = new IndexSearcher(indexReader);
     }
 
-    public Optional<Document> search(String keyword) throws ParseException, IOException {
+    public Optional<LuceneResult> search(String keyword) throws ParseException, IOException {
         QueryParser parser = new QueryParser(CONTENT, new ItalianAnalyzer());
         Query query = parser.parse(keyword);
-        TopDocs topDocs = dirSearcher.search(query, 1);
+        TopDocs topDocs = dirSearcher.search(query, 10);
         return Arrays.stream(topDocs.scoreDocs).map(scoreDoc -> {
             try {
-                return dirSearcher.doc(scoreDoc.doc);
+                final Document doc = dirSearcher.doc(scoreDoc.doc);
+                log.info("Search document for \"{}\" and find \"{}\" width score: {}", keyword, doc.get(LuceneSearch.CONTENT), scoreDoc.score);
+                return new LuceneResult(doc.get(LuceneSearch.URL), doc.get(LuceneSearch.CONTENT), scoreDoc.score);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

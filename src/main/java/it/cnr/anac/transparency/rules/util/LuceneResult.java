@@ -15,19 +15,17 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package it.cnr.anac.transparency.rules.domain;
+package it.cnr.anac.transparency.rules.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.http.HttpStatus;
+
 @Getter
 @Setter
 @AllArgsConstructor
-public class RuleResponse {
+public class LuceneResult {
     private String url;
-    private String ruleName;
-    private Boolean isLeaf;
-    private HttpStatus status;
-    private Float score;
+    private String content;
+    private float score;
 }

@@ -15,19 +15,16 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package it.cnr.anac.transparency.rules.domain;
+package it.cnr.anac.transparency.rules.service;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.http.HttpStatus;
-@Getter
-@Setter
-@AllArgsConstructor
-public class RuleResponse {
-    private String url;
-    private String ruleName;
-    private Boolean isLeaf;
-    private HttpStatus status;
-    private Float score;
+import it.cnr.anac.transparency.rules.domain.Anchor;
+
+import java.util.List;
+
+public interface AnchorService {
+    public static final String HREF = "href";
+    public static final String TEXT = "text";
+    public static final String ANCHOR = "a";
+
+    List<Anchor> find(String content);
 }

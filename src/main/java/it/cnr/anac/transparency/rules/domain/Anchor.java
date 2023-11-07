@@ -20,14 +20,15 @@ package it.cnr.anac.transparency.rules.domain;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.http.HttpStatus;
+
 @Getter
 @Setter
 @AllArgsConstructor
-public class RuleResponse {
-    private String url;
-    private String ruleName;
-    private Boolean isLeaf;
-    private HttpStatus status;
-    private Float score;
+public class Anchor {
+    private final String href;
+    private final String content;
+
+    public static Anchor newInstance(String href, String content) {
+        return new Anchor(href, content);
+    }
 }
