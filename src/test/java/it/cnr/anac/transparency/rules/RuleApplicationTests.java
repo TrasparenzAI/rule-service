@@ -29,11 +29,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -86,16 +86,31 @@ class RuleApplicationTests {
 	@Test
 	void blank() throws IOException, URISyntaxException {
 		Assertions.assertThrows(RuleNotFoundException.class, () -> {
-			Document doc = Jsoup.parse( new File(this.getClass().getResource("/blank.html").toURI()));
-			ruleService.executeRule(doc.html(), Optional.empty());
+			final InputStream resourceAsStream = this.getClass().getResourceAsStream("/blank.html");
+			ruleService.executeRule(new BufferedReader(
+					new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
+					.lines()
+					.collect(Collectors.joining("\n")), Optional.empty());
 		});
 	}
 
 	@Test
 	void local() throws IOException, URISyntaxException {
-		Document doc = Jsoup.parse( new File(this.getClass().getResource("/amministrazione.html").toURI()));
-		final RuleResponse ruleResponse = ruleService.executeRule(doc.html(), Optional.empty());
-		Assertions.assertNotNull(ruleResponse.getUrl());
+		final InputStream resourceAsStream = this.getClass().getResourceAsStream("/amministrazione.html");
+		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
+				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
+				.lines()
+				.collect(Collectors.joining("\n")), Optional.empty());
+		Assertions.assertEquals("/", ruleResponse.getUrl());
+	}
+	@Test
+	void local2() throws IOException, URISyntaxException {
+		final InputStream resourceAsStream = this.getClass().getResourceAsStream("/amministrazione2.html");
+		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
+				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
+				.lines()
+				.collect(Collectors.joining("\n")), Optional.empty());
+		Assertions.assertEquals("/prova-apici-singoli3", ruleResponse.getUrl());
 	}
 
 	@Test
