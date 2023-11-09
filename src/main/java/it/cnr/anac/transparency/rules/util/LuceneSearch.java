@@ -51,12 +51,20 @@ public class LuceneSearch {
     public LuceneSearch(List<Anchor> values) throws IOException {
         ByteBuffersDirectory directory = new ByteBuffersDirectory();
         try (IndexWriter directoryWriter = new IndexWriter(directory, new IndexWriterConfig(new ItalianAnalyzer()))) {
-            for (Anchor anchor : values) {
-                Document doc = new Document();
-                doc.add(new StoredField(URL, anchor.getHref()));
-                doc.add(new TextField(CONTENT, anchor.getContent(), Field.Store.YES));
-                directoryWriter.addDocument(doc);
-            }
+            values
+                    .stream()
+                    .filter(anchor -> Optional.ofNullable(anchor.getHref()).filter(s -> s.trim().length() > 0).isPresent())
+                    .filter(anchor -> Optional.ofNullable(anchor.getContent()).filter(s -> s.trim().length() > 0).isPresent())
+                    .forEach(anchor -> {
+                        Document doc = new Document();
+                        doc.add(new StoredField(URL, anchor.getHref()));
+                        doc.add(new TextField(CONTENT, anchor.getContent(), Field.Store.YES));
+                        try {
+                            directoryWriter.addDocument(doc);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
         }
         DirectoryReader indexReader = DirectoryReader.open(directory);
         dirSearcher = new IndexSearcher(indexReader);

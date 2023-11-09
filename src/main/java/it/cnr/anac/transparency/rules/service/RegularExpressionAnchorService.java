@@ -36,7 +36,7 @@ public class RegularExpressionAnchorService implements AnchorService{
     RuleConfiguration ruleConfiguration;
     @Override
     public List<Anchor> find(String content) {
-        Pattern pattern = Pattern.compile(ruleConfiguration.getAnchorExpression(), Pattern.UNICODE_CHARACTER_CLASS);
+        Pattern pattern = Pattern.compile(ruleConfiguration.getAnchorExpression(), Pattern.UNICODE_CHARACTER_CLASS|Pattern.DOTALL|Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(content);
         List<Anchor> result = new ArrayList<>();
         while (matcher.find()) {

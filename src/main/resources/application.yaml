@@ -1,5 +1,5 @@
 rules_root: amministrazione-trasparente
-anchor_expression: <a.*href\s?=['"]*(?<href>[^'"]*)[^>]*>((?<text>(.(?!\<\/a\>))*.))<\/a>
+anchor_expression: <a[\s]+([^>]+)href\s?=['"]*(?<href>[^'"]*)[^>]*>((?<text>(.(?!\<\/a\>))*.))<\/a>
 spring:
   profiles:
     default: jsoup

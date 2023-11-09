@@ -47,6 +47,7 @@ public class RuleService {
                 .flatMap(s -> Optional.ofNullable(ruleConfiguration.getRule(s)))
                 .orElseGet(() -> ruleConfiguration.getRootRule());
         final List<Anchor> anchors = anchorService.find(content);
+        log.debug("Find {} anchor in content", anchors.size());
         LuceneSearch luceneSearch = new LuceneSearch(anchors);
         return findTermInValues(luceneSearch, ruleName, rule);
     }
@@ -57,6 +58,7 @@ public class RuleService {
                 .orElseGet(() -> ruleConfiguration.getRootRule())
                 .getChilds();
         final List<Anchor> anchors = anchorService.find(content);
+        log.debug("Find {} anchor in content", anchors.size());
         LuceneSearch luceneSearch = new LuceneSearch(anchors);
         return childs.entrySet()
                 .stream()
