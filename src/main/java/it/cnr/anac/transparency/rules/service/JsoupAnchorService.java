@@ -18,6 +18,7 @@
 package it.cnr.anac.transparency.rules.service;
 
 import it.cnr.anac.transparency.rules.domain.Anchor;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.context.annotation.Profile;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 @Service
+@Slf4j
 @Profile("jsoup")
 public class JsoupAnchorService implements AnchorService{
     @Override
@@ -33,6 +35,9 @@ public class JsoupAnchorService implements AnchorService{
         Document doc = Jsoup.parse(content);
         return doc.getElementsByTag(ANCHOR)
                 .stream()
+                .peek(element -> {
+                    log.debug("Find anchor width href: {} and text: {}", element.attr(HREF), element.text());
+                })
                 .map(element -> {
                     return new Anchor(element.attr(HREF), element.text());
                 }).collect(Collectors.toList());

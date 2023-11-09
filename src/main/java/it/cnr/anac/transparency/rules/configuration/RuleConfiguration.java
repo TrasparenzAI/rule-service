@@ -38,8 +38,11 @@ import java.util.Optional;
 public class RuleConfiguration {
     @Value("${rules_root}")
     protected String root_rule;
-    @Value("${anchor_expression}")
-    protected String anchorExpression;
+    @Value("${anchor_regex}")
+    protected String anchorRegex;
+    @Value("${href_regex}")
+    protected String hrefRegex;
+
     protected Map<String, Rule> rules;
     protected Map<String, Rule> flattenRules;
 

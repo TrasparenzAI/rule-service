@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static java.awt.SystemColor.text;
+
 @Slf4j
 @Service
 @Profile("regular-expression")
@@ -36,14 +39,23 @@ public class RegularExpressionAnchorService implements AnchorService{
     RuleConfiguration ruleConfiguration;
     @Override
     public List<Anchor> find(String content) {
-        Pattern pattern = Pattern.compile(ruleConfiguration.getAnchorExpression(), Pattern.UNICODE_CHARACTER_CLASS|Pattern.DOTALL|Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(content);
+        content = content.replaceAll("\\s+", " ");
+        final Pattern patternAnchor = Pattern.compile(ruleConfiguration.getAnchorRegex(), Pattern.CASE_INSENSITIVE);
+        final Pattern patternHref = Pattern.compile(ruleConfiguration.getHrefRegex());
+        Matcher matcher = patternAnchor.matcher(content);
         List<Anchor> result = new ArrayList<>();
         while (matcher.find()) {
-            final String href = matcher.group(HREF);
-            final String text = matcher.group(TEXT);
-            result.add(Anchor.newInstance(href, text));
-            log.debug("Find anchor width href: {} and text: {}", href, text);
+            final String attributes = matcher.group(1);
+            final Matcher matcherHref = patternHref.matcher(attributes);
+            matcherHref.find();
+            try {
+                final String href = matcherHref.group(HREF);
+                final String text = matcher.group(TEXT);
+                result.add(Anchor.newInstance(href, text));
+                log.debug("Find anchor width href: {} and text: {}", href, text);
+            } catch (IllegalStateException _ex) {
+                log.warn("No match found in attributes: {}", attributes);
+            }
         }
         return result;
     }
