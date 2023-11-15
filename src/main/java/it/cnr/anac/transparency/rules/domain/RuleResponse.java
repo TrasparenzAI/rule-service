@@ -27,6 +27,8 @@ import org.springframework.http.HttpStatus;
 public class RuleResponse {
     private String url;
     private String ruleName;
+    private String term;
+    private String content;
     private Boolean isLeaf;
     private HttpStatus status;
     private Float score;

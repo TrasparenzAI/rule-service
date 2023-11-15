@@ -26,6 +26,10 @@ import it.cnr.anac.transparency.rules.util.LuceneResult;
 import it.cnr.anac.transparency.rules.util.LuceneSearch;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -42,23 +46,35 @@ public class RuleService {
     @Autowired
     AnchorService anchorService;
 
-    public RuleResponse executeRule(String content, Optional<String> ruleName) throws RuleNotFoundException, IOException {
+    public RuleResponse executeRule(String content, Optional<String> ruleName, List<Anchor> anchors) throws RuleNotFoundException, IOException {
         final Rule rule = ruleName
                 .flatMap(s -> Optional.ofNullable(ruleConfiguration.getRule(s)))
                 .orElseGet(() -> ruleConfiguration.getRootRule());
-        final List<Anchor> anchors = anchorService.find(content);
-        log.debug("Founded {} anchor in content for rule {}", anchors.size(), ruleName);
+        log.debug("Founded {} anchor in content for rule {}", anchors.size(), ruleName.orElse("empty"));
         LuceneSearch luceneSearch = new LuceneSearch(anchors);
         return findTermInValues(luceneSearch, ruleName, rule);
     }
 
-    public List<RuleResponse> executeChildRule(String content, Optional<String> ruleName) throws RuleNotFoundException, IOException {
-        final Map<String, Rule> childs = ruleName
+    public RuleResponse executeRule(String content, Optional<String> ruleName) throws RuleNotFoundException, IOException {
+        try {
+            return executeRule(content, ruleName, anchorService.find(content));
+        } catch (RuleNotFoundException _ex) {
+            return executeRuleAlternative(content, ruleName);
+        }
+    }
+    public RuleResponse executeRuleAlternative(String content, Optional<String> ruleName) throws RuleNotFoundException, IOException {
+        return executeRule(content, ruleName, anchorsWidthJsoup(content));
+    }
+
+    public Map<String, Rule> childRules(Optional<String> ruleName) {
+        return ruleName
                 .flatMap(s -> Optional.ofNullable(ruleConfiguration.getRule(s)))
                 .orElseGet(() -> ruleConfiguration.getRootRule())
                 .getChilds();
-        final List<Anchor> anchors = anchorService.find(content);
-        log.debug("Founded {} anchor in content for rule {}", anchors.size(), ruleName);
+    }
+    public List<RuleResponse> executeChildRule(String content, Optional<String> ruleName, List<Anchor> anchors) throws RuleNotFoundException, IOException {
+        final Map<String, Rule> childs = childRules(ruleName);
+        log.debug("Founded {} anchor in content for rule {}", anchors.size(), ruleName.orElse("empty"));
         LuceneSearch luceneSearch = new LuceneSearch(anchors);
         return childs.entrySet()
                 .stream()
@@ -69,6 +85,8 @@ public class RuleService {
                         return new RuleResponse(
                                 null,
                                 entry.getKey(),
+                                ruleConfiguration.getFlattenRules().get(entry.getKey()).getTerm(),
+                                null,
                                 Optional.ofNullable(entry.getValue().getChilds()).map(c -> c.isEmpty()).orElse(Boolean.TRUE),
                                 HttpStatus.NOT_FOUND,
                                 null
@@ -77,6 +95,13 @@ public class RuleService {
                 })
                 .collect(Collectors.toList());
     }
+    public List<RuleResponse> executeChildRule(String content, Optional<String> ruleName) throws RuleNotFoundException, IOException {
+        return executeChildRule(content, ruleName, anchorService.find(content));
+    }
+
+    public List<RuleResponse> executeChildRuleAlternative(String content, Optional<String> ruleName) throws RuleNotFoundException, IOException {
+        return executeChildRule(content, ruleName, anchorsWidthJsoup(content));
+    }
 
     private RuleResponse findTermInValues(LuceneSearch luceneSearch, Optional<String> ruleName, Rule rule) throws RuleNotFoundException {
         try {
@@ -84,9 +109,12 @@ public class RuleService {
             if (luceneResult.isPresent()) {
                 log.debug("Term {} - find {} URL: {}", rule.getTerm(),
                         luceneResult.get().getContent(), luceneResult.get().getUrl());
+                final String r = ruleName.orElse(ruleConfiguration.getRoot_rule());
                 return new RuleResponse(
                         luceneResult.get().getUrl(),
-                        ruleName.orElse(ruleConfiguration.getRoot_rule()),
+                        r,
+                        ruleConfiguration.getFlattenRules().get(r).getTerm(),
+                        luceneResult.get().getContent(),
                         Optional.ofNullable(rule.getChilds()).map(c -> c.isEmpty()).orElse(Boolean.TRUE),
                         HttpStatus.OK,
                         luceneResult.get().getScore()
@@ -96,5 +124,14 @@ public class RuleService {
         } catch (IOException | ParseException e) {
             throw new RuleNotFoundException();
         }
+    }
+
+    private List<Anchor> anchorsWidthJsoup(String content) {
+        Document doc = Jsoup.parse(content);
+        return doc.getElementsByTag(AnchorService.ANCHOR)
+                .stream()
+                .map(element -> {
+                    return new Anchor(element.attr(AnchorService.HREF), element.parent().text());
+                }).collect(Collectors.toList());
     }
 }

@@ -28,6 +28,9 @@ public class RuleResponseDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String url;
     private String ruleName;
+    private String term;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String content;
     private Boolean isLeaf;
     private int status;
     @JsonInclude(JsonInclude.Include.NON_NULL)

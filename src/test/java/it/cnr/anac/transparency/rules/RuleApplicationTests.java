@@ -22,18 +22,22 @@ import it.cnr.anac.transparency.rules.domain.RuleResponse;
 import it.cnr.anac.transparency.rules.domain.Rule;
 import it.cnr.anac.transparency.rules.exception.RuleNotFoundException;
 import it.cnr.anac.transparency.rules.service.RuleService;
+import it.cnr.anac.transparency.rules.v1.controller.RuleController;
+import it.cnr.anac.transparency.rules.v1.dto.RuleResponseDto;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -42,12 +46,14 @@ import java.util.stream.Collectors;
 @SpringBootTest
 class RuleApplicationTests {
 	private static final String TIPOLOGIE_PROCEDIMENTO = "tipologie-procedimento";
-	public static final String AMMINISTRAZIONE_URL = "https://www.cnr.it";
+	public static final String AMMINISTRAZIONE1_URL = "https://www.cnr.it";
 	public static final int TIMEOUT_MILLIS = 10000;
 	@Autowired
 	RuleConfiguration ruleConfiguration;
 	@Autowired
 	RuleService ruleService;
+	@Autowired
+	RuleController ruleController;
 
 	boolean isValidURL(String url) throws MalformedURLException, URISyntaxException {
 		try {
@@ -112,13 +118,47 @@ class RuleApplicationTests {
 				.collect(Collectors.joining("\n")), Optional.empty());
 		Assertions.assertEquals("/prova-apici-singoli3", ruleResponse.getUrl());
 	}
+	@Test
+	void local3() throws IOException, URISyntaxException {
+		final InputStream resourceAsStream = this.getClass().getResourceAsStream("/amministrazione3.html");
+		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
+				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
+				.lines()
+				.collect(Collectors.joining("\n")), Optional.empty());
+		Assertions.assertEquals("/amministrazione-trasparente", ruleResponse.getUrl());
+	}
+
+	void internalChild(InputStream resourceAsStream) throws IOException, URISyntaxException {
+		final ResponseEntity<List<RuleResponseDto>> ruleResponses = ruleController.postChild(Base64.getEncoder().encodeToString(new BufferedReader(
+				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
+				.lines()
+				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty());
+
+		Assertions.assertEquals(23, ruleResponses.getBody().size());
+		Assertions.assertEquals(
+				0,
+				ruleResponses.getBody().stream().filter(r -> !Optional.ofNullable(r.getUrl()).isPresent()).collect(Collectors.toList()).size(),
+				"The rules not satisfied are: " + String.join(",", ruleResponses.getBody().stream().filter(r -> !Optional.ofNullable(r.getUrl()).isPresent())
+						.map(RuleResponseDto::getRuleName)
+						.collect(Collectors.toList()))
+
+		);
+	}
+	@Test
+	void localChild3() throws IOException, URISyntaxException {
+		internalChild(this.getClass().getResourceAsStream("/amministrazione_child1.html"));
+	}
+	@Test
+	void localChild4() throws IOException, URISyntaxException {
+		internalChild(this.getClass().getResourceAsStream("/amministrazione_child2.html"));
+	}
 
 	@Test
-	void amministrazione() throws IOException, URISyntaxException {
-		Document doc = Jsoup.parse(new URL(AMMINISTRAZIONE_URL), TIMEOUT_MILLIS);
+	void amministrazione1() throws IOException, URISyntaxException {
+		Document doc = Jsoup.parse(new URL(AMMINISTRAZIONE1_URL), TIMEOUT_MILLIS);
 		final RuleResponse ruleResponse = ruleService.executeRule(doc.html(), Optional.empty());
 
-		Document doc2 = Jsoup.parse(getURL(ruleResponse.getUrl(),AMMINISTRAZIONE_URL), TIMEOUT_MILLIS);
+		Document doc2 = Jsoup.parse(getURL(ruleResponse.getUrl(), AMMINISTRAZIONE1_URL), TIMEOUT_MILLIS);
 		final List<RuleResponse> ruleResponse2 = ruleService.executeChildRule(doc2.html(), Optional.of(ruleResponse.getRuleName()));
 		Assertions.assertEquals(23, ruleResponse2.size());
 		Assertions.assertEquals(

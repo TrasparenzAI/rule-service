@@ -26,6 +26,7 @@ import it.cnr.anac.transparency.rules.v1.dto.RuleMapper;
 import it.cnr.anac.transparency.rules.v1.dto.RuleResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -75,10 +76,12 @@ public class RuleController {
     @PostMapping("/child")
     public ResponseEntity<List<RuleResponseDto>> postChild(@RequestBody String content, @RequestParam(name = "ruleName") Optional<String> ruleName) {
         try {
-            final List<RuleResponse> ruleResponses = ruleService.executeChildRule(
-                    new String(Base64.getDecoder().decode(content), StandardCharsets.UTF_8),
-                    ruleName
-            );
+            final String contentDecoded = new String(Base64.getDecoder().decode(content), StandardCharsets.UTF_8);
+            List<RuleResponse> ruleResponses = ruleService.executeChildRule(contentDecoded, ruleName);
+            if (ruleResponses.stream().filter(ruleResponse -> ruleResponse.getStatus().equals(HttpStatus.NOT_FOUND)).collect(Collectors.toList()).size() >
+                ruleService.childRules(ruleName).size() / 2) {
+                ruleResponses = ruleService.executeChildRuleAlternative(contentDecoded, ruleName);
+            }
             return ResponseEntity.ok().body(
                     ruleResponses
                             .stream()
