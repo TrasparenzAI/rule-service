@@ -34,4 +34,4 @@ jobs:
       - name: Get branch name
         run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr /# -)" >> $GITHUB_ENV
       - name: Build container image
-        run: ./gradlew jib -Djib.to.tags=${{ env.BRANCH_NAME }}
+        run: ./gradlew jib -Djib.to.tags=${{ env.BRANCH_NAME }} -Djib.to.auth.username=${{ github.actor }} -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}
