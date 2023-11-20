@@ -1,5 +1,8 @@
 name: Build
 on: [push, pull_request]
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build:
@@ -34,4 +37,6 @@ jobs:
       - name: Get branch name
         run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr /# -)" >> $GITHUB_ENV
       - name: Build container image
-        run: ./gradlew jib -Djib.to.tags=${{ env.BRANCH_NAME }} -Djib.to.auth.username=${{ github.actor }} -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}
+        run: ./gradlew jib -Djib.to.auth.username=${{ github.actor }}
+          -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}
+          -Djib.to.image=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
