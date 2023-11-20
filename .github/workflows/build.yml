@@ -8,6 +8,10 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 17
@@ -16,9 +20,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Build container image
-        run: |
-          echo ${{ secrets.GITHUB_TOKEN }}
-          ./gradlew jib \
+        run: ./gradlew jib \
             -Djib.to.image=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
             -Djib.to.auth.username=${{ github.actor }} \
             -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}
