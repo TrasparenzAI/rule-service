@@ -17,6 +17,10 @@
 
 package it.cnr.anac.transparency.rules.v1.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import it.cnr.anac.transparency.rules.configuration.RuleConfiguration;
 import it.cnr.anac.transparency.rules.domain.RuleResponse;
 import it.cnr.anac.transparency.rules.exception.RuleNotFoundException;
@@ -35,6 +39,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Tag(name = "Rule Controller", description = "Metodi di consultazione e applicazione delle regole sulla trasparenza")
 @RequiredArgsConstructor
 @Slf4j
 @RestController
@@ -43,7 +48,12 @@ public class RuleController {
     private final RuleConfiguration ruleConfiguration;
     private final RuleMapper ruleMapper;
     private final RuleService ruleService;
-
+    @Operation(
+            summary = "Visualizzazione dell'albero delle regole.",
+            description = "Il servizio recupera dalla configurazione l'albero delle regole e lo presenta come json")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Restitutito l'albero delle regole.")
+    })
     @GetMapping
     public ResponseEntity<Map<String, RuleDto>> get() {
         return ResponseEntity.ok().body(
@@ -56,7 +66,15 @@ public class RuleController {
                         ))
         );
     }
-
+    @Operation(
+            summary = "Applicazione di una singola regola allo stream in base64 passato in input.",
+            description = "Il servizio accetta in input una stringa in base64 contenente la pagina html e il nome logico" +
+                    " di una regola da applicare, in alternativa viene aplicata la regola root.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Il termine della regola è stato trovato e " +
+                    "viene restituito un oggetto json con le informazioni sullo score"),
+            @ApiResponse(responseCode = "400", description = "Il termine della regola non è stato trovato o la regola non esiste.")
+    })
     @PostMapping
     public ResponseEntity<RuleResponseDto> post(@RequestBody String content, @RequestParam(name = "ruleName") Optional<String> ruleName) {
         try {
@@ -73,6 +91,15 @@ public class RuleController {
         }
     }
 
+    @Operation(
+            summary = "Vengono applicate tutte le regole figlie di una determinata regola, allo stream in base64 passato in input.",
+            description = "Il servizio accetta in input una stringa in base64 contenente la pagina html e il nome logico" +
+                    " di una regola da cui recuperare i figli, in alternativa vengono cercati i figli della regola root.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "La regola padre esiste " +
+                    "viene restituito una lista di oggetti json con le informazioni sullo score"),
+            @ApiResponse(responseCode = "400", description = "La regola padre non esiste.")
+    })
     @PostMapping("/child")
     public ResponseEntity<List<RuleResponseDto>> postChild(@RequestBody String content, @RequestParam(name = "ruleName") Optional<String> ruleName) {
         try {
