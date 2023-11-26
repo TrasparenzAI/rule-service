@@ -132,7 +132,7 @@ class RuleApplicationTests {
 		final ResponseEntity<List<RuleResponseDto>> ruleResponses = ruleController.postChild(Base64.getEncoder().encodeToString(new BufferedReader(
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty());
+				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Boolean.TRUE);
 
 		Assertions.assertEquals(23, ruleResponses.getBody().size());
 		Assertions.assertEquals(
