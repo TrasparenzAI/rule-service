@@ -80,7 +80,7 @@ public class RuleController {
                                                 @RequestParam(name = "isBase64", defaultValue = "true", required = false) boolean isBase64) {
         try {
             final RuleResponse ruleResponse = ruleService.executeRule(
-                    isBase64 ? content : new String(Base64.getDecoder().decode(content), StandardCharsets.UTF_8),
+                    !isBase64 ? content : new String(Base64.getDecoder().decode(content), StandardCharsets.UTF_8),
                     ruleName
             );
             return ResponseEntity.ok().body(ruleMapper.convert(ruleResponse));
@@ -105,7 +105,7 @@ public class RuleController {
     public ResponseEntity<List<RuleResponseDto>> postChild(@RequestBody String content, @RequestParam(name = "ruleName") Optional<String> ruleName,
                                                            @RequestParam(name = "isBase64", defaultValue = "true", required = false) boolean isBase64) {
         try {
-            final String contentDecoded = isBase64 ? content : new String(Base64.getDecoder().decode(content), StandardCharsets.UTF_8);
+            final String contentDecoded = !isBase64 ? content : new String(Base64.getDecoder().decode(content), StandardCharsets.UTF_8);
             List<RuleResponse> ruleResponses = ruleService.executeChildRule(contentDecoded, ruleName);
             if (ruleResponses.stream().filter(ruleResponse -> ruleResponse.getStatus().equals(HttpStatus.NOT_FOUND)).collect(Collectors.toList()).size() >
                 ruleService.childRules(ruleName).size() / 2) {
