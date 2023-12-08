@@ -45,6 +45,8 @@ public class RuleService {
     RuleConfiguration ruleConfiguration;
     @Autowired
     AnchorService anchorService;
+    @Autowired
+    SeleniumAnchorService seleniumAnchorService;
 
     public RuleResponse executeRule(String content, Optional<String> ruleName, List<Anchor> anchors) throws RuleNotFoundException, IOException {
         final Rule rule = ruleName
@@ -55,15 +57,21 @@ public class RuleService {
         return findTermInValues(luceneSearch, ruleName, rule);
     }
 
-    public RuleResponse executeRule(String content, Optional<String> ruleName) throws RuleNotFoundException, IOException {
+    public RuleResponse executeRule(String content, Optional<String> ruleName, Optional<String> url) throws RuleNotFoundException, IOException {
         try {
             return executeRule(content, ruleName, anchorService.find(content));
         } catch (RuleNotFoundException _ex) {
-            return executeRuleAlternative(content, ruleName);
+            return executeRuleAlternative(content, ruleName, url);
         }
     }
-    public RuleResponse executeRuleAlternative(String content, Optional<String> ruleName) throws RuleNotFoundException, IOException {
-        return executeRule(content, ruleName, anchorsWidthJsoup(content));
+    public RuleResponse executeRuleAlternative(String content, Optional<String> ruleName, Optional<String> url) throws RuleNotFoundException, IOException {
+        try {
+            return executeRule(content, ruleName, anchorsWidthJsoup(content));
+        } catch (RuleNotFoundException _ex) {
+            if (url.isPresent())
+                return executeRule(content, ruleName, seleniumAnchorService.findAnchor(url.get()));
+            throw _ex;
+        }
     }
 
     public Map<String, Rule> childRules(Optional<String> ruleName) {

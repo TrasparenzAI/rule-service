@@ -77,11 +77,13 @@ public class RuleController {
     })
     @PostMapping
     public ResponseEntity<RuleResponseDto> post(@RequestBody String content, @RequestParam(name = "ruleName") Optional<String> ruleName,
-                                                @RequestParam(name = "isBase64", defaultValue = "true", required = false) boolean isBase64) {
+                                                @RequestParam(name = "isBase64", defaultValue = "true", required = false) boolean isBase64,
+                                                @RequestParam(name = "url") Optional<String> url) {
         try {
             final RuleResponse ruleResponse = ruleService.executeRule(
                     !isBase64 ? content : new String(Base64.getDecoder().decode(content), StandardCharsets.UTF_8),
-                    ruleName
+                    ruleName,
+                    url
             );
             return ResponseEntity.ok().body(ruleMapper.convert(ruleResponse));
         } catch (RuleNotFoundException e) {

@@ -12,11 +12,10 @@ che quindi può essere modificato o ampliato attraverso variabili di ambiente o 
 delle regole in formato _json_, e la verifica di una o più regole su un contenuto _html_  
 
 ## Docker
-Il servizio è dotato di un [Dockerfile](Dockerfile) che permette di effettuare la _build_ e fornisce 
-l'immagine per l'esecuzione tramite _docker_
+Il servizio è dotato del plugi _jib_  che permette di effettuare la _build_ e fornisce l'immagine per l'esecuzione tramite _docker_
 ```bash
-docker build . --tag rule-service:latest
-docker run -p 8080:8080 -ti rule-service:latest
+gradle jibDockerBuild
+docker run -p 8080:8080 -ti rule-service:{version}
 ```
 La documentazione relativa ai servizi REST è consultabile [qui](http://localhost:8080/api-docs) ed è possibile interagire
 con i servizi attraverso **Swagger** alla seguente URL http://localhost:8080/swagger-ui.html
