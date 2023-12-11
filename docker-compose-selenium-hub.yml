@@ -1,7 +1,7 @@
 version: "3"
 services:
   chrome:
-    image: selenium/node-chrome:beta
+    image: selenium/node-chrome
     container_name: selenium-chrome
     shm_size: 2gb
     links:
@@ -12,12 +12,14 @@ services:
       - SE_EVENT_BUS_HOST=selenium-hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_OVERRIDE_MAX_SESSIONS=true
+      - SE_NODE_MAX_SESSIONS=5
+      - SE_NODE_SESSION_TIMEOUT=3600
+      - JAVA_OPTS=-XX:ActiveProcessorCount=5
 
   selenium-hub:
     image: selenium/hub:latest
     container_name: selenium-hub
-    environment:
-      - SE_NODE_SESSION_TIMEOUT=-1
     ports:
       - "4444:4444"
 

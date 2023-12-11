@@ -2,7 +2,7 @@ rules_root: amministrazione-trasparente
 anchor_regex: <a[\s]+([^>]+)>((?<text>(.(?!\<\/a\>))*.))<\/a>
 href_regex: href\s*=\s*(?:["'](?<href>[^"']*)["']|([^>\s]+))
 selenium_url: http://selenium-hub:4444
-selenium_arguments: --lang=it
+selenium_arguments: --lang=it --ignore-certificate-errors
 spring:
   profiles:
     default: regular-expression,selenium-chrome
