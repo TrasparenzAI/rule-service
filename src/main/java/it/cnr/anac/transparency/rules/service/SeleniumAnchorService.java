@@ -20,6 +20,7 @@ package it.cnr.anac.transparency.rules.service;
 import it.cnr.anac.transparency.rules.configuration.RuleConfiguration;
 import it.cnr.anac.transparency.rules.domain.Anchor;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.AbstractDriverOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -42,19 +43,7 @@ public class SeleniumAnchorService {
     AbstractDriverOptions abstractDriverOptions;
 
     public List<Anchor> findAnchor(String url) {
-        if (driver == null) {
-            try {
-                log.debug("Try to start driver.....");
-                driver = new RemoteWebDriver(new URL(ruleConfiguration.getSelenium_url()), abstractDriverOptions);
-                driver.manage().window().maximize();
-                log.debug("Driver is started");
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        log.debug("Start to get url: {}", url);
-        driver.get(url);
-        log.debug("Finish to get url: {}", url);
+        driverGet(url);
         final String pageSource = driver.getPageSource();
         log.trace("===============BEGING PAGE SOURCE==============");
         log.trace(pageSource);
@@ -62,4 +51,24 @@ public class SeleniumAnchorService {
         return anchorService.find(pageSource);
     }
 
+    private void driverGet(String url) {
+        try {
+            if (driver == null) {
+                try {
+                    log.debug("Try to start driver.....");
+                    driver = new RemoteWebDriver(new URL(ruleConfiguration.getSelenium_url()), abstractDriverOptions);
+                    driver.manage().window().maximize();
+                    log.debug("Driver is started");
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            log.debug("Start to get url: {}", url);
+            driver.get(url);
+            log.debug("Finish to get url: {}", url);
+        } catch (NoSuchSessionException _ex) {
+            driver = null;
+            driverGet(url);
+        }
+    }
 }
