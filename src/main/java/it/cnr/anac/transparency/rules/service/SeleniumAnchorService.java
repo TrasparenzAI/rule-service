@@ -19,6 +19,7 @@ package it.cnr.anac.transparency.rules.service;
 
 import it.cnr.anac.transparency.rules.configuration.RuleConfiguration;
 import it.cnr.anac.transparency.rules.domain.Anchor;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.WebDriver;
@@ -42,6 +43,7 @@ public class SeleniumAnchorService {
     @Autowired
     AbstractDriverOptions abstractDriverOptions;
 
+    @Synchronized
     public List<Anchor> findAnchor(String url) {
         driverGet(url);
         final String pageSource = driver.getPageSource();
