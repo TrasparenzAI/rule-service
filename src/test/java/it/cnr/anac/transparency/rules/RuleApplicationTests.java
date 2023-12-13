@@ -20,6 +20,7 @@ package it.cnr.anac.transparency.rules;
 import it.cnr.anac.transparency.rules.configuration.RuleConfiguration;
 import it.cnr.anac.transparency.rules.domain.RuleResponse;
 import it.cnr.anac.transparency.rules.domain.Rule;
+import it.cnr.anac.transparency.rules.exception.RuleException;
 import it.cnr.anac.transparency.rules.exception.RuleNotFoundException;
 import it.cnr.anac.transparency.rules.service.RuleService;
 import it.cnr.anac.transparency.rules.v1.controller.RuleController;
@@ -101,7 +102,7 @@ class RuleApplicationTests {
 	}
 
 	@Test
-	void local() throws IOException, URISyntaxException {
+	void local() throws IOException, URISyntaxException, RuleException {
 		final InputStream resourceAsStream = this.getClass().getResourceAsStream("/amministrazione.html");
 		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
@@ -110,7 +111,7 @@ class RuleApplicationTests {
 		Assertions.assertEquals("/", ruleResponse.getUrl());
 	}
 	@Test
-	void local2() throws IOException, URISyntaxException {
+	void local2() throws IOException, URISyntaxException, RuleException {
 		final InputStream resourceAsStream = this.getClass().getResourceAsStream("/amministrazione2.html");
 		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
@@ -119,7 +120,7 @@ class RuleApplicationTests {
 		Assertions.assertEquals("/prova-apici-singoli3", ruleResponse.getUrl());
 	}
 	@Test
-	void local3() throws IOException, URISyntaxException {
+	void local3() throws IOException, URISyntaxException, RuleException {
 		final InputStream resourceAsStream = this.getClass().getResourceAsStream("/amministrazione3.html");
 		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
@@ -154,7 +155,7 @@ class RuleApplicationTests {
 	}
 
 	@Test
-	void amministrazione1() throws IOException, URISyntaxException {
+	void amministrazione1() throws IOException, URISyntaxException, RuleException {
 		Document doc = Jsoup.parse(new URL(AMMINISTRAZIONE1_URL), TIMEOUT_MILLIS);
 		final RuleResponse ruleResponse = ruleService.executeRule(doc.html(), Optional.empty(), Optional.empty());
 

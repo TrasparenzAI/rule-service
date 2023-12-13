@@ -21,6 +21,7 @@ import it.cnr.anac.transparency.rules.configuration.RuleConfiguration;
 import it.cnr.anac.transparency.rules.domain.Anchor;
 import it.cnr.anac.transparency.rules.domain.Rule;
 import it.cnr.anac.transparency.rules.domain.RuleResponse;
+import it.cnr.anac.transparency.rules.exception.RuleException;
 import it.cnr.anac.transparency.rules.exception.RuleNotFoundException;
 import it.cnr.anac.transparency.rules.util.LuceneResult;
 import it.cnr.anac.transparency.rules.util.LuceneSearch;
@@ -57,14 +58,14 @@ public class RuleService {
         return findTermInValues(luceneSearch, ruleName, rule);
     }
 
-    public RuleResponse executeRule(String content, Optional<String> ruleName, Optional<String> url) throws RuleNotFoundException, IOException {
+    public RuleResponse executeRule(String content, Optional<String> ruleName, Optional<String> url) throws RuleNotFoundException, IOException, RuleException {
         try {
             return executeRule(content, ruleName, anchorService.find(content));
         } catch (RuleNotFoundException _ex) {
             return executeRuleAlternative(content, ruleName, url);
         }
     }
-    public RuleResponse executeRuleAlternative(String content, Optional<String> ruleName, Optional<String> url) throws RuleNotFoundException, IOException {
+    public RuleResponse executeRuleAlternative(String content, Optional<String> ruleName, Optional<String> url) throws RuleNotFoundException, IOException, RuleException {
         try {
             return executeRule(content, ruleName, anchorsWidthJsoup(content));
         } catch (RuleNotFoundException _ex) {

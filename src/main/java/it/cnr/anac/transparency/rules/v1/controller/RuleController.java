@@ -23,6 +23,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.cnr.anac.transparency.rules.configuration.RuleConfiguration;
 import it.cnr.anac.transparency.rules.domain.RuleResponse;
+import it.cnr.anac.transparency.rules.exception.RuleException;
 import it.cnr.anac.transparency.rules.exception.RuleNotFoundException;
 import it.cnr.anac.transparency.rules.service.RuleService;
 import it.cnr.anac.transparency.rules.v1.dto.RuleDto;
@@ -76,7 +77,7 @@ public class RuleController {
             @ApiResponse(responseCode = "400", description = "Il termine della regola non è stato trovato o la regola non esiste.")
     })
     @PostMapping
-    public ResponseEntity<RuleResponseDto> post(@RequestBody String content, @RequestParam(name = "ruleName") Optional<String> ruleName,
+    public ResponseEntity post(@RequestBody String content, @RequestParam(name = "ruleName") Optional<String> ruleName,
                                                 @RequestParam(name = "isBase64", defaultValue = "true", required = false) boolean isBase64,
                                                 @RequestParam(name = "url") Optional<String> url) {
         try {
@@ -86,6 +87,8 @@ public class RuleController {
                     url
             );
             return ResponseEntity.ok().body(ruleMapper.convert(ruleResponse));
+        } catch (RuleException e) {
+            return ResponseEntity.status(e.getHttpStatus()).body(e.getMessage());
         } catch (RuleNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (IOException e) {

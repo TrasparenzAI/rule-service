@@ -19,13 +19,16 @@ package it.cnr.anac.transparency.rules.service;
 
 import it.cnr.anac.transparency.rules.configuration.RuleConfiguration;
 import it.cnr.anac.transparency.rules.domain.Anchor;
+import it.cnr.anac.transparency.rules.exception.RuleException;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.remote.AbstractDriverOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.net.MalformedURLException;
@@ -44,7 +47,7 @@ public class SeleniumAnchorService {
     AbstractDriverOptions abstractDriverOptions;
 
     @Synchronized
-    public List<Anchor> findAnchor(String url) {
+    public List<Anchor> findAnchor(String url) throws RuleException {
         driverGet(url);
         final String pageSource = driver.getPageSource();
         log.trace("===============BEGING PAGE SOURCE==============");
@@ -53,7 +56,7 @@ public class SeleniumAnchorService {
         return anchorService.find(pageSource);
     }
 
-    private void driverGet(String url) {
+    private void driverGet(String url) throws RuleException {
         try {
             if (driver == null) {
                 try {
@@ -71,6 +74,11 @@ public class SeleniumAnchorService {
         } catch (NoSuchSessionException _ex) {
             driver = null;
             driverGet(url);
+        } catch (WebDriverException _ex) {
+            final String message = _ex.getMessage();
+            if (message.contains("ERR_NAME_NOT_RESOLVED"))
+                throw new RuleException(message).status(HttpStatus.BAD_GATEWAY);
+            throw new RuleException(message).status(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
