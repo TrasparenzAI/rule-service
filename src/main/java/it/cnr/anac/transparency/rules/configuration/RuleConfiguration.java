@@ -33,10 +33,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Configuration
 @ConfigurationProperties
@@ -51,7 +48,7 @@ public class RuleConfiguration {
     protected String hrefRegex;
 
     public String selenium_url;
-    public String selenium_arguments;
+    public List<String> selenium_arguments;
 
     protected Map<String, Rule> rules;
     protected Map<String, Rule> flattenRules;
