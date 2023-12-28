@@ -144,14 +144,13 @@ public class RuleService {
                     final String href = element.attr(AnchorService.HREF);
                     return Arrays.asList(
                             new Anchor(href, element.text()),
-                            new Anchor(href, Optional.ofNullable(element.parent()).
-                                    map(Element::text).
-                                    orElse("")),
+                            new Anchor(href, Optional.ofNullable(element.parent())
+                                            .map(Element::text)
+                                            .orElse("")),
                             new Anchor(href,
-                                    Optional.ofNullable(element.parent()).
-                                            flatMap(element1 -> Optional.ofNullable(element1.parent())).
-                                            map(Element::text).
-                                            orElse(""))
+                                    Optional.ofNullable(element.parent())
+                                            .flatMap(element1 -> Optional.ofNullable(element1.attributes().get("aria-label")))
+                                            .orElse(""))
                     );
                 }).flatMap(List::stream).collect(Collectors.toList());
     }
