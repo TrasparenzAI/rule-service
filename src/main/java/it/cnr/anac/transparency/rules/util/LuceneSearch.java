@@ -37,7 +37,6 @@ import org.apache.lucene.store.ByteBuffersDirectory;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -53,7 +52,7 @@ public class LuceneSearch {
         try (IndexWriter directoryWriter = new IndexWriter(directory, new IndexWriterConfig(new ItalianAnalyzer()))) {
             values
                     .stream()
-                    .filter(anchor -> Optional.ofNullable(anchor.getHref()).filter(s -> s.trim().length() > 0).isPresent())
+                    .filter(anchor -> Optional.ofNullable(anchor.getHref()).filter(s -> !s.trim().isEmpty()).isPresent())
                     .filter(anchor -> Optional.ofNullable(anchor.getContent()).filter(s -> s.trim().length() > 0).isPresent())
                     .forEach(anchor -> {
                         Document doc = new Document();
@@ -72,6 +71,7 @@ public class LuceneSearch {
 
     public Optional<LuceneResult> search(String keyword) throws ParseException, IOException {
         QueryParser parser = new QueryParser(CONTENT, new ItalianAnalyzer());
+        parser.setDefaultOperator(QueryParser.Operator.AND);
         Query query = parser.parse(keyword);
         TopDocs topDocs = dirSearcher.search(query, 10);
         return Arrays.stream(topDocs.scoreDocs).map(scoreDoc -> {

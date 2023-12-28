@@ -77,14 +77,11 @@ public class RuleController {
             @ApiResponse(responseCode = "400", description = "Il termine della regola non è stato trovato o la regola non esiste.")
     })
     @PostMapping
-    public ResponseEntity post(@RequestBody String content, @RequestParam(name = "ruleName") Optional<String> ruleName,
-                                                @RequestParam(name = "isBase64", defaultValue = "true", required = false) boolean isBase64,
-                                                @RequestParam(name = "url") Optional<String> url) {
+    public ResponseEntity post(@RequestBody String content, @RequestParam(name = "ruleName") Optional<String> ruleName) {
         try {
             final RuleResponse ruleResponse = ruleService.executeRule(
-                    !isBase64 ? content : new String(Base64.getDecoder().decode(content), StandardCharsets.UTF_8),
-                    ruleName,
-                    url
+                    ruleService.base64Decode(content),
+                    ruleName
             );
             return ResponseEntity.ok().body(ruleMapper.convert(ruleResponse));
         } catch (RuleException e) {
@@ -107,10 +104,9 @@ public class RuleController {
             @ApiResponse(responseCode = "400", description = "La regola padre non esiste.")
     })
     @PostMapping("/child")
-    public ResponseEntity<List<RuleResponseDto>> postChild(@RequestBody String content, @RequestParam(name = "ruleName") Optional<String> ruleName,
-                                                           @RequestParam(name = "isBase64", defaultValue = "true", required = false) boolean isBase64) {
+    public ResponseEntity<List<RuleResponseDto>> postChild(@RequestBody String content, @RequestParam(name = "ruleName") Optional<String> ruleName) {
         try {
-            final String contentDecoded = !isBase64 ? content : new String(Base64.getDecoder().decode(content), StandardCharsets.UTF_8);
+            final String contentDecoded = ruleService.base64Decode(content);
             List<RuleResponse> ruleResponses = ruleService.executeChildRule(contentDecoded, ruleName);
             if (ruleResponses.stream().filter(ruleResponse -> ruleResponse.getStatus().equals(HttpStatus.NOT_FOUND)).collect(Collectors.toList()).size() >
                 ruleService.childRules(ruleName).size() / 2) {

@@ -97,7 +97,7 @@ class RuleApplicationTests {
 			ruleService.executeRule(new BufferedReader(
 					new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 					.lines()
-					.collect(Collectors.joining("\n")), Optional.empty(), Optional.empty());
+					.collect(Collectors.joining("\n")), Optional.empty());
 		});
 	}
 
@@ -107,7 +107,7 @@ class RuleApplicationTests {
 		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")), Optional.empty(), Optional.empty());
+				.collect(Collectors.joining("\n")), Optional.empty());
 		Assertions.assertEquals("/", ruleResponse.getUrl());
 	}
 	@Test
@@ -116,7 +116,7 @@ class RuleApplicationTests {
 		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")), Optional.empty(), Optional.empty());
+				.collect(Collectors.joining("\n")), Optional.empty());
 		Assertions.assertEquals("/prova-apici-singoli3", ruleResponse.getUrl());
 	}
 	@Test
@@ -125,7 +125,7 @@ class RuleApplicationTests {
 		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")), Optional.empty(), Optional.empty());
+				.collect(Collectors.joining("\n")), Optional.empty());
 		Assertions.assertEquals("/amministrazione-trasparente", ruleResponse.getUrl());
 	}
 
@@ -133,7 +133,7 @@ class RuleApplicationTests {
 		final ResponseEntity<List<RuleResponseDto>> ruleResponses = ruleController.postChild(Base64.getEncoder().encodeToString(new BufferedReader(
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Boolean.TRUE);
+				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty());
 
 		Assertions.assertEquals(23, ruleResponses.getBody().size());
 		Assertions.assertEquals(
@@ -157,7 +157,7 @@ class RuleApplicationTests {
 	@Test
 	void amministrazione1() throws IOException, URISyntaxException, RuleException {
 		Document doc = Jsoup.parse(new URL(AMMINISTRAZIONE1_URL), TIMEOUT_MILLIS);
-		final RuleResponse ruleResponse = ruleService.executeRule(doc.html(), Optional.empty(), Optional.empty());
+		final RuleResponse ruleResponse = ruleService.executeRule(doc.html(), Optional.empty());
 
 		Document doc2 = Jsoup.parse(getURL(ruleResponse.getUrl(), AMMINISTRAZIONE1_URL), TIMEOUT_MILLIS);
 		final List<RuleResponse> ruleResponse2 = ruleService.executeChildRule(doc2.html(), Optional.of(ruleResponse.getRuleName()));

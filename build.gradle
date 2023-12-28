@@ -42,7 +42,7 @@ dependencies {
 
 	implementation 'org.jsoup:jsoup:1.16.2'
 
-	implementation 'org.seleniumhq.selenium:selenium-java:4.15.0'
+	implementation 'commons-codec:commons-codec:1.16.0'
 
 }
 

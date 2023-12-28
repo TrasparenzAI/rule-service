@@ -22,16 +22,9 @@ import it.cnr.anac.transparency.rules.exception.RuleNotFoundException;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.Setter;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.chromium.ChromiumOptions;
-import org.openqa.selenium.edge.EdgeOptions;
-import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.remote.AbstractDriverOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 import java.util.*;
 
@@ -82,27 +75,4 @@ public class RuleConfiguration {
         return getRule(root_rule);
     }
 
-    @Bean
-    @Profile("selenium-chrome")
-    public ChromiumOptions createChromeOptions() {
-        final ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments(selenium_arguments);
-        return chromeOptions;
-    }
-
-    @Bean
-    @Profile("selenium-firefox")
-    public AbstractDriverOptions<?> createFirefoxOptions() {
-        final FirefoxOptions firefoxOptions = new FirefoxOptions();
-        firefoxOptions.addArguments(selenium_arguments);
-        return firefoxOptions;
-    }
-
-    @Bean
-    @Profile("selenium-edge")
-    public AbstractDriverOptions<?> createEdgeOptions() {
-        final EdgeOptions edgeOptions = new EdgeOptions();
-        edgeOptions.addArguments(selenium_arguments);
-        return edgeOptions;
-    }
 }

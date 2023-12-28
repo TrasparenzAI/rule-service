@@ -30,14 +30,15 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.apache.commons.codec.binary.Base64;
 
 @Service
 @Slf4j
@@ -46,10 +47,16 @@ public class RuleService {
     RuleConfiguration ruleConfiguration;
     @Autowired
     AnchorService anchorService;
-    @Autowired
-    SeleniumAnchorService seleniumAnchorService;
 
-    public RuleResponse executeRule(String content, Optional<String> ruleName, List<Anchor> anchors) throws RuleNotFoundException, IOException {
+    public String base64Decode(String content) {
+        if (Base64.isBase64(content)) {
+            return new String(Base64.decodeBase64(content.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+        } else if (content.contains("b'")) {
+            return new String(Base64.decodeBase64(content.replace("b'", "").getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+        }
+        return content;
+    }
+    public RuleResponse executeRule(Optional<String> ruleName, List<Anchor> anchors) throws RuleNotFoundException, IOException {
         final Rule rule = ruleName
                 .flatMap(s -> Optional.ofNullable(ruleConfiguration.getRule(s)))
                 .orElseGet(() -> ruleConfiguration.getRootRule());
@@ -58,21 +65,15 @@ public class RuleService {
         return findTermInValues(luceneSearch, ruleName, rule);
     }
 
-    public RuleResponse executeRule(String content, Optional<String> ruleName, Optional<String> url) throws RuleNotFoundException, IOException, RuleException {
+    public RuleResponse executeRule(String content, Optional<String> ruleName) throws RuleNotFoundException, IOException, RuleException {
         try {
-            return executeRule(content, ruleName, anchorService.find(content));
+            return executeRule(ruleName, anchorService.find(content));
         } catch (RuleNotFoundException _ex) {
-            return executeRuleAlternative(content, ruleName, url);
+            return executeRuleAlternative(content, ruleName);
         }
     }
-    public RuleResponse executeRuleAlternative(String content, Optional<String> ruleName, Optional<String> url) throws RuleNotFoundException, IOException, RuleException {
-        try {
-            return executeRule(content, ruleName, anchorsWidthJsoup(content));
-        } catch (RuleNotFoundException _ex) {
-            if (url.isPresent())
-                return executeRule(content, ruleName, seleniumAnchorService.findAnchor(url.get()));
-            throw _ex;
-        }
+    public RuleResponse executeRuleAlternative(String content, Optional<String> ruleName) throws RuleNotFoundException, IOException, RuleException {
+        return executeRule(ruleName, anchorsWidthJsoup(content));
     }
 
     public Map<String, Rule> childRules(Optional<String> ruleName) {
@@ -140,7 +141,18 @@ public class RuleService {
         return doc.getElementsByTag(AnchorService.ANCHOR)
                 .stream()
                 .map(element -> {
-                    return new Anchor(element.attr(AnchorService.HREF), element.parent().text());
-                }).collect(Collectors.toList());
+                    final String href = element.attr(AnchorService.HREF);
+                    return Arrays.asList(
+                            new Anchor(href, element.text()),
+                            new Anchor(href, Optional.ofNullable(element.parent()).
+                                    map(Element::text).
+                                    orElse("")),
+                            new Anchor(href,
+                                    Optional.ofNullable(element.parent()).
+                                            flatMap(element1 -> Optional.ofNullable(element1.parent())).
+                                            map(Element::text).
+                                            orElse(""))
+                    );
+                }).flatMap(List::stream).collect(Collectors.toList());
     }
 }
