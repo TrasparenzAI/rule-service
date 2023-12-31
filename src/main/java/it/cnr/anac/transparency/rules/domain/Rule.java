@@ -18,6 +18,8 @@
 package it.cnr.anac.transparency.rules.domain;
 
 import lombok.*;
+
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -26,7 +28,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class Rule {
     @EqualsAndHashCode.Include
-    private String term;
+    private List<String> term;
     private Map<String, Rule> childs;
 
 }

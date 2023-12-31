@@ -21,12 +21,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.ToString;
 
+import java.util.List;
 import java.util.Map;
 
 @ToString
 @Data
 public class RuleDto {
-    private String term;
+    private List<String> term;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Map<String, RuleDto> childs;
 }

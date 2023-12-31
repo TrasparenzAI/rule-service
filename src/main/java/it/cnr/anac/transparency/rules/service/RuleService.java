@@ -95,7 +95,7 @@ public class RuleService {
                         return new RuleResponse(
                                 null,
                                 entry.getKey(),
-                                ruleConfiguration.getFlattenRules().get(entry.getKey()).getTerm(),
+                                String.join(",", ruleConfiguration.getFlattenRules().get(entry.getKey()).getTerm()),
                                 null,
                                 Optional.ofNullable(entry.getValue().getChilds()).map(c -> c.isEmpty()).orElse(Boolean.TRUE),
                                 HttpStatus.NOT_FOUND,
@@ -112,10 +112,9 @@ public class RuleService {
     public List<RuleResponse> executeChildRuleAlternative(String content, Optional<String> ruleName) throws RuleNotFoundException, IOException {
         return executeChildRule(content, ruleName, anchorsWidthJsoup(content));
     }
-
-    private RuleResponse findTermInValues(LuceneSearch luceneSearch, Optional<String> ruleName, Rule rule) throws RuleNotFoundException {
+    private RuleResponse findTermInValues(LuceneSearch luceneSearch, Optional<String> ruleName, Rule rule, String term) throws RuleNotFoundException {
         try {
-            final Optional<LuceneResult> luceneResult = luceneSearch.search(rule.getTerm());
+            final Optional<LuceneResult> luceneResult = luceneSearch.search(term);
             if (luceneResult.isPresent()) {
                 log.debug("Term {} - find {} URL: {}", rule.getTerm(),
                         luceneResult.get().getContent(), luceneResult.get().getUrl());
@@ -123,7 +122,7 @@ public class RuleService {
                 return new RuleResponse(
                         luceneResult.get().getUrl(),
                         r,
-                        ruleConfiguration.getFlattenRules().get(r).getTerm(),
+                        term,
                         luceneResult.get().getContent(),
                         Optional.ofNullable(rule.getChilds()).map(c -> c.isEmpty()).orElse(Boolean.TRUE),
                         HttpStatus.OK,
@@ -134,6 +133,17 @@ public class RuleService {
         } catch (IOException | ParseException e) {
             throw new RuleNotFoundException();
         }
+    }
+
+    private RuleResponse findTermInValues(LuceneSearch luceneSearch, Optional<String> ruleName, Rule rule) throws RuleNotFoundException {
+        for (String term: rule.getTerm()) {
+            try {
+                return findTermInValues(luceneSearch, ruleName, rule, term);
+            } catch (RuleNotFoundException e) {
+                continue;
+            }
+        }
+        throw new RuleNotFoundException();
     }
 
     private List<Anchor> anchorsWidthJsoup(String content) {

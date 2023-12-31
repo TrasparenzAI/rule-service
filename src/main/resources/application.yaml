@@ -11,7 +11,9 @@ springdoc:
 
 rules:
   amministrazione-trasparente:
-      term: Amministrazione Trasparente
+      term:
+        - Amministrazione Trasparente
+        - Società Trasparente
       childs:
         disposizioni-generali:
           term: Disposizione Generali
