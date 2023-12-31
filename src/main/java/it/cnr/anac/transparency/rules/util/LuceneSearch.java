@@ -36,6 +36,7 @@ import org.apache.lucene.store.ByteBuffersDirectory;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,6 +47,11 @@ public class LuceneSearch {
     public static final String CONTENT = "content";
 
     private final IndexSearcher dirSearcher;
+
+    Comparator<LuceneResult> compareLuceneResult = Comparator
+            .comparing(LuceneResult::getScore)
+            .reversed()
+            .thenComparing((luceneResult, t1) -> Integer.valueOf(luceneResult.getUrl().length()).compareTo(t1.getUrl().length()) * -1);
 
     public LuceneSearch(List<Anchor> values) throws IOException {
         ByteBuffersDirectory directory = new ByteBuffersDirectory();
@@ -75,14 +81,16 @@ public class LuceneSearch {
         Query query = parser.parse(keyword);
         TopDocs topDocs = dirSearcher.search(query, 10);
         return Arrays.stream(topDocs.scoreDocs).map(scoreDoc -> {
-            try {
-                final Document doc = dirSearcher.doc(scoreDoc.doc);
-                log.debug("Search document for \"{}\" and find \"{}\" width score: {}", keyword, doc.get(LuceneSearch.CONTENT), scoreDoc.score);
-                return new LuceneResult(doc.get(LuceneSearch.URL), doc.get(LuceneSearch.CONTENT), scoreDoc.score);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }).findFirst();
+                    try {
+                        final Document doc = dirSearcher.doc(scoreDoc.doc);
+                        log.debug("Search document for \"{}\" and find \"{}\" width score: {}", keyword, doc.get(LuceneSearch.CONTENT), scoreDoc.score);
+                        return new LuceneResult(doc.get(LuceneSearch.URL), doc.get(LuceneSearch.CONTENT), scoreDoc.score);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .sorted(compareLuceneResult)
+                .findFirst();
     }
 
 }

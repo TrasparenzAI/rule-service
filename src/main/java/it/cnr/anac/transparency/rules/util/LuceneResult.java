@@ -27,5 +27,5 @@ import lombok.Setter;
 public class LuceneResult {
     private String url;
     private String content;
-    private float score;
+    private Float score;
 }
