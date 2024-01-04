@@ -87,7 +87,7 @@ public class RuleController {
         } catch (RuleException e) {
             return ResponseEntity.status(e.getHttpStatus()).body(e.getMessage());
         } catch (RuleNotFoundException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("status",HttpStatus.NOT_FOUND.value()));
         } catch (IOException e) {
             log.error("Cannot execute rule {}", ruleName, e);
             return ResponseEntity.internalServerError().build();
