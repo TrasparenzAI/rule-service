@@ -39,6 +39,8 @@ public class RuleConfiguration {
     protected String anchorRegex;
     @Value("${href_regex}")
     protected String hrefRegex;
+    @Value("${tag_attributes}")
+    protected List<String> tagAttributes;
 
     public String selenium_url;
     public List<String> selenium_arguments;

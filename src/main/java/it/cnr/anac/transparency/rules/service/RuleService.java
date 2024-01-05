@@ -38,6 +38,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.commons.codec.binary.Base64;
 
 @Service
@@ -148,20 +150,30 @@ public class RuleService {
 
     private List<Anchor> anchorsWidthJsoup(String content) {
         Document doc = Jsoup.parse(content);
+        final List<String> anchorAttributes = Arrays.asList("aria-label", "alt", "title");
         return doc.getElementsByTag(AnchorService.ANCHOR)
                 .stream()
                 .map(element -> {
                     final String href = element.attr(AnchorService.HREF);
-                    return Arrays.asList(
+                    final List<Anchor> firstList = Arrays.asList(
                             new Anchor(href, element.text()),
                             new Anchor(href, Optional.ofNullable(element.parent())
-                                            .map(Element::text)
-                                            .orElse("")),
-                            new Anchor(href,
-                                    Optional.ofNullable(element.parent())
-                                            .flatMap(element1 -> Optional.ofNullable(element1.attributes().get("aria-label")))
-                                            .orElse(""))
+                                    .map(Element::text)
+                                    .orElse(""))
                     );
+                    final List<Anchor> secondList = anchorAttributes.stream().map(s -> {
+                        return new Anchor(href, Optional.ofNullable(element)
+                                .flatMap(element1 -> Optional.ofNullable(element1.attributes().get(s)))
+                                .orElse(""));
+                    }).collect(Collectors.toList());
+                    final List<Anchor> thirdList = ruleConfiguration.getTagAttributes().stream().map(s -> {
+                        return new Anchor(href, Optional.ofNullable(element.parent())
+                                .flatMap(element1 -> Optional.ofNullable(element1.attributes().get(s)))
+                                .orElse(""));
+                    }).collect(Collectors.toList());
+                    return Stream.concat(
+                            Stream.concat(firstList.stream(), secondList.stream()),thirdList.stream()
+                    ).collect(Collectors.toList());
                 }).flatMap(List::stream).collect(Collectors.toList());
     }
 }
