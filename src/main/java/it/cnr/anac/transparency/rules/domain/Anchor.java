@@ -29,7 +29,7 @@ public class Anchor {
     private final String content;
     private final String where;
 
-    public static Anchor newInstance(String href, String where, String content) {
-        return new Anchor(href, where, content);
+    public static Anchor newInstance(String href, String content, String where) {
+        return new Anchor(href, content, where);
     }
 }
