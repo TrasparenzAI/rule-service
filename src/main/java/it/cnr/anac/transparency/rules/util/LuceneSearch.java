@@ -45,7 +45,7 @@ public class LuceneSearch {
 
     public static final String URL = "url";
     public static final String CONTENT = "content";
-
+    public static final String WHERE = "where";
     private final IndexSearcher dirSearcher;
 
     Comparator<LuceneResult> compareLuceneResult = Comparator
@@ -64,6 +64,7 @@ public class LuceneSearch {
                         Document doc = new Document();
                         doc.add(new StoredField(URL, anchor.getHref()));
                         doc.add(new TextField(CONTENT, anchor.getContent(), Field.Store.YES));
+                        doc.add(new TextField(WHERE, anchor.getWhere(), Field.Store.YES));
                         try {
                             directoryWriter.addDocument(doc);
                         } catch (IOException e) {
@@ -84,7 +85,7 @@ public class LuceneSearch {
                     try {
                         final Document doc = dirSearcher.doc(scoreDoc.doc);
                         log.debug("Search document for \"{}\" and find \"{}\" width score: {}", keyword, doc.get(LuceneSearch.CONTENT), scoreDoc.score);
-                        return new LuceneResult(doc.get(LuceneSearch.URL), doc.get(LuceneSearch.CONTENT), scoreDoc.score);
+                        return new LuceneResult(doc.get(LuceneSearch.URL), doc.get(LuceneSearch.CONTENT), doc.get(LuceneSearch.WHERE), scoreDoc.score);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

@@ -29,6 +29,7 @@ public class RuleResponse {
     private String ruleName;
     private String term;
     private String content;
+    private String where;
     private Boolean isLeaf;
     private HttpStatus status;
     private Float score;

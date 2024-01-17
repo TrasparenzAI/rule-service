@@ -31,6 +31,7 @@ public class RuleResponseDto {
     private String term;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String content;
+    private String where;
     private Boolean isLeaf;
     private int status;
     @JsonInclude(JsonInclude.Include.NON_NULL)

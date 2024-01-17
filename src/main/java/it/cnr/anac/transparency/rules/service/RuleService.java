@@ -27,9 +27,6 @@ import it.cnr.anac.transparency.rules.util.LuceneResult;
 import it.cnr.anac.transparency.rules.util.LuceneSearch;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -38,7 +35,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -48,7 +44,9 @@ public class RuleService {
     @Autowired
     RuleConfiguration ruleConfiguration;
     @Autowired
-    AnchorService anchorService;
+    RegularExpressionAnchorService regularExpressionAnchorService;
+    @Autowired
+    JsoupAnchorService jsoupAnchorService;
 
     public String base64Decode(String content) {
         if (Base64.isBase64(content)) {
@@ -69,7 +67,7 @@ public class RuleService {
 
     public RuleResponse executeRule(String content, Optional<String> ruleName) throws RuleNotFoundException, IOException, RuleException {
         try {
-            return executeRule(ruleName, anchorService.find(content));
+            return executeRule(ruleName, regularExpressionAnchorService.find(content));
         } catch (RuleNotFoundException _ex) {
             return executeRuleAlternative(content, ruleName);
         }
@@ -99,6 +97,7 @@ public class RuleService {
                                 entry.getKey(),
                                 String.join(",", ruleConfiguration.getFlattenRules().get(entry.getKey()).getTerm()),
                                 null,
+                                null,
                                 Optional.ofNullable(entry.getValue().getChilds()).map(c -> c.isEmpty()).orElse(Boolean.TRUE),
                                 HttpStatus.NOT_FOUND,
                                 null
@@ -108,7 +107,7 @@ public class RuleService {
                 .collect(Collectors.toList());
     }
     public List<RuleResponse> executeChildRule(String content, Optional<String> ruleName) throws RuleNotFoundException, IOException {
-        return executeChildRule(content, ruleName, anchorService.find(content));
+        return executeChildRule(content, ruleName, regularExpressionAnchorService.find(content));
     }
 
     public List<RuleResponse> executeChildRuleAlternative(String content, Optional<String> ruleName) throws RuleNotFoundException, IOException {
@@ -120,12 +119,13 @@ public class RuleService {
             if (luceneResult.isPresent()) {
                 log.debug("Term {} - find {} URL: {}", rule.getTerm(),
                         luceneResult.get().getContent(), luceneResult.get().getUrl());
-                final String r = ruleName.orElse(ruleConfiguration.getRoot_rule());
+                final String r = ruleName.orElse(ruleConfiguration.getRulesRoot());
                 return new RuleResponse(
                         luceneResult.get().getUrl(),
                         r,
                         term,
                         luceneResult.get().getContent(),
+                        luceneResult.get().getWhere(),
                         Optional.ofNullable(rule.getChilds()).map(c -> c.isEmpty()).orElse(Boolean.TRUE),
                         HttpStatus.OK,
                         luceneResult.get().getScore()
@@ -142,38 +142,13 @@ public class RuleService {
             try {
                 return findTermInValues(luceneSearch, ruleName, rule, term);
             } catch (RuleNotFoundException e) {
-                continue;
+                log.trace("Term {} not found on rule {}", term, rule);
             }
         }
         throw new RuleNotFoundException();
     }
 
     private List<Anchor> anchorsWidthJsoup(String content) {
-        Document doc = Jsoup.parse(content);
-        final List<String> anchorAttributes = Arrays.asList("aria-label", "alt", "title");
-        return doc.getElementsByTag(AnchorService.ANCHOR)
-                .stream()
-                .map(element -> {
-                    final String href = element.attr(AnchorService.HREF);
-                    final List<Anchor> firstList = Arrays.asList(
-                            new Anchor(href, element.text()),
-                            new Anchor(href, Optional.ofNullable(element.parent())
-                                    .map(Element::text)
-                                    .orElse(""))
-                    );
-                    final List<Anchor> secondList = anchorAttributes.stream().map(s -> {
-                        return new Anchor(href, Optional.ofNullable(element)
-                                .flatMap(element1 -> Optional.ofNullable(element1.attributes().get(s)))
-                                .orElse(""));
-                    }).collect(Collectors.toList());
-                    final List<Anchor> thirdList = ruleConfiguration.getTagAttributes().stream().map(s -> {
-                        return new Anchor(href, Optional.ofNullable(element.parent())
-                                .flatMap(element1 -> Optional.ofNullable(element1.attributes().get(s)))
-                                .orElse(""));
-                    }).collect(Collectors.toList());
-                    return Stream.concat(
-                            Stream.concat(firstList.stream(), secondList.stream()),thirdList.stream()
-                    ).collect(Collectors.toList());
-                }).flatMap(List::stream).collect(Collectors.toList());
+        return jsoupAnchorService.find(content);
     }
 }

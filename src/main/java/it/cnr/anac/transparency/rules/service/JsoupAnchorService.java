@@ -17,29 +17,58 @@
 
 package it.cnr.anac.transparency.rules.service;
 
+import it.cnr.anac.transparency.rules.configuration.RuleConfiguration;
 import it.cnr.anac.transparency.rules.domain.Anchor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 @Service
 @Slf4j
-@Profile("jsoup")
 public class JsoupAnchorService implements AnchorService{
+    @Autowired
+    RuleConfiguration ruleConfiguration;
+
     @Override
     public List<Anchor> find(String content) {
         Document doc = Jsoup.parse(content);
-        return doc.getElementsByTag(ANCHOR)
+        return doc.getElementsByTag(AnchorService.ANCHOR)
                 .stream()
-                .peek(element -> {
-                    log.debug("Find anchor width href: {} and text: {}", element.attr(HREF), element.text());
-                })
                 .map(element -> {
-                    return new Anchor(element.attr(HREF), element.text());
-                }).collect(Collectors.toList());
+                    final String href = element.attr(AnchorService.HREF);
+                    final List<Anchor> firstList = Arrays.asList(
+                            new Anchor(href, "text", element.text()),
+                            new Anchor(href, Optional.ofNullable(element.parent())
+                                    .map(Element::text)
+                                    .orElse(null), "text::parent")
+                    );
+                    final List<Anchor> secondList = ruleConfiguration.getTagAttributes().stream().map(s -> {
+                        return new Anchor(href, Optional.ofNullable(element)
+                                .flatMap(element1 -> Optional.ofNullable(element1.attributes().get(s)))
+                                .orElse(null), "attribute::" + s);
+                    }).collect(Collectors.toList());
+                    final List<Anchor> thirdList = ruleConfiguration.getTagAttributes().stream().map(s -> {
+                        return new Anchor(href, Optional.ofNullable(element.parent())
+                                .flatMap(element1 -> Optional.ofNullable(element1.attributes().get(s)))
+                                .orElse(null), "attribute::parent::" + s);
+                    }).collect(Collectors.toList());
+                    return Stream.concat(
+                            Stream.concat(
+                                    firstList.stream().filter(anchor -> Optional.ofNullable(anchor.getContent()).isPresent()),
+                                    secondList.stream().filter(anchor -> Optional.ofNullable(anchor.getContent()).isPresent())
+                            ),
+                            thirdList.stream().filter(anchor -> Optional.ofNullable(anchor.getContent()).isPresent())
+                    ).collect(Collectors.toList());
+                }).flatMap(List::stream).collect(Collectors.toList());
     }
 }

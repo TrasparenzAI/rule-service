@@ -26,9 +26,11 @@ import java.util.Map;
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
+@ToString
 public class Rule {
     @EqualsAndHashCode.Include
     private List<String> term;
+    @ToString.Exclude
     private Map<String, Rule> childs;
 
 }

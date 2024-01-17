@@ -22,7 +22,6 @@ import it.cnr.anac.transparency.rules.exception.RuleNotFoundException;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -33,17 +32,11 @@ import java.util.*;
 @Getter
 @Setter
 public class RuleConfiguration {
-    @Value("${rules_root}")
-    protected String root_rule;
-    @Value("${anchor_regex}")
-    protected String anchorRegex;
-    @Value("${href_regex}")
-    protected String hrefRegex;
-    @Value("${tag_attributes}")
-    protected List<String> tagAttributes;
 
-    public String selenium_url;
-    public List<String> selenium_arguments;
+    protected String rulesRoot;
+    protected String anchorRegex;
+    protected String hrefRegex;
+    protected List<String> tagAttributes;
 
     protected Map<String, Rule> rules;
     protected Map<String, Rule> flattenRules;
@@ -62,10 +55,10 @@ public class RuleConfiguration {
     private void addToFlattenRules(String key, Rule rule) {
         flattenRules.put(key, rule);
         Optional.ofNullable(rule.getChilds())
-            .orElse(Collections.emptyMap())
-            .entrySet()
-            .stream()
-            .forEach(entry -> addToFlattenRules(entry.getKey(), entry.getValue()));
+                .orElse(Collections.emptyMap())
+                .entrySet()
+                .stream()
+                .forEach(entry -> addToFlattenRules(entry.getKey(), entry.getValue()));
     }
 
     public Rule getRule(String ruleName) {
@@ -74,7 +67,7 @@ public class RuleConfiguration {
     }
 
     public Rule getRootRule() {
-        return getRule(root_rule);
+        return getRule(rulesRoot);
     }
 
 }

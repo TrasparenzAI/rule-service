@@ -33,7 +33,6 @@ import static java.awt.SystemColor.text;
 
 @Slf4j
 @Service
-@Profile("regular-expression")
 public class RegularExpressionAnchorService implements AnchorService{
     @Autowired
     RuleConfiguration ruleConfiguration;
@@ -51,7 +50,7 @@ public class RegularExpressionAnchorService implements AnchorService{
             try {
                 final String href = matcherHref.group(HREF);
                 final String text = matcher.group(TEXT);
-                result.add(Anchor.newInstance(href, text));
+                result.add(Anchor.newInstance(href, text, "text"));
                 log.debug("Find anchor width href: {} and text: {}", href, text);
             } catch (IllegalStateException _ex) {
                 log.warn("No match found in attributes: {}", attributes);

@@ -1,13 +1,11 @@
 rules_root: amministrazione-trasparente
 anchor_regex: <a[\s]+([^>]+)>((?<text>(.(?!\<\/a\>))*.))<\/a>
 href_regex: href\s*=\s*(?:["'](?<href>[^"']*)["']|([^>\s]+))
-spring:
-  profiles:
-    default: regular-expression
 
 springdoc:
   api-docs:
     path: /api-docs
+
 tag_attributes:
     - aria-label
     - alt

@@ -82,7 +82,7 @@ class RuleApplicationTests {
 		Assertions.assertEquals(Boolean.TRUE, Optional.ofNullable(flattenRules.get(TIPOLOGIE_PROCEDIMENTO)).isPresent());
 		Assertions.assertEquals(
 				23,
-				Optional.ofNullable(flattenRules.get(ruleConfiguration.getRoot_rule()))
+				Optional.ofNullable(flattenRules.get(ruleConfiguration.getRulesRoot()))
 						.flatMap(rule -> Optional.ofNullable(rule.getChilds()))
 						.map(Map::size)
 						.orElse(0)
