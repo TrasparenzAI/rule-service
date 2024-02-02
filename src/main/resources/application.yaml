@@ -35,7 +35,8 @@ rules:
             sanzioni-mancata-comunicazione-dati:
               term: Sanzioni per mancata comunicazione dei dati
             rendiconti-gruppi-consiliari-regionali-provinciali:
-              term: Rendiconti gruppi consiliari regionali, provinciali
+              term:
+                - Rendiconti gruppi consiliari regionali, provinciali
             articolazione-degli-uffici:
               term: Articolazione degli uffici
             telefono-posta-elettronica:
@@ -115,7 +116,8 @@ rules:
         bandi-gara-contratti:
           term: Bandi di gara e contratti
         sovvenzioni-contributi-sussidi-vantaggi-economici:
-          term: Sovvenzioni, contributi, sussidi, vantaggi economici
+          term:
+            - Sovvenzioni, contributi, sussidi, vantaggi economici
           childs:
             criteri-modalita:
               term: Criteri e modalità
