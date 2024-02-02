@@ -16,6 +16,7 @@ rules:
       term:
         - Amministrazione Trasparente
         - Società Trasparente
+        - Amm. Trasparente
       childs:
         disposizioni-generali:
           term: Disposizione Generali
