@@ -111,6 +111,15 @@ class RuleApplicationTests {
 		Assertions.assertEquals("/", ruleResponse.getUrl());
 	}
 	@Test
+	void localUnderscore() throws IOException, URISyntaxException, RuleException {
+		final InputStream resourceAsStream = this.getClass().getResourceAsStream("/amministrazione_.html");
+		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
+				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
+				.lines()
+				.collect(Collectors.joining("\n")), Optional.empty());
+		Assertions.assertEquals("/", ruleResponse.getUrl());
+	}
+	@Test
 	void local2() throws IOException, URISyntaxException, RuleException {
 		final InputStream resourceAsStream = this.getClass().getResourceAsStream("/amministrazione2.html");
 		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
