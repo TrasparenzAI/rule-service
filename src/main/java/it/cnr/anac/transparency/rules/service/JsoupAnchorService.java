@@ -45,7 +45,7 @@ public class JsoupAnchorService implements AnchorService{
         return doc.getElementsByTag(AnchorService.ANCHOR)
                 .stream()
                 .map(element -> {
-                    final String href = element.attr(AnchorService.HREF);
+                    final String href = Optional.ofNullable(element.attr(AnchorService.HREF)).filter(s -> s.trim().length() > 0).orElse("#");
                     final List<Anchor> firstList = Arrays.asList(
                             new Anchor(href, "text", element.text()),
                             new Anchor(href, Optional.ofNullable(element.parent())

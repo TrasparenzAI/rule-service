@@ -103,12 +103,13 @@ class RuleApplicationTests {
 
 	@Test
 	void local() throws IOException, URISyntaxException, RuleException {
-		final InputStream resourceAsStream = this.getClass().getResourceAsStream("/amministrazione.html");
-		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
-				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
-				.lines()
-				.collect(Collectors.joining("\n")), Optional.empty());
-		Assertions.assertEquals("/", ruleResponse.getUrl());
+		Assertions.assertThrows(RuleNotFoundException.class, () -> {
+			final InputStream resourceAsStream = this.getClass().getResourceAsStream("/amministrazione.html");
+			final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
+					new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
+					.lines()
+					.collect(Collectors.joining("\n")), Optional.empty());
+		});
 	}
 	@Test
 	void localUnderscore() throws IOException, URISyntaxException, RuleException {
