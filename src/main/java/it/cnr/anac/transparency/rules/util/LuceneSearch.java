@@ -19,6 +19,7 @@ package it.cnr.anac.transparency.rules.util;
 
 import it.cnr.anac.transparency.rules.domain.Anchor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.it.ItalianAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -48,6 +49,8 @@ public class LuceneSearch {
     public static final String WHERE = "where";
     private final IndexSearcher dirSearcher;
 
+    private final Analyzer analyzer;
+
     Comparator<LuceneResult> compareLuceneResult = Comparator
             .comparing(LuceneResult::getScore)
             .reversed()
@@ -55,7 +58,8 @@ public class LuceneSearch {
 
     public LuceneSearch(List<Anchor> values) throws IOException {
         ByteBuffersDirectory directory = new ByteBuffersDirectory();
-        try (IndexWriter directoryWriter = new IndexWriter(directory, new IndexWriterConfig(new ItalianAnalyzer()))) {
+        this.analyzer = new ItalianAnalyzer();
+        try (IndexWriter directoryWriter = new IndexWriter(directory, new IndexWriterConfig(this.analyzer))) {
             values
                     .stream()
                     .filter(anchor -> Optional.ofNullable(anchor.getHref()).filter(s -> !s.trim().isEmpty()).isPresent())
@@ -77,7 +81,7 @@ public class LuceneSearch {
     }
 
     public Optional<LuceneResult> search(String keyword) throws ParseException, IOException {
-        QueryParser parser = new QueryParser(CONTENT, new ItalianAnalyzer());
+        QueryParser parser = new QueryParser(CONTENT, this.analyzer);
         parser.setDefaultOperator(QueryParser.Operator.AND);
         Query query = parser.parse(keyword);
         TopDocs topDocs = dirSearcher.search(query, 10);
