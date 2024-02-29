@@ -139,7 +139,7 @@ class RuleApplicationTests {
 		Assertions.assertEquals("/amministrazione-trasparente", ruleResponse.getUrl());
 	}
 
-	void internalChild(InputStream resourceAsStream) throws IOException, URISyntaxException {
+	void internalChild(InputStream resourceAsStream, int expected) throws IOException, URISyntaxException {
 		final ResponseEntity<List<RuleResponseDto>> ruleResponses = ruleController.postChild(Base64.getEncoder().encodeToString(new BufferedReader(
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 				.lines()
@@ -147,7 +147,7 @@ class RuleApplicationTests {
 
 		Assertions.assertEquals(23, ruleResponses.getBody().size());
 		Assertions.assertEquals(
-				0,
+				expected,
 				ruleResponses.getBody().stream().filter(r -> !Optional.ofNullable(r.getUrl()).isPresent()).collect(Collectors.toList()).size(),
 				"The rules not satisfied are: " + String.join(",", ruleResponses.getBody().stream().filter(r -> !Optional.ofNullable(r.getUrl()).isPresent())
 						.map(RuleResponseDto::getRuleName)
@@ -157,11 +157,11 @@ class RuleApplicationTests {
 	}
 	@Test
 	void localChild3() throws IOException, URISyntaxException {
-		internalChild(this.getClass().getResourceAsStream("/amministrazione_child1.html"));
+		internalChild(this.getClass().getResourceAsStream("/amministrazione_child1.html"), 1);
 	}
 	@Test
 	void localChild4() throws IOException, URISyntaxException {
-		internalChild(this.getClass().getResourceAsStream("/amministrazione_child2.html"));
+		internalChild(this.getClass().getResourceAsStream("/amministrazione_child2.html"), 2);
 	}
 
 	@Test
