@@ -78,23 +78,25 @@ public class LuceneSearch {
         }
         DirectoryReader indexReader = DirectoryReader.open(directory);
         dirSearcher = new IndexSearcher(indexReader);
-        getTokensForField(indexReader, CONTENT);
+        if (log.isTraceEnabled()) {
+            getTokensForField(indexReader, CONTENT);
+        }
     }
 
     private void getTokensForField(IndexReader reader, String fieldName) throws IOException {
         List<LeafReaderContext> list = reader.leaves();
-
+        log.trace("============= START TOKEN =============");
         for (LeafReaderContext lrc : list) {
             Terms terms = lrc.reader().terms(fieldName);
             if (terms != null) {
                 TermsEnum termsEnum = terms.iterator();
-
                 BytesRef term;
                 while ((term = termsEnum.next()) != null) {
-                    System.out.println(term.utf8ToString());
+                    log.trace(term.utf8ToString());
                 }
             }
         }
+        log.trace("============= END TOKEN =============");
     }
     public Optional<LuceneResult> search(String keyword) throws ParseException, IOException {
         QueryParser parser = new QueryParser(CONTENT, this.customTokenizerAnalyzer);
