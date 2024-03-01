@@ -121,6 +121,25 @@ class RuleApplicationTests {
 		Assertions.assertEquals("/", ruleResponse.getUrl());
 	}
 	@Test
+	void dotontext() throws IOException, URISyntaxException, RuleException {
+		final InputStream resourceAsStream = this.getClass().getResourceAsStream("/amministrazione_dotontext.html");
+		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
+				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
+				.lines()
+				.collect(Collectors.joining("\n")), Optional.empty());
+		Assertions.assertEquals("/", ruleResponse.getUrl());
+	}
+	@Test
+	void href() throws IOException, URISyntaxException, RuleException {
+		final InputStream resourceAsStream = this.getClass().getResourceAsStream("/amministrazione_href.html");
+		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
+				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
+				.lines()
+				.collect(Collectors.joining("\n")), Optional.empty());
+		Assertions.assertEquals("/amministrazione-trasparente", ruleResponse.getUrl());
+	}
+
+	@Test
 	void local2() throws IOException, URISyntaxException, RuleException {
 		final InputStream resourceAsStream = this.getClass().getResourceAsStream("/amministrazione2.html");
 		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(

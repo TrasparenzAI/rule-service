@@ -15,25 +15,25 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package it.cnr.anac.transparency.rules.util;
+package it.cnr.anac.transparency.rules.search;
 
 import it.cnr.anac.transparency.rules.domain.Anchor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.it.ItalianAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.*;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.ByteBuffersDirectory;
+import org.apache.lucene.util.BytesRef;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -49,17 +49,17 @@ public class LuceneSearch {
     public static final String WHERE = "where";
     private final IndexSearcher dirSearcher;
 
-    private final Analyzer analyzer;
+    private final CustomTokenizerAnalyzer customTokenizerAnalyzer;
 
     Comparator<LuceneResult> compareLuceneResult = Comparator
             .comparing(LuceneResult::getScore)
             .reversed()
             .thenComparing((luceneResult, t1) -> Integer.valueOf(luceneResult.getUrl().length()).compareTo(t1.getUrl().length()) * -1);
 
-    public LuceneSearch(List<Anchor> values) throws IOException {
+    public LuceneSearch(List<Anchor> values, CustomTokenizerAnalyzer customTokenizerAnalyzer) throws IOException {
+        this.customTokenizerAnalyzer = customTokenizerAnalyzer;
         ByteBuffersDirectory directory = new ByteBuffersDirectory();
-        this.analyzer = new ItalianAnalyzer();
-        try (IndexWriter directoryWriter = new IndexWriter(directory, new IndexWriterConfig(this.analyzer))) {
+        try (IndexWriter directoryWriter = new IndexWriter(directory, new IndexWriterConfig(this.customTokenizerAnalyzer))) {
             values
                     .stream()
                     .filter(anchor -> Optional.ofNullable(anchor.getHref()).filter(s -> !s.trim().isEmpty()).isPresent())
@@ -78,10 +78,26 @@ public class LuceneSearch {
         }
         DirectoryReader indexReader = DirectoryReader.open(directory);
         dirSearcher = new IndexSearcher(indexReader);
+        getTokensForField(indexReader, CONTENT);
     }
 
+    private void getTokensForField(IndexReader reader, String fieldName) throws IOException {
+        List<LeafReaderContext> list = reader.leaves();
+
+        for (LeafReaderContext lrc : list) {
+            Terms terms = lrc.reader().terms(fieldName);
+            if (terms != null) {
+                TermsEnum termsEnum = terms.iterator();
+
+                BytesRef term;
+                while ((term = termsEnum.next()) != null) {
+                    System.out.println(term.utf8ToString());
+                }
+            }
+        }
+    }
     public Optional<LuceneResult> search(String keyword) throws ParseException, IOException {
-        QueryParser parser = new QueryParser(CONTENT, this.analyzer);
+        QueryParser parser = new QueryParser(CONTENT, this.customTokenizerAnalyzer);
         parser.setDefaultOperator(QueryParser.Operator.AND);
         Query query = parser.parse(keyword);
         TopDocs topDocs = dirSearcher.search(query, 10);
@@ -97,5 +113,4 @@ public class LuceneSearch {
                 .sorted(compareLuceneResult)
                 .findFirst();
     }
-
 }

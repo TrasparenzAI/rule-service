@@ -37,6 +37,7 @@ public class RuleConfiguration {
     protected String anchorRegex;
     protected String hrefRegex;
     protected List<String> tagAttributes;
+    private List<Character> searchTokens;
 
     protected Map<String, Rule> rules;
     protected Map<String, Rule> flattenRules;

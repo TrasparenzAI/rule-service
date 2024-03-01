@@ -23,11 +23,14 @@ import it.cnr.anac.transparency.rules.domain.Rule;
 import it.cnr.anac.transparency.rules.domain.RuleResponse;
 import it.cnr.anac.transparency.rules.exception.RuleException;
 import it.cnr.anac.transparency.rules.exception.RuleNotFoundException;
-import it.cnr.anac.transparency.rules.util.LuceneResult;
-import it.cnr.anac.transparency.rules.util.LuceneSearch;
+import it.cnr.anac.transparency.rules.search.CustomTokenizerAnalyzer;
+import it.cnr.anac.transparency.rules.search.LuceneResult;
+import it.cnr.anac.transparency.rules.search.LuceneSearch;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +50,8 @@ public class RuleService {
     RegularExpressionAnchorService regularExpressionAnchorService;
     @Autowired
     JsoupAnchorService jsoupAnchorService;
-
+    @Autowired
+    CustomTokenizerAnalyzer customTokenizerAnalyzer;
     public String base64Decode(String content) {
         if (Base64.isBase64(content)) {
             return new String(Base64.decodeBase64(content.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
@@ -56,12 +60,18 @@ public class RuleService {
         }
         return content;
     }
+    @Bean(autowireCandidate = false)
+    @Scope("prototype")
+    public LuceneSearch createLuceneSearch(List<Anchor> anchors) throws IOException {
+        return new LuceneSearch(anchors, this.customTokenizerAnalyzer);
+    }
+
     public RuleResponse executeRule(Optional<String> ruleName, List<Anchor> anchors) throws RuleNotFoundException, IOException {
         final Rule rule = ruleName
                 .flatMap(s -> Optional.ofNullable(ruleConfiguration.getRule(s)))
                 .orElseGet(() -> ruleConfiguration.getRootRule());
         log.debug("Founded {} anchor in content for rule {}", anchors.size(), ruleName.orElse("empty"));
-        LuceneSearch luceneSearch = new LuceneSearch(anchors);
+        LuceneSearch luceneSearch = createLuceneSearch(anchors);
         return findTermInValues(luceneSearch, ruleName, rule);
     }
 
@@ -85,7 +95,7 @@ public class RuleService {
     public List<RuleResponse> executeChildRule(String content, Optional<String> ruleName, List<Anchor> anchors) throws RuleNotFoundException, IOException {
         final Map<String, Rule> childs = childRules(ruleName);
         log.debug("Founded {} anchor in content for rule {}", anchors.size(), ruleName.orElse("empty"));
-        LuceneSearch luceneSearch = new LuceneSearch(anchors);
+        LuceneSearch luceneSearch = createLuceneSearch(anchors);
         return childs.entrySet()
                 .stream()
                 .map(entry -> {

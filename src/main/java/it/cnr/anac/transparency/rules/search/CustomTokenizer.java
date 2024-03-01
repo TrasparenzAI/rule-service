@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2023 Consiglio Nazionale delle Ricerche
+ *  Copyright (C) 2024 Consiglio Nazionale delle Ricerche
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -15,18 +15,19 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package it.cnr.anac.transparency.rules.util;
+package it.cnr.anac.transparency.rules.search;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import it.cnr.anac.transparency.rules.configuration.RuleConfiguration;
+import org.apache.lucene.analysis.util.CharTokenizer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-@Getter
-@Setter
-@AllArgsConstructor
-public class LuceneResult {
-    private String url;
-    private String content;
-    private String where;
-    private Float score;
+@Component
+public class CustomTokenizer extends CharTokenizer {
+    @Autowired
+    private RuleConfiguration ruleConfiguration;
+
+    protected boolean isTokenChar(int c) {
+        return !ruleConfiguration.getSearchTokens().stream().filter(character -> character == c).findAny().isPresent();
+    }
 }
