@@ -10,7 +10,6 @@ tag_attributes:
     - aria-label
     - alt
     - title
-    - href
 
 search_tokens:
   - ' '
