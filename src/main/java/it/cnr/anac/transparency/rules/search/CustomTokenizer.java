@@ -22,15 +22,18 @@ import org.apache.lucene.analysis.util.CharTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component
+import java.util.List;
+
 public class CustomTokenizer extends CharTokenizer {
-    @Autowired
-    private RuleConfiguration ruleConfiguration;
+    private final List<Character> searchTokens;
+
+    public CustomTokenizer(List<Character> searchTokens) {
+        this.searchTokens = searchTokens;
+    }
 
     protected boolean isTokenChar(int c) {
         return !(
-            ruleConfiguration
-                    .getSearchTokens()
+                searchTokens
                     .stream()
                     .filter(character -> character == c)
                     .findAny()

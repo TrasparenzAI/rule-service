@@ -19,6 +19,7 @@ package it.cnr.anac.transparency.rules.search;
 
 import it.cnr.anac.transparency.rules.domain.Anchor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StoredField;
@@ -31,9 +32,6 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.util.BytesRef;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -49,17 +47,17 @@ public class LuceneSearch {
     public static final String WHERE = "where";
     private final IndexSearcher dirSearcher;
 
-    private final CustomTokenizerAnalyzer customTokenizerAnalyzer;
+    private final Analyzer customAnalyzer;
 
     Comparator<LuceneResult> compareLuceneResult = Comparator
             .comparing(LuceneResult::getScore)
             .reversed()
             .thenComparing((luceneResult, t1) -> Integer.valueOf(luceneResult.getUrl().length()).compareTo(t1.getUrl().length()) * -1);
 
-    public LuceneSearch(List<Anchor> values, CustomTokenizerAnalyzer customTokenizerAnalyzer) throws IOException {
-        this.customTokenizerAnalyzer = customTokenizerAnalyzer;
+    public LuceneSearch(List<Anchor> values, Analyzer customAnalyzer) throws IOException {
+        this.customAnalyzer = customAnalyzer;
         ByteBuffersDirectory directory = new ByteBuffersDirectory();
-        try (IndexWriter directoryWriter = new IndexWriter(directory, new IndexWriterConfig(this.customTokenizerAnalyzer))) {
+        try (IndexWriter directoryWriter = new IndexWriter(directory, new IndexWriterConfig(this.customAnalyzer))) {
             values
                     .stream()
                     .filter(anchor -> Optional.ofNullable(anchor.getHref()).filter(s -> !s.trim().isEmpty()).isPresent())
@@ -99,7 +97,7 @@ public class LuceneSearch {
         log.trace("============= END TOKEN =============");
     }
     public Optional<LuceneResult> search(String keyword) throws ParseException, IOException {
-        QueryParser parser = new QueryParser(CONTENT, this.customTokenizerAnalyzer);
+        QueryParser parser = new QueryParser(CONTENT, this.customAnalyzer);
         parser.setDefaultOperator(QueryParser.Operator.AND);
         Query query = parser.parse(keyword);
         TopDocs topDocs = dirSearcher.search(query, 10);

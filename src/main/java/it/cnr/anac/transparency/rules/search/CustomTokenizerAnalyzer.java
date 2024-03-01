@@ -30,9 +30,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-@Service
 public class CustomTokenizerAnalyzer extends StopwordAnalyzerBase {
-    @Autowired
     private CustomTokenizer customTokenizer;
     private final CharArraySet stemExclusionSet;
 
@@ -76,8 +74,9 @@ public class CustomTokenizerAnalyzer extends StopwordAnalyzerBase {
     /**
      * Builds an analyzer with the default stop words: {@link #DEFAULT_STOPWORD_FILE}.
      */
-    public CustomTokenizerAnalyzer() {
+    public CustomTokenizerAnalyzer(CustomTokenizer customTokenizer) {
         this(DefaultSetHolder.DEFAULT_STOP_SET);
+        this.customTokenizer = customTokenizer;
     }
 
     /**
