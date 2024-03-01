@@ -29,7 +29,7 @@ import java.util.Map;
 @ToString
 public class Rule {
     @EqualsAndHashCode.Include
-    private List<String> term;
+    private List<Term> term;
     @ToString.Exclude
     private Map<String, Rule> childs;
 

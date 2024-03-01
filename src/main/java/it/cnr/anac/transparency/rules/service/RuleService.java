@@ -21,6 +21,7 @@ import it.cnr.anac.transparency.rules.configuration.RuleConfiguration;
 import it.cnr.anac.transparency.rules.domain.Anchor;
 import it.cnr.anac.transparency.rules.domain.Rule;
 import it.cnr.anac.transparency.rules.domain.RuleResponse;
+import it.cnr.anac.transparency.rules.domain.Term;
 import it.cnr.anac.transparency.rules.exception.RuleException;
 import it.cnr.anac.transparency.rules.exception.RuleNotFoundException;
 import it.cnr.anac.transparency.rules.search.CustomTokenizerAnalyzer;
@@ -105,7 +106,13 @@ public class RuleService {
                         return new RuleResponse(
                                 null,
                                 entry.getKey(),
-                                String.join(",", ruleConfiguration.getFlattenRules().get(entry.getKey()).getTerm()),
+                                String.join(",", ruleConfiguration
+                                        .getFlattenRules()
+                                        .get(entry.getKey())
+                                        .getTerm()
+                                        .stream()
+                                        .map(Term::getKey)
+                                        .collect(Collectors.toList())),
                                 null,
                                 null,
                                 Optional.ofNullable(entry.getValue().getChilds()).map(c -> c.isEmpty()).orElse(Boolean.TRUE),
@@ -123,9 +130,9 @@ public class RuleService {
     public List<RuleResponse> executeChildRuleAlternative(String content, Optional<String> ruleName) throws RuleNotFoundException, IOException {
         return executeChildRule(content, ruleName, anchorsWidthJsoup(content));
     }
-    private RuleResponse findTermInValues(LuceneSearch luceneSearch, Optional<String> ruleName, Rule rule, String term) throws RuleNotFoundException {
+    private RuleResponse findTermInValues(LuceneSearch luceneSearch, Optional<String> ruleName, Rule rule, Term term) throws RuleNotFoundException {
         try {
-            final Optional<LuceneResult> luceneResult = luceneSearch.search(term);
+            final Optional<LuceneResult> luceneResult = luceneSearch.search(term.getKey());
             if (luceneResult.isPresent()) {
                 log.debug("Term {} - find {} URL: {}", rule.getTerm(),
                         luceneResult.get().getContent(), luceneResult.get().getUrl());
@@ -133,11 +140,11 @@ public class RuleService {
                 return new RuleResponse(
                         luceneResult.get().getUrl(),
                         r,
-                        term,
+                        term.getKey(),
                         luceneResult.get().getContent(),
                         luceneResult.get().getWhere(),
                         Optional.ofNullable(rule.getChilds()).map(c -> c.isEmpty()).orElse(Boolean.TRUE),
-                        HttpStatus.OK,
+                        HttpStatus.valueOf(term.getCode()),
                         luceneResult.get().getScore()
                 );
             }
@@ -148,7 +155,7 @@ public class RuleService {
     }
 
     private RuleResponse findTermInValues(LuceneSearch luceneSearch, Optional<String> ruleName, Rule rule) throws RuleNotFoundException {
-        for (String term: rule.getTerm()) {
+        for (Term term: rule.getTerm()) {
             try {
                 return findTermInValues(luceneSearch, ruleName, rule, term);
             } catch (RuleNotFoundException e) {

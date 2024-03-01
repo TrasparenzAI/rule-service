@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2023 Consiglio Nazionale delle Ricerche
+ *  Copyright (C) 2024 Consiglio Nazionale delle Ricerche
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -15,20 +15,22 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package it.cnr.anac.transparency.rules.v1.dto;
+package it.cnr.anac.transparency.rules.domain;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import it.cnr.anac.transparency.rules.domain.Term;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
+import org.springframework.http.HttpStatus;
 
-import java.util.List;
-import java.util.Map;
-
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString
-@Data
-public class RuleDto {
-    private List<Term> term;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Map<String, RuleDto> childs;
+@NoArgsConstructor
+public class Term {
+    @EqualsAndHashCode.Include
+    private String key;
+    private int code = HttpStatus.OK.value();
+
+    public Term(String key) {
+        this.key = key;
+    }
 }

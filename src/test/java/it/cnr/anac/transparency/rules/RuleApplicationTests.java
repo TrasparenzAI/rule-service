@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.io.*;
@@ -127,6 +128,7 @@ class RuleApplicationTests {
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 				.lines()
 				.collect(Collectors.joining("\n")), Optional.empty());
+		Assertions.assertEquals(ruleResponse.getStatus(), HttpStatus.ACCEPTED);
 		Assertions.assertEquals("/", ruleResponse.getUrl());
 	}
 	@Test
@@ -136,6 +138,7 @@ class RuleApplicationTests {
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 				.lines()
 				.collect(Collectors.joining("\n")), Optional.empty());
+		Assertions.assertEquals(ruleResponse.getStatus(), HttpStatus.ACCEPTED);
 		Assertions.assertEquals("/amministrazione-trasparente", ruleResponse.getUrl());
 	}
 
@@ -146,6 +149,7 @@ class RuleApplicationTests {
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 				.lines()
 				.collect(Collectors.joining("\n")), Optional.empty());
+		Assertions.assertEquals(ruleResponse.getStatus(), HttpStatus.OK);
 		Assertions.assertEquals("/prova-apici-singoli3", ruleResponse.getUrl());
 	}
 	@Test

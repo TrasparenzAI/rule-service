@@ -16,19 +16,32 @@ search_tokens:
   - ' '
   - '.'
   - '/'
-  - '-'
 
 rules:
   amministrazione-trasparente:
       term:
         - Amministrazione Trasparente
-        - Società Trasparente
-        - Amm. Trasparente
-        - amministrazionetrasparente
-        - amministrazione_trasparente
-        - amministrazione-trasparente
-        - societatrasparente
-        - societa_trasparente
+        -
+          key: Società Trasparente
+          code: 202
+        -
+          key: Amministrazione Trasparente
+          code: 202
+        -
+          key: amministrazionetrasparente
+          code: 202
+        -
+          key: amministrazione_trasparente
+          code: 202
+        -
+          key: amministrazione-trasparente
+          code: 202
+        -
+          key: societatrasparente
+          code: 202
+        -
+          key: societa_trasparente
+          code: 202
       childs:
         disposizioni-generali:
           term: Disposizione Generali
