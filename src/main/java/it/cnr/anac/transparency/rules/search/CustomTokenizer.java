@@ -28,6 +28,14 @@ public class CustomTokenizer extends CharTokenizer {
     private RuleConfiguration ruleConfiguration;
 
     protected boolean isTokenChar(int c) {
-        return !ruleConfiguration.getSearchTokens().stream().filter(character -> character == c).findAny().isPresent();
+        return !(
+            ruleConfiguration
+                    .getSearchTokens()
+                    .stream()
+                    .filter(character -> character == c)
+                    .findAny()
+                    .isPresent() ||
+                    Character.isDigit(c)
+        );
     }
 }
