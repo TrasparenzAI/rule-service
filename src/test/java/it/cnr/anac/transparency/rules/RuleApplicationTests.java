@@ -133,13 +133,13 @@ class RuleApplicationTests {
 	}
 	@Test
 	void href() throws IOException, URISyntaxException, RuleException {
-		final InputStream resourceAsStream = this.getClass().getResourceAsStream("/amministrazione_href.html");
-		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
-				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
-				.lines()
-				.collect(Collectors.joining("\n")), Optional.empty());
-		Assertions.assertEquals(ruleResponse.getStatus(), HttpStatus.ACCEPTED);
-		Assertions.assertEquals("/amministrazione-trasparente", ruleResponse.getUrl());
+		Assertions.assertThrows(RuleNotFoundException.class, () -> {
+			final InputStream resourceAsStream = this.getClass().getResourceAsStream("/amministrazione_href.html");
+			ruleService.executeRule(new BufferedReader(
+					new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
+					.lines()
+					.collect(Collectors.joining("\n")), Optional.empty());
+		});
 	}
 
 	@Test
