@@ -112,6 +112,9 @@ public class RuleController {
                 ruleService.childRules(ruleName).size() / 2) {
                 ruleResponses = ruleService.executeChildRuleAlternative(contentDecoded, ruleName);
             }
+            if (!ruleResponses.stream().filter(ruleResponse -> !ruleResponse.getStatus().equals(HttpStatus.NOT_FOUND)).findAny().isPresent()) {
+                return ResponseEntity.notFound().build();
+            }
             return ResponseEntity.ok().body(
                     ruleResponses
                             .stream()
