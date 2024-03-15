@@ -203,7 +203,7 @@ class RuleApplicationTests {
 						.collect(Collectors.toList()))
 
 		);
-		ruleResponse2.stream().filter(ruleResponse1 -> !ruleResponse1.getIsLeaf()).forEach(r -> {
+		ruleResponse2.stream().filter(ruleResponse1 -> !ruleResponse1.getLeaf()).forEach(r -> {
 			try {
 				final List<RuleResponse> ruleResponse3 = ruleService.executeChildRule(doc2.html(), Optional.of(r.getRuleName()));
 				Assertions.assertEquals(Boolean.FALSE, ruleResponse3.isEmpty());

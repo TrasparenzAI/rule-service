@@ -30,7 +30,7 @@ public class RuleResponse {
     private String term;
     private String content;
     private String where;
-    private Boolean isLeaf;
+    private Boolean leaf;
     private HttpStatus status;
     private Float score;
 }
