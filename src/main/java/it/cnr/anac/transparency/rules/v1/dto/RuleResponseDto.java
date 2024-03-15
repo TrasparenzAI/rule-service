@@ -32,7 +32,7 @@ public class RuleResponseDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String content;
     private String where;
-    private Boolean isLeaf;
+    private Boolean leaf;
     private int status;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Float score;
