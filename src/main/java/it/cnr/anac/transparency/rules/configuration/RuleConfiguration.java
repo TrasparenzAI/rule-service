@@ -36,6 +36,7 @@ public class RuleConfiguration {
     protected String rulesRoot;
     protected String anchorRegex;
     protected String hrefRegex;
+    protected Integer maxLengthContent;
     protected List<String> tagAttributes;
     private List<Character> searchTokens;
 

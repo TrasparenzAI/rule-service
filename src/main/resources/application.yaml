@@ -18,6 +18,8 @@ search_tokens:
   - '"'
   - ''''
 
+max_length_content: 250
+
 rules:
   amministrazione-trasparente:
       term:

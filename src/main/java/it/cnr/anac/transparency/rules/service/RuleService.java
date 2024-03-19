@@ -68,7 +68,7 @@ public class RuleService {
     }
 
     public LuceneSearch createLuceneSearch(List<Anchor> anchors) throws IOException {
-        return new LuceneSearch(anchors, createCustomAnalyzer());
+        return new LuceneSearch(anchors, createCustomAnalyzer(), ruleConfiguration.getMaxLengthContent());
     }
 
     public RuleResponse executeRule(Optional<String> ruleName, List<Anchor> anchors) throws RuleNotFoundException, IOException {

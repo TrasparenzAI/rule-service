@@ -54,14 +54,15 @@ public class LuceneSearch {
             .reversed()
             .thenComparing((luceneResult, t1) -> Integer.valueOf(luceneResult.getUrl().length()).compareTo(t1.getUrl().length()) * -1);
 
-    public LuceneSearch(List<Anchor> values, Analyzer customAnalyzer) throws IOException {
+    public LuceneSearch(List<Anchor> values, Analyzer customAnalyzer, Integer maxLengthContent) throws IOException {
         this.customAnalyzer = customAnalyzer;
         ByteBuffersDirectory directory = new ByteBuffersDirectory();
         try (IndexWriter directoryWriter = new IndexWriter(directory, new IndexWriterConfig(this.customAnalyzer))) {
             values
                     .stream()
                     .filter(anchor -> Optional.ofNullable(anchor.getHref()).filter(s -> !s.trim().isEmpty()).isPresent())
-                    .filter(anchor -> Optional.ofNullable(anchor.getContent()).filter(s -> s.trim().length() > 0).isPresent())
+                    .filter(anchor -> Optional.ofNullable(anchor.getContent())
+                            .filter(s -> s.trim().length() > 0 && s.trim().length() < maxLengthContent).isPresent())
                     .forEach(anchor -> {
                         Document doc = new Document();
                         doc.add(new StoredField(URL, anchor.getHref()));
