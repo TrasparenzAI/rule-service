@@ -19,6 +19,7 @@ search_tokens:
   - ''''
   - '<'
   - '>'
+  - '’'
 
 max_length_content: 1000
 
@@ -65,8 +66,7 @@ rules:
             sanzioni-mancata-comunicazione-dati:
               term: Sanzioni per mancata comunicazione dei dati
             rendiconti-gruppi-consiliari-regionali-provinciali:
-              term:
-                - Rendiconti gruppi consiliari regionali, provinciali
+              term: Rendiconti gruppi consiliari regionali, provinciali
             articolazione-degli-uffici:
               term: Articolazione degli uffici
             telefono-posta-elettronica:
