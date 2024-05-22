@@ -24,9 +24,11 @@ import lombok.*;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class LuceneResult {
-    private String url;
-    private String content;
-    private String where;
-    private Float score;
+public class LuceneResultCount {
+    private LuceneResult luceneResult;
+    private Long count;
+
+    public Float getScore() {
+        return getLuceneResult().getScore();
+    }
 }

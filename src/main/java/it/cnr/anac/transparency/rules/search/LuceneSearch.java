@@ -34,10 +34,8 @@ import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.util.BytesRef;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class LuceneSearch {
@@ -49,10 +47,11 @@ public class LuceneSearch {
 
     private final Analyzer customAnalyzer;
 
-    Comparator<LuceneResult> compareLuceneResult = Comparator
-            .comparing(LuceneResult::getScore)
+    Comparator<LuceneResultCount> compareLuceneResult = Comparator
+            .comparing(LuceneResultCount::getScore)
             .reversed()
-            .thenComparing((luceneResult, t1) -> Integer.valueOf(luceneResult.getUrl().length()).compareTo(t1.getUrl().length()) * -1);
+            .thenComparing((t1, t2) -> t1.getCount().compareTo(t2.getCount())* -1)
+            .thenComparing((t1, t2) -> Integer.valueOf(t1.getLuceneResult().getUrl().length()).compareTo(t2.getLuceneResult().getUrl().length()) * -1);
 
     public LuceneSearch(List<Anchor> values, Analyzer customAnalyzer, Integer maxLengthContent) throws IOException {
         this.customAnalyzer = customAnalyzer;
@@ -102,16 +101,24 @@ public class LuceneSearch {
         parser.setDefaultOperator(QueryParser.Operator.AND);
         Query query = parser.parse(keyword);
         TopDocs topDocs = dirSearcher.search(query, 10);
-        return Arrays.stream(topDocs.scoreDocs).map(scoreDoc -> {
+        final Map<LuceneResult, Long> luceneResultLongMap = Arrays.stream(topDocs.scoreDocs).map(scoreDoc -> {
                     try {
                         final Document doc = dirSearcher.doc(scoreDoc.doc);
-                        log.debug("Search document for \"{}\" and find \"{}\" width score: {}", keyword, doc.get(LuceneSearch.CONTENT), scoreDoc.score);
+                        log.debug("Search document for \"{}\" and find \"{}\" width score: {} and URL: {}", keyword, doc.get(LuceneSearch.CONTENT), scoreDoc.score, doc.get(LuceneSearch.URL));
                         return new LuceneResult(doc.get(LuceneSearch.URL), doc.get(LuceneSearch.CONTENT), doc.get(LuceneSearch.WHERE), scoreDoc.score);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 })
+                .collect(Collectors.groupingBy(luceneResult -> {return luceneResult;}, Collectors.counting()));
+        return luceneResultLongMap
+                .entrySet()
+                .stream()
+                .map(e -> new LuceneResultCount(e.getKey(), e.getValue()))
                 .sorted(compareLuceneResult)
+                .map(LuceneResultCount::getLuceneResult)
                 .findFirst();
     }
+
+
 }
