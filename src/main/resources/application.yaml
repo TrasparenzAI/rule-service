@@ -96,7 +96,7 @@ rules:
           articolazione-uffici:
             term: Articolazione degli uffici
             childs:
-              articolazione-uffici:
+              articolazione-uffici-child:
                 term: Articolazione degli uffici
               organigramma:
                 term: Organigramma
