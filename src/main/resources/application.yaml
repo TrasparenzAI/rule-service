@@ -138,7 +138,7 @@ rules:
           personale-non-tempo-indeterminato:
             term: Personale non a tempo indeterminato
             childs:
-              personale-non-tempo-indeterminato:
+              personale-non-tempo-indeterminato-child:
                 term: Personale non a tempo indeterminato
               costo-personale-non-tempo-indeterminato:
                 term: Costo del personale non a tempo indeterminato
