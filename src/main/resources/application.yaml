@@ -177,7 +177,7 @@ rules:
             childs:
               dati-societa-partecipate:
                 term: Dati società partecipate
-              provvedimenti:
+              provvedimenti-societa-partecipate:
                 term: Provvedimenti
           enti-diritto-privato-controllati:
             term: Enti di diritto privato controllati
