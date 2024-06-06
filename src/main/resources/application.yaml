@@ -86,10 +86,10 @@ rules:
                 term: Cessati dall'incarico
           sanzioni-mancata-comunicazione-dati:
             term: Sanzioni per mancata comunicazione dei dati
-          rendiconti-gruppi_consiliari-regionali/provinciali:
+          rendiconti-gruppi_consiliari-regionali-provinciali:
             term: Rendiconti gruppi consiliari regionali/provinciali
             childs:
-              rendiconti-gruppi_consiliari-regionali/provinciali:
+              rendiconti-gruppi_consiliari-regionali-provinciali-child:
                 term: Rendiconti gruppi consiliari regionali/provinciali
               atti-organi-controllo:
                 term: Atti degli organi di controllo
