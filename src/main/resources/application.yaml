@@ -25,6 +25,323 @@ max_length_content: 1000
 
 rules:
   amministrazione-trasparente:
+    term:
+      - Amministrazione Trasparente
+      -
+        key: Società Trasparente
+        code: 202
+      -
+        key: Amm. Trasparente
+        code: 202
+      -
+        key: amministrazionetrasparente
+        code: 202
+      -
+        key: amministrazione_trasparente
+        code: 202
+      -
+        key: amministrazione-trasparente
+        code: 202
+      -
+        key: societatrasparente
+        code: 202
+      -
+        key: societa_trasparente
+        code: 202
+    childs:
+      disposizioni-generali:
+        term: Disposizione Generali
+        childs:
+          piano-triennale-prevenzione-corruzione-trasparenza:
+            term: Piano triennale per la prevenzione della corruzione e della trasparenza
+          atti-generali:
+            term: Atti generali
+            childs:
+              riferimenti-normativi-organizzazione-attivita:
+                term: Riferimenti normativi su organizzazione e attività
+              atti-amministrativi-generali:
+                term: Atti amministrativi generali
+              documenti-programmazione-strategico-gestionale:
+                term: Documenti di programmazione strategico-gestionale
+              statuti-leggi-regionali:
+                term: Statuti e leggi regionali
+              codice-disciplinare-codice-condotta:
+                term: Codice disciplinare e codice di condotta
+          oneri-informativi-cittadini-imprese:
+            term: Oneri informativi per cittadini e imprese
+      organizzazione:
+        term: Organizzazione
+        childs:
+          titolari-incarichi-politici-amministrazione-direzione-governo:
+            term:
+              - Titolari di incarichi politici, di amministrazione, di direzione o di governo
+            childs:
+              titolari-incarichi-politici-art-14-1-dlgs-33/2013:
+                term:
+                  - Titolari di incarichi politici di cui all'art. 14, co. 1, del dlgs n. 33/2013
+              titolari-incarichi-amministrazione-direzione-governo-art-14-1-bis-dlgs-33/2013:
+                term:
+                  - Titolari di incarichi di amministrazione, di direzione o di governo di cui all'art. 14, co. 1-bis, del dlgs n. 33/2013
+              cessati-incarico:
+                term: Cessati dall'incarico
+          sanzioni-mancata-comunicazione-dati:
+            term: Sanzioni per mancata comunicazione dei dati
+          rendiconti-gruppi_consiliari-regionali/provinciali:
+            term: Rendiconti gruppi consiliari regionali/provinciali
+            childs:
+              rendiconti-gruppi_consiliari-regionali/provinciali:
+                term: Rendiconti gruppi consiliari regionali/provinciali
+              atti-organi-controllo:
+                term: Atti degli organi di controllo
+          articolazione-uffici:
+            term: Articolazione degli uffici
+            childs:
+              articolazione-uffici:
+                term: Articolazione degli uffici
+              organigramma:
+                term: Organigramma
+          telefono-posta-elettronica:
+            term: Telefono e posta elettronica
+      consulenti-collaboratori:
+        term: Consulenti e collaboratori
+        childs:
+          titolari-incarichi-collaborazione-consulenza:
+            term: Titolari di incarichi di collaborazione o consulenza
+      personale:
+        term: Personale
+        childs:
+          titolari-incarichi-dirigenziali-amministrativi-vertice:
+            term: Titolari di incarichi dirigenziali amministrativi di vertice
+          titolari-incarichi-dirigenziali:
+            term: Titolari di incarichi dirigenziali (dirigenti non generali)
+            childs:
+              incarichi-dirigenziali-qualsiasi-titolo_conferiti:
+                term:
+                  - Incarichi dirigenziali, a qualsiasi titolo conferiti, ivi inclusi quelli conferiti discrezionalmente dall'organo di indirizzo politico senza procedure pubbliche di selezione e titolari di posizione organizzativa con funzioni dirigenziali
+              posti-funzione-disponibili:
+                term: Posti di funzione disponibili
+              ruolo-dirigenti:
+                term: Ruolo dirigenti
+          dirigenti-cessati:
+            term: Dirigenti cessati
+          sanzioni-mancata-comunicazione-dati:
+            term: Sanzioni per mancata comunicazione dei dati
+          posizioni-organizzative:
+            term: Posizioni organizzative
+          dotazione-organica:
+            term: Dotazione organica
+            childs:
+              conto-annuale-personale:
+                term: Conto annuale del personale
+              costo-personale-tempo-indeterminato:
+                term: Costo personale tempo indeterminato
+          personale-non-tempo-indeterminato:
+            term: Personale non a tempo indeterminato
+            childs:
+              personale-non-tempo-indeterminato:
+                term: Personale non a tempo indeterminato
+              costo-personale-non-tempo-indeterminato:
+                term: Costo del personale non a tempo indeterminato
+          tassi-assenza:
+            term: Tassi di assenza
+          incarichi-conferiti-autorizzati-dipendenti:
+            term: Incarichi conferiti e autorizzati ai dipendenti
+          contrattazione-collettiva:
+            term: Contrattazione collettiva
+          contrattazione-integrativa:
+            term: Contrattazione integrativa
+          oiv:
+            term: OIV
+      bandi-concorso:
+        term: Bandi di concorso
+      performance:
+        term: Performance
+        childs:
+          sistema-misurazione-valutazione-performance:
+            term: Sistema di misurazione e valutazione della Performance
+          piano-performance:
+            term: Piano della Performance
+          relazione-performance:
+            term: Relazione sulla Performance
+          ammontare-complessivo-premi:
+            term: Ammontare complessivo dei premi
+          dati-relativi-premi:
+            term: Dati relativi ai premi
+      enti-controllati:
+        term: Enti controllati
+        childs:
+          enti-pubblici-vigilati:
+            term: Enti pubblici vigilati
+          societa-partecipate:
+            term: Società partecipate
+            childs:
+              dati-societa-partecipate:
+                term: Dati società partecipate
+              provvedimenti:
+                term: Provvedimenti
+          enti-diritto-privato-controllati:
+            term: Enti di diritto privato controllati
+          rappresentazione-grafica:
+            term: Rappresentazione grafica
+      attivita-procedimenti:
+        term: Attività e procedimenti
+        childs:
+          tipologie-procedimento:
+            term: Tipologie di procedimento
+          dichiarazioni-sostitutive-acquisizione-ufficio-dati:
+            term: Dichiarazioni sostitutive e acquisizione d'ufficio dei dati
+      provvedimenti:
+        term: Provvedimenti
+        childs:
+          provvedimenti-organi-indirizzo-politico:
+            term: Provvedimenti organi indirizzo-politico
+          provvedimenti-dirigenti-amministrativi:
+            term: Provvedimenti dirigenti amministrativi
+      bandi-gara-contratti:
+        term: Bandi di gara e contratti
+        childs:
+          informazioni-singole-procedure-formato-tabellare:
+            term: Informazioni sulle singole procedure in formato tabellare
+          atti-amministrazioni-aggiudicatrici-enti-aggiudicatori-distintamente-procedura:
+            term: Atti delle amministrazioni aggiudicatrici e degli enti aggiudicatori distintamente per ogni procedura
+            childs:
+              atti-relativi-programmazione-lavori-opere-servizi-forniture:
+                term:
+                  - Atti relativi alla programmazione di lavori, opere, servizi e forniture
+              atti-relativi-procedure-affidamento-appalti-pubblici-servizi:
+                term:
+                  - Atti relativi alle procedure per l'affidamento di appalti pubblici di servizi, forniture, lavori e opere, di concorsi pubblici di progettazione, di concorsi di idee e di concessioni. Compresi quelli tra enti nell'ambito del settore pubblico di cui all'art. 5 del dlgs n. 50/2016
+              provvedimento-determina-esclusioni-procedura-affidamento-ammissioni-esito-valutazioni-requisiti-soggettivi-economico-finanziari-tecnico-professionali:
+                term: Provvedimento che determina le esclusioni dalla procedura di affidamento e le ammissioni all'esito delle valutazioni dei requisiti soggettivi, economico-finanziari e tecnico-professionali
+              composizione-commissione-giudicatrice-curricula-componenti:
+                term: Composizione della commissione giudicatrice e i curricula dei suoi componenti
+              contratti:
+                term: Contratti
+              resoconti-gestione-finanziaria-contratti-termine-esecuzione:
+                term: Resoconti della gestione finanziaria dei contratti al termine della loro esecuzione
+      sovvenzioni-contributi-sussidi-vantaggi-economici:
+        term:
+          - Sovvenzioni, contributi, sussidi, vantaggi economici
+        childs:
+          criteri-modalita:
+            term: Criteri e modalità
+          atti-concessione:
+            term: Atti di concessione
+      bilanci:
+        term: Bilanci
+        childs:
+          bilancio-preventivo-consuntivo:
+            term: Bilancio preventivo e consuntivo
+            childs:
+              bilancio-preventivo:
+                term: Bilancio preventivo
+              bilancio-consuntivo:
+                term: Bilancio consuntivo
+          piano-indicatori-risultati-attesi-bilancio:
+            term: Piano degli indicatori e risultati attesi di bilancio
+      beni-immobili-gestione-patrimonio:
+        term: Beni immobili e gestione patrimonio
+        childs:
+          patrimonio-immobiliare:
+            term: Patrimonio immobiliare
+          canoni-locazione-affitto:
+            term: Canoni di locazione o affitto
+      controlli-rilievi-amministrazione:
+        term: Controlli e rilievi sull'amministrazione
+        childs:
+          organismi-indipendenti-valutazione-nuclei-valutazione-organismi-funzioni-analoghe:
+            term:
+              - Organismi indipendenti di valutazione, nuclei di valutazione o altri organismi con funzioni analoghe
+          organi-revisione-amministrativa-contabile:
+            term: Organi di revisione amministrativa e contabile
+          corte-dei-conti:
+            term: Corte dei conti
+      servizi-erogati:
+        term: Servizi erogati
+        childs:
+          carta-servizi-standard-qualita:
+            term: Carta dei servizi e standard di qualità
+          class-action:
+            term: Class action
+          costi-contabilizzati:
+            term: Costi contabilizzati
+          liste-attesa:
+            term: Liste di attesa
+          servizi-rete:
+            term: Servizi in rete
+      pagamenti-amministrazione:
+        term: Pagamenti dell'amministrazione
+        childs:
+          dati-pagamenti:
+            term: Dati sui pagamenti
+          dati-pagamenti-servizio-sanitario-nazionale:
+            term: Dati sui pagamenti del servizio sanitario nazionale
+          indicatore-tempestivita-pagamenti:
+            term: Indicatore di tempestività dei pagamenti
+            childs:
+              indicatore-tempestivita-pagamenti-child:
+                term: Indicatore di tempestività dei pagamenti
+              ammontare-complessivo-debiti:
+                term: Ammontare complessivo dei debiti
+          iban-pagamenti-informatici:
+            term: IBAN e pagamenti informatici
+      opere-pubbliche:
+        term: Opere pubbliche
+        childs:
+          nuclei-valutazione-verifica-investimenti-pubblici:
+            term: Nuclei di valutazione e verifica degli investimenti pubblici
+          atti-programmazione-opere-pubbliche:
+            term: Atti di programmazione delle opere pubbliche
+          tempi-costi-indicatori-realizzazione-opere-pubbliche:
+            term: Tempi costi e indicatori di realizzazione delle opere pubbliche
+      pianificazione-governo-territorio:
+        term: Pianificazione e governo del territorio
+      informazioni-ambientali:
+        term: Informazioni ambientali
+      strutture-sanitarie-private-accreditate:
+        term: Strutture sanitarie private accreditate
+      interventi-straordinari-emergenza:
+        term: Interventi straordinari e di emergenza
+      altri-contenuti:
+        term: Altri contenuti
+        childs:
+          prevenzione-corruzione:
+            term: Prevenzione della Corruzione
+            childs:
+              piano-triennale-prevenzione-corruzione-trasparenza:
+                term: Piano triennale per la prevenzione della corruzione e della trasparenza
+              responsabile-prevenzione-corruzione-trasparenza:
+                term: Responsabile della prevenzione della corruzione e della trasparenza
+              regolamenti-prevenzione-repressione-corruzione-illegalita:
+                term: Regolamenti per la prevenzione e la repressione della corruzione e dell'illegalità
+              relazione-responsabile-prevenzione-corruzione-trasparenza:
+                term: Relazione del responsabile della prevenzione della corruzione e della trasparenza
+              provvedimenti-adottati-anac-atti-adeguamento-provvedimenti:
+                term: Provvedimenti adottati dall'A.N.A.C. ed atti di adeguamento a tali provvedimenti
+              atti-accertamento-violazioni:
+                term: Atti di accertamento delle violazioni
+          accesso-civico:
+            term: Accesso civico
+            childs:
+              accesso-civico-semplice-concernente-dati-documenti-informazioni-soggetti-pubblicazione-obbligatoria:
+                term:
+                  - Accesso civico "semplice" concernente dati, documenti e informazioni soggetti a pubblicazione obbligatoria
+              accesso-civico-generalizzato-concernente-dati-documenti-ulteriori:
+                term: Accesso civico "generalizzato" concernente dati e documenti ulteriori
+          accessibilita-catalogo-dati-metadati-banche-dati:
+            term:
+              - Accessibilità e Catalogo dei dati, metadati e banche dati
+            childs:
+              catalogo-dati-metadati-banche-dati:
+                term:
+                  - Catalogo dei dati, metadati e delle banche dati
+              regolamenti:
+                term: Regolamenti
+              obiettivi-accessibilita:
+                term: Obiettivi di accessibilità
+          dati-ulteriori:
+            term: Dati ulteriori
+  amministrazione-trasparente-dlgs33-2013:
       term:
         - Amministrazione Trasparente
         -
@@ -66,7 +383,8 @@ rules:
             sanzioni-mancata-comunicazione-dati:
               term: Sanzioni per mancata comunicazione dei dati
             rendiconti-gruppi-consiliari-regionali-provinciali:
-              term: Rendiconti gruppi consiliari regionali, provinciali
+              term:
+                - Rendiconti gruppi consiliari regionali, provinciali
             articolazione-degli-uffici:
               term: Articolazione degli uffici
             telefono-posta-elettronica:
