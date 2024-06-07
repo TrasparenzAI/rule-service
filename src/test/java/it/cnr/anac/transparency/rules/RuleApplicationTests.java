@@ -152,6 +152,19 @@ class RuleApplicationTests {
 		Assertions.assertEquals(ruleResponse.getStatus(), HttpStatus.OK);
 		Assertions.assertEquals("/prova-apici-singoli3", ruleResponse.getUrl());
 	}
+
+	@Test
+	void local4() throws IOException, URISyntaxException, RuleException {
+		final InputStream resourceAsStream = this.getClass().getResourceAsStream("/amministrazione4.html");
+		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
+				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
+				.lines()
+				.collect(Collectors.joining("\n")), Optional.of("rendiconti-gruppi-consiliari-regionali-provinciali"));
+		Assertions.assertEquals(ruleResponse.getStatus(), HttpStatus.OK);
+		Assertions.assertEquals("https://cosenza.etrasparenza.it/pagina710_rendiconti-gruppi-consiliari-regionaliprovinciali.html", ruleResponse.getUrl());
+	}
+
+
 	@Test
 	void local3() throws IOException, URISyntaxException, RuleException {
 		final InputStream resourceAsStream = this.getClass().getResourceAsStream("/amministrazione3.html");

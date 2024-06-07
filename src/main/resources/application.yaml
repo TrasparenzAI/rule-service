@@ -14,6 +14,7 @@ tag_attributes:
 search_tokens:
   - ' '
   - '.'
+  - '/'
   - '"'
   - ''''
   - '<'
@@ -77,19 +78,19 @@ rules:
             childs:
               titolari-incarichi-politici-art-14-1-dlgs-33/2013:
                 term:
-                  - Titolari di incarichi politici di cui all'art. 14, co. 1, del dlgs n. 33/2013
+                  - Titolari di incarichi politici di cui all'art. 14, co. 1, del dlgs n. 33 2013
               titolari-incarichi-amministrazione-direzione-governo-art-14-1-bis-dlgs-33/2013:
                 term:
-                  - Titolari di incarichi di amministrazione, di direzione o di governo di cui all'art. 14, co. 1-bis, del dlgs n. 33/2013
+                  - Titolari di incarichi di amministrazione, di direzione o di governo di cui all'art. 14, co. 1-bis, del dlgs n. 33 2013
               cessati-incarico:
                 term: Cessati dall'incarico
           sanzioni-mancata-comunicazione-dati:
             term: Sanzioni per mancata comunicazione dei dati
-          rendiconti-gruppi_consiliari-regionali-provinciali:
-            term: Rendiconti gruppi consiliari regionali/provinciali
+          rendiconti-gruppi-consiliari-regionali-provinciali:
+            term: Rendiconti gruppi consiliari regionali provinciali
             childs:
-              rendiconti-gruppi_consiliari-regionali-provinciali-child:
-                term: Rendiconti gruppi consiliari regionali/provinciali
+              rendiconti-gruppi-consiliari-regionali-provinciali-child:
+                term: Rendiconti gruppi consiliari regionali provinciali
               atti-organi-controllo:
                 term: Atti degli organi di controllo
           articolazione-uffici:
@@ -209,7 +210,7 @@ rules:
                   - Atti relativi alla programmazione di lavori, opere, servizi e forniture
               atti-relativi-procedure-affidamento-appalti-pubblici-servizi:
                 term:
-                  - Atti relativi alle procedure per l'affidamento di appalti pubblici di servizi, forniture, lavori e opere, di concorsi pubblici di progettazione, di concorsi di idee e di concessioni. Compresi quelli tra enti nell'ambito del settore pubblico di cui all'art. 5 del dlgs n. 50/2016
+                  - Atti relativi alle procedure per l'affidamento di appalti pubblici di servizi, forniture, lavori e opere, di concorsi pubblici di progettazione, di concorsi di idee e di concessioni. Compresi quelli tra enti nell'ambito del settore pubblico di cui all'art. 5 del dlgs n. 50 2016
               provvedimento-determina-esclusioni-procedura-affidamento-ammissioni-esito-valutazioni-requisiti-soggettivi-economico-finanziari-tecnico-professionali:
                 term: Provvedimento che determina le esclusioni dalla procedura di affidamento e le ammissioni all'esito delle valutazioni dei requisiti soggettivi, economico-finanziari e tecnico-professionali
               composizione-commissione-giudicatrice-curricula-componenti:
