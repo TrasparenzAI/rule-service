@@ -55,6 +55,8 @@ public class RuleConfiguration {
     }
 
     private void addToFlattenRules(String key, Rule rule) {
+        if (flattenRules.containsKey(key))
+            throw new RuntimeException("There is rule alredy registered: " + key);
         flattenRules.put(key, rule);
         Optional.ofNullable(rule.getChilds())
                 .orElse(Collections.emptyMap())
