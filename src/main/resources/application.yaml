@@ -50,7 +50,7 @@ rules:
         code: 202
     childs:
       disposizioni-generali:
-        term: Disposizione Generali
+        term: Disposizioni Generali
         childs:
           piano-triennale-prevenzione-corruzione-trasparenza:
             term: Piano triennale per la prevenzione della corruzione e della trasparenza
