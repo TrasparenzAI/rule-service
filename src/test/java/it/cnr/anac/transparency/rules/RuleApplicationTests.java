@@ -82,7 +82,7 @@ class RuleApplicationTests {
 		Assertions.assertEquals(Boolean.FALSE, flattenRules.isEmpty());
 		Assertions.assertEquals(Boolean.TRUE, Optional.ofNullable(flattenRules.get(TIPOLOGIE_PROCEDIMENTO)).isPresent());
 		Assertions.assertEquals(
-				23,
+				22,
 				Optional.ofNullable(flattenRules.get(ruleConfiguration.getRulesRoot()))
 						.flatMap(rule -> Optional.ofNullable(rule.getChilds()))
 						.map(Map::size)
@@ -128,7 +128,7 @@ class RuleApplicationTests {
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 				.lines()
 				.collect(Collectors.joining("\n")), Optional.empty());
-		Assertions.assertEquals(ruleResponse.getStatus(), HttpStatus.ACCEPTED);
+		Assertions.assertEquals(HttpStatus.OK, ruleResponse.getStatus());
 		Assertions.assertEquals("/", ruleResponse.getUrl());
 	}
 	@Test
@@ -150,7 +150,7 @@ class RuleApplicationTests {
 				.lines()
 				.collect(Collectors.joining("\n")), Optional.empty());
 		Assertions.assertEquals(ruleResponse.getStatus(), HttpStatus.OK);
-		Assertions.assertEquals("/prova-apici-singoli3", ruleResponse.getUrl());
+		Assertions.assertEquals("/prova-apici-singoli4", ruleResponse.getUrl());
 	}
 
 	@Test
@@ -185,13 +185,13 @@ class RuleApplicationTests {
 		Assertions.assertEquals("/amministrazione-trasparente", ruleResponse.getUrl());
 	}
 
-	void internalChild(InputStream resourceAsStream, int expected) throws IOException, URISyntaxException {
+	List<RuleResponseDto> internalChild(InputStream resourceAsStream, int expected) throws IOException, URISyntaxException {
 		final ResponseEntity<List<RuleResponseDto>> ruleResponses = ruleController.postChild(Base64.getEncoder().encodeToString(new BufferedReader(
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 				.lines()
 				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty());
 
-		Assertions.assertEquals(23, ruleResponses.getBody().size());
+		Assertions.assertEquals(22, ruleResponses.getBody().size());
 		Assertions.assertEquals(
 				expected,
 				ruleResponses.getBody().stream().filter(r -> !Optional.ofNullable(r.getUrl()).isPresent()).collect(Collectors.toList()).size(),
@@ -200,14 +200,20 @@ class RuleApplicationTests {
 						.collect(Collectors.toList()))
 
 		);
+		return ruleResponses.getBody();
 	}
 	@Test
 	void localChild3() throws IOException, URISyntaxException {
-		internalChild(this.getClass().getResourceAsStream("/amministrazione_child1.html"), 1);
+		internalChild(this.getClass().getResourceAsStream("/amministrazione_child1.html"), 0);
 	}
 	@Test
 	void localChild4() throws IOException, URISyntaxException {
-		internalChild(this.getClass().getResourceAsStream("/amministrazione_child2.html"), 2);
+		internalChild(this.getClass().getResourceAsStream("/amministrazione_child2.html"), 1);
+	}
+	@Test
+	void localChild5() throws IOException, URISyntaxException {
+		final List<RuleResponseDto> ruleResponseDtos = internalChild(this.getClass().getResourceAsStream("/amministrazione_child3.html"), 2);
+		Assertions.assertEquals(20, ruleResponseDtos.stream().filter(ruleResponseDto -> ruleResponseDto.getStatus() == 200).count());
 	}
 
 	@Test
@@ -217,7 +223,7 @@ class RuleApplicationTests {
 
 		Document doc2 = Jsoup.parse(getURL(ruleResponse.getUrl(), AMMINISTRAZIONE1_URL), TIMEOUT_MILLIS);
 		final List<RuleResponse> ruleResponse2 = ruleService.executeChildRule(doc2.html(), Optional.of(ruleResponse.getRuleName()));
-		Assertions.assertEquals(23, ruleResponse2.size());
+		Assertions.assertEquals(22, ruleResponse2.size());
 		Assertions.assertEquals(
 				0,
 				ruleResponse2.stream().filter(r -> !Optional.ofNullable(r.getUrl()).isPresent()).collect(Collectors.toList()).size(),
