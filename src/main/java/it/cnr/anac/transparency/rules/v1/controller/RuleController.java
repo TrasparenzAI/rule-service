@@ -108,11 +108,17 @@ public class RuleController {
         try {
             final String contentDecoded = ruleService.base64Decode(content);
             List<RuleResponse> ruleResponses = ruleService.executeChildRule(contentDecoded, ruleName);
-            final List<RuleResponse> rulesFound = ruleResponses
+            List<RuleResponse> rulesFound = ruleResponses
                     .stream()
                     .filter(ruleResponse -> !ruleResponse.getStatus().equals(HttpStatus.NOT_FOUND)).collect(Collectors.toList());
             if (rulesFound.size() != ruleService.childRules(ruleName).size()) {
-                ruleResponses = ruleService.executeChildRuleAlternative(contentDecoded, ruleName, rulesFound);
+                ruleResponses = ruleService.executeChildRuleAlternative(contentDecoded, ruleName, rulesFound, Boolean.FALSE);
+                rulesFound = ruleResponses
+                        .stream()
+                        .filter(ruleResponse -> !ruleResponse.getStatus().equals(HttpStatus.NOT_FOUND)).collect(Collectors.toList());
+                if (rulesFound.size() != ruleService.childRules(ruleName).size()) {
+                    ruleResponses = ruleService.executeChildRuleAlternative(contentDecoded, ruleName, rulesFound, Boolean.TRUE);
+                }
             }
             if (!ruleResponses.stream().filter(ruleResponse -> !ruleResponse.getStatus().equals(HttpStatus.NOT_FOUND)).findAny().isPresent()) {
                 return ResponseEntity.notFound().build();

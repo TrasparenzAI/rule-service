@@ -35,7 +35,7 @@ public class RegularExpressionAnchorService implements AnchorService{
     @Autowired
     RuleConfiguration ruleConfiguration;
     @Override
-    public List<Anchor> find(String content) {
+    public List<Anchor> find(String content, boolean allTags) {
         content = content.replaceAll("\\s+", " ");
         final Pattern patternAnchor = Pattern.compile(ruleConfiguration.getAnchorRegex(), Pattern.CASE_INSENSITIVE);
         final Pattern patternHref = Pattern.compile(ruleConfiguration.getHrefRegex(), Pattern.CASE_INSENSITIVE);

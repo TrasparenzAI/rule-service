@@ -82,13 +82,13 @@ public class RuleService {
 
     public RuleResponse executeRule(String content, Optional<String> ruleName) throws RuleNotFoundException, IOException, RuleException {
         try {
-            return executeRule(ruleName, regularExpressionAnchorService.find(content));
+            return executeRule(ruleName, regularExpressionAnchorService.find(content, Boolean.FALSE));
         } catch (RuleNotFoundException _ex) {
             return executeRuleAlternative(content, ruleName);
         }
     }
     public RuleResponse executeRuleAlternative(String content, Optional<String> ruleName) throws RuleNotFoundException, IOException, RuleException {
-        return executeRule(ruleName, anchorsWidthJsoup(content));
+        return executeRule(ruleName, anchorsWidthJsoup(content, Boolean.FALSE));
     }
 
     public Map<String, Rule> childRules(Optional<String> ruleName) {
@@ -134,11 +134,11 @@ public class RuleService {
                 .collect(Collectors.toList());
     }
     public List<RuleResponse> executeChildRule(String content, Optional<String> ruleName) throws RuleNotFoundException, IOException {
-        return executeChildRule(content, ruleName, regularExpressionAnchorService.find(content), Collections.emptyList());
+        return executeChildRule(content, ruleName, regularExpressionAnchorService.find(content, Boolean.FALSE), Collections.emptyList());
     }
 
-    public List<RuleResponse> executeChildRuleAlternative(String content, Optional<String> ruleName, List<RuleResponse> rulesFound) throws RuleNotFoundException, IOException {
-        return executeChildRule(content, ruleName, anchorsWidthJsoup(content), rulesFound);
+    public List<RuleResponse> executeChildRuleAlternative(String content, Optional<String> ruleName, List<RuleResponse> rulesFound, boolean allTags) throws RuleNotFoundException, IOException {
+        return executeChildRule(content, ruleName, anchorsWidthJsoup(content, allTags), rulesFound);
     }
 
     private RuleResponse findTermInValues(LuceneSearch luceneSearch, Optional<String> ruleName, Rule rule, Term term) throws RuleNotFoundException {
@@ -176,7 +176,7 @@ public class RuleService {
         throw new RuleNotFoundException();
     }
 
-    private List<Anchor> anchorsWidthJsoup(String content) {
-        return jsoupAnchorService.find(content);
+    private List<Anchor> anchorsWidthJsoup(String content, boolean allTags) {
+        return jsoupAnchorService.find(content, allTags);
     }
 }

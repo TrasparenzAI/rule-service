@@ -26,5 +26,5 @@ public interface AnchorService {
     public static final String TEXT = "text";
     public static final String ANCHOR = "a";
 
-    List<Anchor> find(String content);
+    List<Anchor> find(String content, boolean allTags);
 }

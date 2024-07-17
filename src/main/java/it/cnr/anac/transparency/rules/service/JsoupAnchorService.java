@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.parser.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,8 +40,23 @@ public class JsoupAnchorService implements AnchorService{
     RuleConfiguration ruleConfiguration;
 
     @Override
-    public List<Anchor> find(String content) {
+    public List<Anchor> find(String content, boolean allTags) {
         Document doc = Jsoup.parse(content);
+        if (allTags) {
+            return doc.getAllElements()
+                    .stream()
+                    .filter(element -> !element.tag().equals(Tag.valueOf(AnchorService.ANCHOR)))
+                    .map(element -> {
+                        final String href = "#";
+                        final List<Anchor> firstList = Arrays.asList(
+                                new Anchor(href, element.text(),"text")
+                        );
+                        return firstList
+                                .stream()
+                                .filter(anchor -> Optional.ofNullable(anchor.getContent()).isPresent())
+                                .collect(Collectors.toList());
+                    }).flatMap(List::stream).collect(Collectors.toList());
+        }
         return doc.getElementsByTag(AnchorService.ANCHOR)
                 .stream()
                 .map(element -> {
