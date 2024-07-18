@@ -21,6 +21,8 @@ search_tokens:
   - '>'
   - '’'
   - '-'
+  - '('
+  - ')'
 
 max_length_content: 1000
 
