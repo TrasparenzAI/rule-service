@@ -43,7 +43,7 @@ public class LuceneSearch {
     public static final String URL = "url";
     public static final String CONTENT = "content";
     public static final String WHERE = "where";
-    private final IndexSearcher dirSearcher;
+    private final DirectoryReader indexReader;
 
     private final Analyzer customAnalyzer;
 
@@ -74,8 +74,7 @@ public class LuceneSearch {
                         }
                     });
         }
-        DirectoryReader indexReader = DirectoryReader.open(directory);
-        dirSearcher = new IndexSearcher(indexReader);
+        indexReader = DirectoryReader.open(directory);
         if (log.isTraceEnabled()) {
             getTokensForField(indexReader, CONTENT);
         }
@@ -97,6 +96,7 @@ public class LuceneSearch {
         log.trace("============= END TOKEN =============");
     }
     public Optional<LuceneResult> search(String keyword) throws ParseException, IOException {
+        IndexSearcher dirSearcher = new IndexSearcher(indexReader);
         QueryParser parser = new QueryParser(CONTENT, this.customAnalyzer);
         parser.setDefaultOperator(QueryParser.Operator.AND);
         Query query = parser.parse(keyword);
