@@ -30,17 +30,19 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'javax.annotation:javax.annotation-api:1.3.2'
 
-	compileOnly 'org.projectlombok:lombok:1.18.30'
-	annotationProcessor 'org.projectlombok:lombok:1.18.30'
+	def lombokGroup = 'org.projectlombok', lombokVersion = '1.18.30'
+	compileOnly group: lombokGroup, name: 'lombok', version: lombokVersion
+	annotationProcessor group: lombokGroup, name: 'lombok', version: lombokVersion
 
+	def mapstructGroup = 'org.mapstruct', mapstructVersion = '1.5.5.Final'
+	implementation group: mapstructGroup, name: 'mapstruct', version: mapstructVersion
+	annotationProcessor group: mapstructGroup, name: 'mapstruct-processor', version: mapstructVersion
 
-	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
-	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
-
-	implementation 'org.apache.lucene:lucene-core:8.7.0'
-	implementation 'org.apache.lucene:lucene-queryparser:8.7.0'
-	implementation 'org.apache.lucene:lucene-suggest:8.7.0'
-	implementation 'org.apache.lucene:lucene-analyzers-common:8.7.0'
+	def luceneGroup = 'org.apache.lucene', luceneVersion = '9.11.1'
+	implementation group: luceneGroup, name: 'lucene-core', version: luceneVersion
+	implementation group: luceneGroup, name: 'lucene-queryparser', version: luceneVersion
+	implementation group: luceneGroup, name: 'lucene-suggest', version: luceneVersion
+	implementation group: luceneGroup, name: 'lucene-analysis-common', version: luceneVersion
 
 	implementation 'org.jsoup:jsoup:1.16.2'
 
