@@ -51,7 +51,7 @@ public class RegularExpressionAnchorService implements AnchorService{
                 result.add(Anchor.newInstance(href, StringEscapeUtils.unescapeHtml4(text), "text"));
                 log.debug("Find anchor width href: {} and text: {}", href, text);
             } catch (IllegalStateException _ex) {
-                log.warn("No match found in attributes: {}", attributes);
+                log.debug("No match found in attributes: {}", attributes);
             }
         }
         return result;

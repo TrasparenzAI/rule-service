@@ -44,7 +44,6 @@ public class LuceneSearch {
     public static final String CONTENT = "content";
     public static final String WHERE = "where";
     private final DirectoryReader indexReader;
-
     private final Analyzer customAnalyzer;
 
     Comparator<LuceneResultCount> compareLuceneResult = Comparator
@@ -54,6 +53,7 @@ public class LuceneSearch {
             .thenComparing((t1, t2) -> Integer.valueOf(t1.getLuceneResult().getUrl().length()).compareTo(t2.getLuceneResult().getUrl().length()) * -1);
 
     public LuceneSearch(List<Anchor> values, Analyzer customAnalyzer, Integer maxLengthContent) throws IOException {
+        log.warn("Number of anchror to index is {}", values.size());
         this.customAnalyzer = customAnalyzer;
         ByteBuffersDirectory directory = new ByteBuffersDirectory();
         try (IndexWriter directoryWriter = new IndexWriter(directory, new IndexWriterConfig(this.customAnalyzer))) {
@@ -95,6 +95,7 @@ public class LuceneSearch {
         }
         log.trace("============= END TOKEN =============");
     }
+
     public Optional<LuceneResult> search(String keyword) throws ParseException, IOException {
         IndexSearcher dirSearcher = new IndexSearcher(indexReader);
         QueryParser parser = new QueryParser(CONTENT, this.customAnalyzer);
@@ -119,6 +120,4 @@ public class LuceneSearch {
                 .map(LuceneResultCount::getLuceneResult)
                 .findFirst();
     }
-
-
 }
