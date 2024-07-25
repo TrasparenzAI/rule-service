@@ -56,9 +56,14 @@ public class RuleService {
 
     public String base64Decode(String content) {
         if (Base64.isBase64(content)) {
-            return new String(Base64.decodeBase64(content.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+            content = new String(Base64.decodeBase64(content.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
         } else if (content.contains("b'")) {
-            return new String(Base64.decodeBase64(content.replace("b'", "").getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+            content = new String(Base64.decodeBase64(content.replace("b'", "").getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+        }
+        final int length = content.getBytes(StandardCharsets.UTF_8).length;
+        if (length > ruleConfiguration.getMaxLengthPageByte()) {
+            log.warn("The content length {} is greater than max {}", length, ruleConfiguration.getMaxLengthPageByte());
+            throw new RuleNotFoundException();
         }
         return content;
     }

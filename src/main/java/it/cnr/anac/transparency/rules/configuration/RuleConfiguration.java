@@ -37,6 +37,7 @@ public class RuleConfiguration {
     protected String anchorRegex;
     protected String hrefRegex;
     protected Integer maxLengthContent;
+    protected Integer maxLengthPageByte;
     protected List<String> tagAttributes;
     private List<Character> searchTokens;
 
