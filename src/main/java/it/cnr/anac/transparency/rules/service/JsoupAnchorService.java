@@ -46,6 +46,7 @@ public class JsoupAnchorService implements AnchorService{
                 .map(String::toUpperCase)
                 .filter(s -> s.contains("HTML"))
                 .isPresent()) {
+            log.warn("Content is not HTML Page!");
             return Collections.emptyList();
         }
         Document doc = Jsoup.parse(content);

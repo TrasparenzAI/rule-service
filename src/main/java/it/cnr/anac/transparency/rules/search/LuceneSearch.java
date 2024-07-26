@@ -53,7 +53,7 @@ public class LuceneSearch {
             .thenComparing((t1, t2) -> Integer.valueOf(t1.getLuceneResult().getUrl().length()).compareTo(t2.getLuceneResult().getUrl().length()) * -1);
 
     public LuceneSearch(List<Anchor> values, Analyzer customAnalyzer, Integer maxLengthContent) throws IOException {
-        log.warn("Number of anchror to index is {}", values.size());
+        log.warn("Number of anchor to index is {}", values.size());
         this.customAnalyzer = customAnalyzer;
         ByteBuffersDirectory directory = new ByteBuffersDirectory();
         try (IndexWriter directoryWriter = new IndexWriter(directory, new IndexWriterConfig(this.customAnalyzer))) {
