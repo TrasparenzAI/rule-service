@@ -104,7 +104,7 @@ public class RuleController {
             @ApiResponse(responseCode = "400", description = "La regola padre non esiste.")
     })
     @PostMapping("/child")
-    public ResponseEntity<List<RuleResponseDto>> postChild(@RequestBody String content, @RequestParam(name = "ruleName") Optional<String> ruleName) {
+    public ResponseEntity<List<RuleResponseDto>> postChild(@RequestBody String content, @RequestParam(name = "ruleName") Optional<String> ruleName, @RequestParam(name = "allRuleMustBePresent", required = false, defaultValue = "false") Boolean allRuleMustBePresent) {
         try {
             final String contentDecoded = ruleService.base64Decode(content);
             List<RuleResponse> ruleResponses = ruleService.executeChildRule(contentDecoded, ruleName);
@@ -119,6 +119,9 @@ public class RuleController {
                 if (rulesFound.size() != ruleService.childRules(ruleName).size()) {
                     ruleResponses = ruleService.executeChildRuleAlternative(contentDecoded, ruleName, rulesFound, Boolean.TRUE);
                 }
+            }
+            if (allRuleMustBePresent && ruleResponses.stream().filter(ruleResponse -> !ruleResponse.getStatus().equals(HttpStatus.OK)).findAny().isPresent()) {
+                return ResponseEntity.notFound().build();
             }
             if (!ruleResponses.stream().filter(ruleResponse -> !ruleResponse.getStatus().equals(HttpStatus.NOT_FOUND)).findAny().isPresent()) {
                 return ResponseEntity.notFound().build();
