@@ -36,6 +36,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -120,7 +122,12 @@ public class RuleController {
                     ruleResponses = ruleService.executeChildRuleAlternative(contentDecoded, ruleName, rulesFound, Boolean.TRUE);
                 }
             }
-            if (allRuleMustBePresent && ruleResponses.stream().filter(ruleResponse -> !ruleResponse.getStatus().equals(HttpStatus.OK)).findAny().isPresent()) {
+            if (allRuleMustBePresent && ruleResponses.stream().filter(
+                    ruleResponse -> ruleResponse.getStatus().equals(HttpStatus.OK)).count() <
+                        BigInteger.valueOf(ruleService.childRules(ruleName).size())
+                                .divide(BigInteger.valueOf(2))
+                                .add(BigInteger.ONE)
+                                .longValue()) {
                 return ResponseEntity.notFound().build();
             }
             if (!ruleResponses.stream().filter(ruleResponse -> !ruleResponse.getStatus().equals(HttpStatus.NOT_FOUND)).findAny().isPresent()) {
