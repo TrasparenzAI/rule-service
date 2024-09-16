@@ -126,7 +126,6 @@ public class RuleController {
                     ruleResponse -> ruleResponse.getStatus().equals(HttpStatus.OK)).count() <
                         BigInteger.valueOf(ruleService.childRules(ruleName).size())
                                 .divide(BigInteger.valueOf(2))
-                                .add(BigInteger.ONE)
                                 .longValue()) {
                 return ResponseEntity.notFound().build();
             }
