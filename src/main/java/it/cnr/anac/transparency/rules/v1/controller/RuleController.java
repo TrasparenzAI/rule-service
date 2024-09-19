@@ -41,6 +41,7 @@ import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Tag(name = "Rule Controller", description = "Metodi di consultazione e applicazione delle regole sulla trasparenza")
 @RequiredArgsConstructor
@@ -122,11 +123,13 @@ public class RuleController {
                     ruleResponses = ruleService.executeChildRuleAlternative(contentDecoded, ruleName, rulesFound, Boolean.TRUE);
                 }
             }
-            if (allRuleMustBePresent && ruleResponses.stream().filter(
-                    ruleResponse -> ruleResponse.getStatus().equals(HttpStatus.OK)).count() <
+            final List<RuleResponse> ruleResponseOK = ruleResponses.stream().filter(
+                    ruleResponse -> ruleResponse.getStatus().equals(HttpStatus.OK)).collect(Collectors.toList());
+            if (allRuleMustBePresent && ruleResponseOK.size() <
                         BigInteger.valueOf(ruleService.childRules(ruleName).size())
                                 .divide(BigInteger.valueOf(2))
                                 .longValue()) {
+                log.info("Found {} rules but total are:{}", ruleResponseOK.size(), ruleService.childRules(ruleName).size());
                 return ResponseEntity.notFound().build();
             }
             if (!ruleResponses.stream().filter(ruleResponse -> !ruleResponse.getStatus().equals(HttpStatus.NOT_FOUND)).findAny().isPresent()) {
