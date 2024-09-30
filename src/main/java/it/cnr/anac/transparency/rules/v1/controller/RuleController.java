@@ -125,10 +125,10 @@ public class RuleController {
             }
             final List<RuleResponse> ruleResponseOK = ruleResponses.stream().filter(
                     ruleResponse -> ruleResponse.getStatus().equals(HttpStatus.OK)).collect(Collectors.toList());
-            if (allRuleMustBePresent && ruleResponseOK.size() <
-                        BigInteger.valueOf(ruleService.childRules(ruleName).size())
-                                .divide(BigInteger.valueOf(2))
-                                .longValue()) {
+            if (allRuleMustBePresent &&
+                    ruleResponses.stream()
+                    .filter(ruleResponse -> ruleResponse.getStatus().equals(HttpStatus.OK)).count() <
+                            ruleService.childRules(ruleName).size()) {
                 log.info("Found {} rules but total are:{}", ruleResponseOK.size(), ruleService.childRules(ruleName).size());
                 return ResponseEntity.notFound().build();
             }
