@@ -1,4 +1,10 @@
-rules_root: amministrazione-trasparente
+spring:
+  config:
+    import: optional:configserver:https://dica33.ba.cnr.it/config
+  application:
+    name: rule-service
+
+default_rule: amministrazione-trasparente
 anchor_regex: <a[\s]+([^>]+)>((?<text>(.(?!\<\/a\>))*.))<\/a>
 href_regex: href\s*=\s*(?:["'](?<href>[^"']*)["']|([^>\s]+))
 
@@ -346,7 +352,7 @@ rules:
                 term: Obiettivi di accessibilità
           dati-ulteriori:
             term: Dati ulteriori
-  amministrazione-trasparente-dlgs33-2013:
+  amministrazione-trasparente-dlgs33:
       term:
         - Amministrazione Trasparente
         -
@@ -371,150 +377,149 @@ rules:
           key: societa_trasparente
           code: 202
       childs:
-        disposizioni-generali-dlgs33-2013:
+        disposizioni-generali:
           term: Disposizione Generali
           childs:
-            programma-trasparenza-integrita-dlgs33-2013:
+            programma-trasparenza-integrita:
               term: Programma per la Trasparenza e l'integrità
-            atti-generali-dlgs33-2013:
+            atti-generali:
               term: Atti generali
-            oneri-informativi-cittadini-imprese-dlgs33-2013:
+            oneri-informativi-cittadini-imprese:
               term: Oneri informativi per cittadini e imprese
-            organi-indirizzo-politico-amministrativo-dlgs33-2013:
+            organi-indirizzo-politico-amministrativo:
               term: Organi di indirizzo politico-amministrativo
-        organizzazione-dlgs33-2013:
+        organizzazione:
           term: Organizzazione
           childs:
-            sanzioni-mancata-comunicazione-dati-dlgs33-2013:
+            sanzioni-mancata-comunicazione-dati:
               term: Sanzioni per mancata comunicazione dei dati
-            rendiconti-gruppi-consiliari-regionali-provinciali-dlgs33-2013:
+            rendiconti-gruppi-consiliari-regionali-provinciali:
               term:
                 - Rendiconti gruppi consiliari regionali, provinciali
-            articolazione-degli-uffici-dlgs33-2013:
+            articolazione-degli-uffici:
               term: Articolazione degli uffici
-            telefono-posta-elettronica-dlgs33-2013:
+            telefono-posta-elettronica:
               term: Telefono e posta elettronica
-        consulenti-collaboratori-dlgs33-2013:
+        consulenti-collaboratori:
           term: Consulenti e collaboratori
           childs:
-            incarichi-amministrativi-vertice-dlgs33-2013:
+            incarichi-amministrativi-vertice:
               term: Incarichi amministrativi di vertice
-            dirigenti-dlgs33-2013:
+            dirigenti:
               term: Dirigenti
-        personale-dlgs33-2013:
+        personale:
           term: Personale
           childs:
-            posizioni-organizzative-dlgs33-2013:
+            posizioni-organizzative:
               term: Posizioni organizzative
-            dotazione-organica-dlgs33-2013:
+            dotazione-organica:
               term: Dotazione organica
-            personale-non-tempo-indeterminato-dlgs33-2013:
+            personale-non-tempo-indeterminato:
               term: Personale non a tempo indeterminato
-            tassi-assenza-dlgs33-2013:
+            tassi-assenza:
               term: Tassi di assenza
-            incarichi-conferiti-autorizzati-dipendenti-dlgs33-2013:
+            incarichi-conferiti-autorizzati-dipendenti:
               term: Incarichi conferiti e autorizzati ai dipendenti
-            contrattazione-collettiva-dlgs33-2013:
+            contrattazione-collettiva:
               term: Contrattazione collettiva
-            contrattazione-integrativa-dlgs33-2013:
+            contrattazione-integrativa:
               term: Contrattazione integrativa
-            oiv-dlgs33-2013:
+            oiv:
               term: OIV
-        bandi-concorso-dlgs33-2013:
+        bandi-concorso:
           term: Bandi di concorso
-        performance-dlgs33-2013:
+        performance:
           term: Performance
           childs:
-            piano-performance-dlgs33-2013:
+            piano-performance:
               term: Piano della Performance
-            relazione-performance-dlgs33-2013:
+            relazione-performance:
               term: Relazione sulla Performance
-            ammontare-complessivo-premi-dlgs33-2013:
+            ammontare-complessivo-premi:
               term: Ammontare complessivo dei premi
-            dati-relativi-premi-dlgs33-2013:
+            dati-relativi-premi:
               term: Dati relativi ai premi
-            benessere-organizzativo-dlgs33-2013:
+            benessere-organizzativo:
               term: Benessere organizzativo
-        enti-controllati-dlgs33-2013:
+        enti-controllati:
           term: Enti controllati
           childs:
-            enti-pubblici-vigilati-dlgs33-2013:
+            enti-pubblici-vigilati:
               term: Enti pubblici vigilati
-            societa-partecipate-dlgs33-2013:
+            societa-partecipate:
               term: Società partecipate
-            enti-diritto-privato-controllati-dlgs33-2013:
+            enti-diritto-privato-controllati:
               term: Enti di diritto privato controllati
-            rappresentazione-grafica-dlgs33-2013:
+            rappresentazione-grafica:
               term: Rappresentazione grafica
-        attivita-procedimenti-dlgs33-2013:
+        attivita-procedimenti:
           term: Attività e procedimenti
           childs:
-            dati-aggregati-attivita-amministrativa-dlgs33-2013:
+            dati-aggregati-attivita-amministrativa:
               term: Dati aggregati attività amministrativa
-            tipologie-procedimento-dlgs33-2013:
+            tipologie-procedimento:
               term: Tipologie di procedimento
-            monitoraggio-tempi-procedimentali-dlgs33-2013:
+            monitoraggio-tempi-procedimentali:
               term: Monitoraggio tempi procedimentali
-            dichiarazioni-sostitutive-acquisizione-ufficio-dati-dlgs33-2013:
+            dichiarazioni-sostitutive-acquisizione-ufficio-dati:
               term: Dichiarazioni sostitutive e acquisizione d'ufficio dei dati
-        provvedimenti-dlgs33-2013:
+        provvedimenti:
           term: Provvedimenti
           childs:
-            provvedimenti-dirigenti-dlgs33-2013:
+            provvedimenti-dirigenti:
               term: Provvedimenti dirigenti
-            provvedimenti-organi-indirizzo-politico-dlgs33-2013:
+            provvedimenti-organi-indirizzo-politico:
               term: Provvedimenti organi indirizzo-politico
-        controlli-imprese-dlgs33-2013:
+        controlli-imprese:
           term: Controlli sulle imprese
-        bandi-gara-contratti-dlgs33-2013:
+        bandi-gara-contratti:
           term: Bandi di gara e contratti
-        sovvenzioni-contributi-sussidi-vantaggi-economici-dlgs33-2013:
+        sovvenzioni-contributi-sussidi-vantaggi-economici:
           term:
             - Sovvenzioni, contributi, sussidi, vantaggi economici
           childs:
-            criteri-modalita-dlgs33-2013:
+            criteri-modalita:
               term: Criteri e modalità
-            atti-concessione-dlgs33-2013:
+            atti-concessione:
               term: Atti di concessione
-        bilanci-dlgs33-2013:
+        bilanci:
           term: Bilanci
           childs:
-            bilancio-preventivo-consuntivo-dlgs33-2013:
+            bilancio-preventivo-consuntivo:
               term: Bilancio preventivo e consuntivo
-            piano-indicatori-risultati-attesi-bilancio-dlgs33-2013:
+            piano-indicatori-risultati-attesi-bilancio:
               term: Piano degli indicatori e risultati attesi di bilancio
-        beni-immobili-gestione-patrimonio-dlgs33-2013:
+        beni-immobili-gestione-patrimonio:
           term: Beni immobili e gestione patrimonio
           childs:
-            patrimonio-immobiliare-dlgs33-2013:
+            patrimonio-immobiliare:
               term: Patrimonio immobiliare
-            canoni-locazione-affitto-dlgs33-2013:
+            canoni-locazione-affitto:
               term: Canoni di locazione o affitto
-        controlli-rilievi-amministrazione-dlgs33-2013:
+        controlli-rilievi-amministrazione:
           term: Controlli e rilievi sull'amministrazione
-        servizi-erogati-dlgs33-2013:
+        servizi-erogati:
           term: Servizi erogati
           childs:
-            carta-servizi-standard-qualita-dlgs33-2013:
+            carta-servizi-standard-qualita:
               term: Carta dei servizi e standard di qualità
-            costi-contabilizzati-dlgs33-2013:
+            costi-contabilizzati:
               term: Costi contabilizzati
-            tempi-medi-erogazione-servizi-dlgs33-2013:
+            tempi-medi-erogazione-servizi:
               term: Tempi medi di erogazione dei servizi
-            liste-attesa-dlgs33-2013:
+            liste-attesa:
               term: Liste di attesa
-        pagamenti-amministrazione-dlgs33-2013:
+        pagamenti-amministrazione:
           term: Pagamenti dell'amministrazione
-        opere-pubbliche-dlgs33-2013:
+        opere-pubbliche:
           term: Opere pubbliche
-        pianificazione-governo-territorio-dlgs33-2013:
+        pianificazione-governo-territorio:
           term: Pianificazione e governo del territorio
-        informazioni-ambientali-dlgs33-2013:
+        informazioni-ambientali:
           term: Informazioni ambientali
-        strutture-sanitarie-private-accreditate-dlgs33-2013:
+        strutture-sanitarie-private-accreditate:
           term: Strutture sanitarie private accreditate
-        interventi-straordinari-emergenza-dlgs33-2013:
+        interventi-straordinari-emergenza:
           term: Interventi straordinari e di emergenza
-        altri-contenuti-dlgs33-2013:
+        altri-contenuti:
           term: Altri contenuti
-

@@ -33,7 +33,7 @@ import java.util.*;
 @Setter
 public class RuleConfiguration {
 
-    protected String rulesRoot;
+    protected String defaultRule;
     protected String anchorRegex;
     protected String hrefRegex;
     protected Integer maxLengthContent;
@@ -42,11 +42,11 @@ public class RuleConfiguration {
     private List<Character> searchTokens;
 
     protected Map<String, Rule> rules;
-    protected Map<String, Rule> flattenRules;
+    protected Map<String, Map<String, Rule>> flattenRules;
 
     @PostConstruct
     public void postConstruct() {
-        flattenRules = new HashMap<String, Rule>();
+        flattenRules = new HashMap<String, Map<String, Rule>>();
         rules
                 .entrySet()
                 .stream()
@@ -58,21 +58,40 @@ public class RuleConfiguration {
     private void addToFlattenRules(String key, Rule rule) {
         if (flattenRules.containsKey(key))
             throw new RuntimeException("There is rule alredy registered: " + key);
-        flattenRules.put(key, rule);
+        Map<String, Rule>flattenRulesChild = new HashMap<String, Rule>();
+        flattenRulesChild.put(key, rule);
+        flattenRules.put(key, flattenRulesChild);
+
         Optional.ofNullable(rule.getChilds())
                 .orElse(Collections.emptyMap())
                 .entrySet()
                 .stream()
-                .forEach(entry -> addToFlattenRules(entry.getKey(), entry.getValue()));
+                .forEach(entry -> addToFlattenRulesChild(flattenRulesChild, entry.getKey(), entry.getValue()));
     }
 
-    public Rule getRule(String ruleName) {
-        return Optional.ofNullable(flattenRules.get(ruleName))
-                .orElseThrow(() -> new RuleNotFoundException());
+    private void addToFlattenRulesChild(Map<String, Rule>flattenRulesChild, String key, Rule rule) {
+        flattenRulesChild.put(key, rule);
+        Optional.ofNullable(rule.getChilds())
+                .orElse(Collections.emptyMap())
+                .entrySet()
+                .stream()
+                .forEach(entry -> addToFlattenRulesChild(flattenRulesChild, entry.getKey(), entry.getValue()));
+    }
+
+    public Rule getRule(Optional<String> rootRule, Optional<String> ruleName) {
+        if(!ruleName.isPresent()) {
+            return Optional.ofNullable(flattenRules.get(rootRule.orElse(defaultRule)))
+                    .orElseGet(() -> flattenRules.get(defaultRule))
+                    .get(rootRule.orElse(defaultRule));
+        } else {
+            return Optional.ofNullable(flattenRules.get(rootRule.orElse(defaultRule)))
+                    .orElseGet(() -> flattenRules.get(defaultRule))
+                    .get(ruleName.orElseThrow(RuleNotFoundException::new));
+        }
     }
 
     public Rule getRootRule() {
-        return getRule(rulesRoot);
+        return getRule(Optional.of(defaultRule), Optional.empty());
     }
 
 }

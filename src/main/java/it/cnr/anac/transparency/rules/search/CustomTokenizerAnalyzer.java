@@ -61,8 +61,11 @@ public class CustomTokenizerAnalyzer extends StopwordAnalyzerBase {
 
         static {
             try {
-                DEFAULT_STOP_SET = WordlistLoader.getSnowballWordSet(IOUtils.getDecodingReader(SnowballFilter.class,
-                        DEFAULT_STOPWORD_FILE, StandardCharsets.UTF_8));
+                DEFAULT_STOP_SET =
+                        WordlistLoader.getSnowballWordSet(
+                                IOUtils.requireResourceNonNull(
+                                        SnowballFilter.class.getResourceAsStream(DEFAULT_STOPWORD_FILE),
+                                        DEFAULT_STOPWORD_FILE));
             } catch (IOException ex) {
                 // default set should always be present as it is part of the
                 // distribution (JAR)

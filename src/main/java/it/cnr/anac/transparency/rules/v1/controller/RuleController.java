@@ -73,17 +73,22 @@ public class RuleController {
     @Operation(
             summary = "Applicazione di una singola regola allo stream in base64 passato in input.",
             description = "Il servizio accetta in input una stringa in base64 contenente la pagina html e il nome logico" +
-                    " di una regola da applicare, in alternativa viene aplicata la regola root.")
+                    " di una regola da applicare, in alternativa viene applicata la regola root.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Il termine della regola è stato trovato e " +
                     "viene restituito un oggetto json con le informazioni sullo score"),
             @ApiResponse(responseCode = "400", description = "Il termine della regola non è stato trovato o la regola non esiste.")
     })
     @PostMapping
-    public ResponseEntity post(@RequestBody String content, @RequestParam(name = "ruleName") Optional<String> ruleName) {
+    public ResponseEntity post(
+            @RequestBody String content,
+            @RequestParam(name = "rootRule", required = false) Optional<String> rootRule,
+            @RequestParam(name = "ruleName") Optional<String> ruleName
+    ) {
         try {
             final RuleResponse ruleResponse = ruleService.executeRule(
                     ruleService.base64Decode(content),
+                    rootRule,
                     ruleName
             );
             return ResponseEntity.ok().body(ruleMapper.convert(ruleResponse));
@@ -107,20 +112,24 @@ public class RuleController {
             @ApiResponse(responseCode = "400", description = "La regola padre non esiste.")
     })
     @PostMapping("/child")
-    public ResponseEntity<List<RuleResponseDto>> postChild(@RequestBody String content, @RequestParam(name = "ruleName") Optional<String> ruleName, @RequestParam(name = "allRuleMustBePresent", required = false, defaultValue = "false") Boolean allRuleMustBePresent) {
+    public ResponseEntity<List<RuleResponseDto>> postChild(
+            @RequestBody String content,
+            @RequestParam(name = "rootRule", required = false) Optional<String> rootRule,
+            @RequestParam(name = "ruleName") Optional<String> ruleName,
+            @RequestParam(name = "allRuleMustBePresent", required = false, defaultValue = "false") Boolean allRuleMustBePresent) {
         try {
             final String contentDecoded = ruleService.base64Decode(content);
-            List<RuleResponse> ruleResponses = ruleService.executeChildRule(contentDecoded, ruleName);
+            List<RuleResponse> ruleResponses = ruleService.executeChildRule(contentDecoded, rootRule, ruleName);
             List<RuleResponse> rulesFound = ruleResponses
                     .stream()
                     .filter(ruleResponse -> !ruleResponse.getStatus().equals(HttpStatus.NOT_FOUND)).collect(Collectors.toList());
-            if (rulesFound.size() != ruleService.childRules(ruleName).size()) {
-                ruleResponses = ruleService.executeChildRuleAlternative(contentDecoded, ruleName, rulesFound, Boolean.FALSE);
+            if (rulesFound.size() != ruleService.childRules(rootRule, ruleName).size()) {
+                ruleResponses = ruleService.executeChildRuleAlternative(contentDecoded, rootRule, ruleName, rulesFound, Boolean.FALSE);
                 rulesFound = ruleResponses
                         .stream()
                         .filter(ruleResponse -> !ruleResponse.getStatus().equals(HttpStatus.NOT_FOUND)).collect(Collectors.toList());
-                if (rulesFound.size() != ruleService.childRules(ruleName).size()) {
-                    ruleResponses = ruleService.executeChildRuleAlternative(contentDecoded, ruleName, rulesFound, Boolean.TRUE);
+                if (rulesFound.size() != ruleService.childRules(rootRule, ruleName).size()) {
+                    ruleResponses = ruleService.executeChildRuleAlternative(contentDecoded, rootRule, ruleName, rulesFound, Boolean.TRUE);
                 }
             }
             final List<RuleResponse> ruleResponseOK = ruleResponses.stream().filter(
@@ -128,8 +137,8 @@ public class RuleController {
             if (allRuleMustBePresent &&
                     ruleResponses.stream()
                     .filter(ruleResponse -> ruleResponse.getStatus().equals(HttpStatus.OK)).count() <
-                            ruleService.childRules(ruleName).size()) {
-                log.info("Found {} rules but total are:{}", ruleResponseOK.size(), ruleService.childRules(ruleName).size());
+                            ruleService.childRules(rootRule, ruleName).size()) {
+                log.info("Found {} rules but total are:{}", ruleResponseOK.size(), ruleService.childRules(rootRule, ruleName).size());
                 return ResponseEntity.notFound().build();
             }
             if (!ruleResponses.stream().filter(ruleResponse -> !ruleResponse.getStatus().equals(HttpStatus.NOT_FOUND)).findAny().isPresent()) {
@@ -149,5 +158,4 @@ public class RuleController {
             return ResponseEntity.internalServerError().build();
         }
     }
-
 }

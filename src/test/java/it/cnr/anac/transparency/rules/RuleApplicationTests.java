@@ -78,16 +78,16 @@ class RuleApplicationTests {
 	void contextLoads() {
 		final Map<String, Rule> rules = ruleConfiguration.getRules();
 		Assertions.assertEquals(Boolean.FALSE, rules.isEmpty());
-		final Map<String, Rule> flattenRules = ruleConfiguration.getFlattenRules();
+		final Map<String,Map<String, Rule>> flattenRules = ruleConfiguration.getFlattenRules();
 		Assertions.assertEquals(Boolean.FALSE, flattenRules.isEmpty());
-		Assertions.assertEquals(Boolean.TRUE, Optional.ofNullable(flattenRules.get(TIPOLOGIE_PROCEDIMENTO)).isPresent());
+		Assertions.assertEquals(Boolean.TRUE, Optional.ofNullable(ruleConfiguration.getRule(Optional.empty(),Optional.of(TIPOLOGIE_PROCEDIMENTO))).isPresent());
 		Assertions.assertEquals(
 				22,
-				Optional.ofNullable(flattenRules.get(ruleConfiguration.getRulesRoot()))
+				Optional.ofNullable(flattenRules.get(ruleConfiguration.getDefaultRule()))
+						.flatMap(stringRuleMap -> Optional.ofNullable(stringRuleMap.get(ruleConfiguration.getDefaultRule())))
 						.flatMap(rule -> Optional.ofNullable(rule.getChilds()))
 						.map(Map::size)
 						.orElse(0)
-
 		);
 	}
 
@@ -98,7 +98,7 @@ class RuleApplicationTests {
 			ruleService.executeRule(new BufferedReader(
 					new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 					.lines()
-					.collect(Collectors.joining("\n")), Optional.empty());
+					.collect(Collectors.joining("\n")), Optional.empty(), Optional.empty());
 		});
 	}
 
@@ -109,7 +109,7 @@ class RuleApplicationTests {
 			final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
 					new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 					.lines()
-					.collect(Collectors.joining("\n")), Optional.empty());
+					.collect(Collectors.joining("\n")), Optional.empty(),Optional.empty());
 		});
 	}
 	@Test
@@ -118,7 +118,7 @@ class RuleApplicationTests {
 		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")), Optional.empty());
+				.collect(Collectors.joining("\n")), Optional.empty(), Optional.empty());
 		Assertions.assertEquals("/", ruleResponse.getUrl());
 	}
 	@Test
@@ -127,7 +127,7 @@ class RuleApplicationTests {
 		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")), Optional.empty());
+				.collect(Collectors.joining("\n")), Optional.empty(), Optional.empty());
 		Assertions.assertEquals(HttpStatus.OK, ruleResponse.getStatus());
 		Assertions.assertEquals("/", ruleResponse.getUrl());
 	}
@@ -138,7 +138,7 @@ class RuleApplicationTests {
 			ruleService.executeRule(new BufferedReader(
 					new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 					.lines()
-					.collect(Collectors.joining("\n")), Optional.empty());
+					.collect(Collectors.joining("\n")), Optional.empty(), Optional.empty());
 		});
 	}
 
@@ -148,7 +148,7 @@ class RuleApplicationTests {
 		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")), Optional.empty());
+				.collect(Collectors.joining("\n")), Optional.empty(), Optional.empty());
 		Assertions.assertEquals(ruleResponse.getStatus(), HttpStatus.OK);
 		Assertions.assertEquals("/prova-apici-singoli4", ruleResponse.getUrl());
 	}
@@ -159,7 +159,7 @@ class RuleApplicationTests {
 		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")), Optional.of("rendiconti-gruppi-consiliari-regionali-provinciali"));
+				.collect(Collectors.joining("\n")), Optional.empty(), Optional.of("rendiconti-gruppi-consiliari-regionali-provinciali"));
 		Assertions.assertEquals(ruleResponse.getStatus(), HttpStatus.OK);
 		Assertions.assertEquals("https://cosenza.etrasparenza.it/pagina710_rendiconti-gruppi-consiliari-regionaliprovinciali.html", ruleResponse.getUrl());
 	}
@@ -170,7 +170,7 @@ class RuleApplicationTests {
 		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")), Optional.of("provvedimenti-organi-indirizzo-politico"));
+				.collect(Collectors.joining("\n")), Optional.empty(), Optional.of("provvedimenti-organi-indirizzo-politico"));
 		Assertions.assertEquals(ruleResponse.getStatus(), HttpStatus.OK);
 		Assertions.assertEquals("https://cosenza.etrasparenza.it/pagina725_provvedimenti-organi-indirizzo-politico.html", ruleResponse.getUrl());
 	}
@@ -181,7 +181,7 @@ class RuleApplicationTests {
 		final RuleResponse ruleResponse = ruleService.executeRule(new BufferedReader(
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")), Optional.empty());
+				.collect(Collectors.joining("\n")), Optional.empty(), Optional.empty());
 		Assertions.assertEquals("/amministrazione-trasparente", ruleResponse.getUrl());
 	}
 
@@ -189,7 +189,7 @@ class RuleApplicationTests {
 		final ResponseEntity<List<RuleResponseDto>> ruleResponses = ruleController.postChild(Base64.getEncoder().encodeToString(new BufferedReader(
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Boolean.FALSE);
+				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.empty(), Boolean.FALSE);
 
 		Assertions.assertEquals(22, ruleResponses.getBody().size());
 		Assertions.assertEquals(
@@ -221,7 +221,7 @@ class RuleApplicationTests {
 		final ResponseEntity<List<RuleResponseDto>> ruleResponses = ruleController.postChild(Base64.getEncoder().encodeToString(new BufferedReader(
 				new InputStreamReader(this.getClass().getResourceAsStream("/amministrazione_child4.html"), StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.of("disposizioni-generali"), Boolean.FALSE);
+				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.of("disposizioni-generali"), Boolean.FALSE);
 		Assertions.assertEquals(3, ruleResponses.getBody().size());
 		Assertions.assertEquals(2, ruleResponses.getBody().stream().filter(ruleResponseDto -> ruleResponseDto.getStatus() == 200).count());
 	}
@@ -231,7 +231,7 @@ class RuleApplicationTests {
 		final ResponseEntity<List<RuleResponseDto>> ruleResponses = ruleController.postChild(Base64.getEncoder().encodeToString(new BufferedReader(
 				new InputStreamReader(this.getClass().getResourceAsStream("/amministrazione_child5.html"), StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.of("personale"), Boolean.FALSE);
+				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.of("personale"), Boolean.FALSE);
 		Assertions.assertEquals(12, ruleResponses.getBody().size());
 		Assertions.assertEquals(12, ruleResponses.getBody().stream().filter(ruleResponseDto -> ruleResponseDto.getStatus() == 200).count());
 	}
@@ -241,7 +241,7 @@ class RuleApplicationTests {
 		final ResponseEntity<List<RuleResponseDto>> ruleResponses = ruleController.postChild(Base64.getEncoder().encodeToString(new BufferedReader(
 				new InputStreamReader(this.getClass().getResourceAsStream("/amministrazione_child6.html"), StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.of("servizi-erogati"), Boolean.FALSE);
+				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.of("servizi-erogati"), Boolean.FALSE);
 		Assertions.assertEquals(5, ruleResponses.getBody().size());
 		Assertions.assertEquals(2, ruleResponses.getBody().stream().filter(ruleResponseDto -> ruleResponseDto.getStatus() == 200).count());
 	}
@@ -251,7 +251,7 @@ class RuleApplicationTests {
 		final ResponseEntity<List<RuleResponseDto>> ruleResponses = ruleController.postChild(Base64.getEncoder().encodeToString(new BufferedReader(
 				new InputStreamReader(this.getClass().getResourceAsStream("/amministrazione_child7.html"), StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.of("consulenti-collaboratori"), Boolean.FALSE);
+				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.of("consulenti-collaboratori"), Boolean.FALSE);
 		Assertions.assertEquals(1, ruleResponses.getBody().size());
 		Assertions.assertEquals(1, ruleResponses.getBody().stream().filter(ruleResponseDto -> ruleResponseDto.getStatus() == 200).count());
 	}
@@ -261,7 +261,7 @@ class RuleApplicationTests {
 		final ResponseEntity<List<RuleResponseDto>> ruleResponses = ruleController.postChild(Base64.getEncoder().encodeToString(new BufferedReader(
 				new InputStreamReader(this.getClass().getResourceAsStream("/amministrazione_child8.html"), StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.of("accesso-civico"), Boolean.FALSE);
+				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.of("accesso-civico"), Boolean.FALSE);
 		Assertions.assertEquals(2, ruleResponses.getBody().size());
 		Assertions.assertEquals(2, ruleResponses.getBody().stream().filter(ruleResponseDto -> ruleResponseDto.getStatus() == 200).count());
 	}
@@ -269,10 +269,10 @@ class RuleApplicationTests {
 	@Test
 	void amministrazione1() throws IOException, URISyntaxException, RuleException {
 		Document doc = Jsoup.parse(new URL(AMMINISTRAZIONE1_URL), TIMEOUT_MILLIS);
-		final RuleResponse ruleResponse = ruleService.executeRule(doc.html(), Optional.empty());
+		final RuleResponse ruleResponse = ruleService.executeRule(doc.html(), Optional.empty(), Optional.empty());
 
 		Document doc2 = Jsoup.parse(getURL(ruleResponse.getUrl(), AMMINISTRAZIONE1_URL), TIMEOUT_MILLIS);
-		final List<RuleResponse> ruleResponse2 = ruleService.executeChildRule(doc2.html(), Optional.of(ruleResponse.getRuleName()));
+		final List<RuleResponse> ruleResponse2 = ruleService.executeChildRule(doc2.html(), Optional.empty(), Optional.of(ruleResponse.getRuleName()));
 		Assertions.assertEquals(22, ruleResponse2.size());
 		Assertions.assertEquals(
 				0,
@@ -284,7 +284,7 @@ class RuleApplicationTests {
 		);
 		ruleResponse2.stream().filter(ruleResponse1 -> !ruleResponse1.getLeaf()).forEach(r -> {
 			try {
-				final List<RuleResponse> ruleResponse3 = ruleService.executeChildRule(doc2.html(), Optional.of(r.getRuleName()));
+				final List<RuleResponse> ruleResponse3 = ruleService.executeChildRule(doc2.html(), Optional.empty(), Optional.of(r.getRuleName()));
 				Assertions.assertEquals(Boolean.FALSE, ruleResponse3.isEmpty());
 			} catch (IOException e) {
 				throw new RuntimeException(e);

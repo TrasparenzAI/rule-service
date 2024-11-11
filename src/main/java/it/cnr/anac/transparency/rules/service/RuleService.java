@@ -32,8 +32,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -76,34 +74,32 @@ public class RuleService {
         return new LuceneSearch(anchors, createCustomAnalyzer(), ruleConfiguration.getMaxLengthContent());
     }
 
-    public RuleResponse executeRule(Optional<String> ruleName, List<Anchor> anchors) throws RuleNotFoundException, IOException {
-        final Rule rule = ruleName
-                .flatMap(s -> Optional.ofNullable(ruleConfiguration.getRule(s)))
+    public RuleResponse executeRule(Optional<String> rootRule, Optional<String> ruleName, List<Anchor> anchors) throws RuleNotFoundException, IOException {
+        final Rule rule = Optional.ofNullable(ruleConfiguration.getRule(rootRule, ruleName))
                 .orElseGet(() -> ruleConfiguration.getRootRule());
         log.debug("Founded {} anchor in content for rule {}", anchors.size(), ruleName.orElse("empty"));
         LuceneSearch luceneSearch = createLuceneSearch(anchors);
         return findTermInValues(luceneSearch, ruleName, rule);
     }
 
-    public RuleResponse executeRule(String content, Optional<String> ruleName) throws RuleNotFoundException, IOException, RuleException {
+    public RuleResponse executeRule(String content, Optional<String> rootRule, Optional<String> ruleName) throws RuleNotFoundException, IOException, RuleException {
         try {
-            return executeRule(ruleName, regularExpressionAnchorService.find(content, Boolean.FALSE));
+            return executeRule(rootRule, ruleName, regularExpressionAnchorService.find(content, Boolean.FALSE));
         } catch (RuleNotFoundException _ex) {
-            return executeRuleAlternative(content, ruleName);
+            return executeRuleAlternative(content, rootRule, ruleName);
         }
     }
-    public RuleResponse executeRuleAlternative(String content, Optional<String> ruleName) throws RuleNotFoundException, IOException, RuleException {
-        return executeRule(ruleName, anchorsWidthJsoup(content, Boolean.FALSE));
+    public RuleResponse executeRuleAlternative(String content, Optional<String> rootRule, Optional<String> ruleName) throws RuleNotFoundException, IOException, RuleException {
+        return executeRule(rootRule, ruleName, anchorsWidthJsoup(content, Boolean.FALSE));
     }
 
-    public Map<String, Rule> childRules(Optional<String> ruleName) {
-        return ruleName
-                .flatMap(s -> Optional.ofNullable(ruleConfiguration.getRule(s)))
+    public Map<String, Rule> childRules(Optional<String> rootRule, Optional<String> ruleName) {
+        return Optional.ofNullable(ruleConfiguration.getRule(rootRule, ruleName))
                 .orElseGet(() -> ruleConfiguration.getRootRule())
                 .getChilds();
     }
-    public List<RuleResponse> executeChildRule(String content, Optional<String> ruleName, List<Anchor> anchors, List<RuleResponse> rulesFound) throws RuleNotFoundException, IOException {
-        final Map<String, Rule> childs = childRules(ruleName);
+    public List<RuleResponse> executeChildRule(String content, Optional<String> rootRule, Optional<String> ruleName, List<Anchor> anchors, List<RuleResponse> rulesFound) throws RuleNotFoundException, IOException {
+        final Map<String, Rule> childs = childRules(rootRule, ruleName);
         log.debug("Founded {} anchor in content for rule {}", anchors.size(), ruleName.orElse("empty"));
         LuceneSearch luceneSearch = createLuceneSearch(anchors);
         return childs.entrySet()
@@ -122,8 +118,7 @@ public class RuleService {
                                 null,
                                 entry.getKey(),
                                 String.join(",", ruleConfiguration
-                                        .getFlattenRules()
-                                        .get(entry.getKey())
+                                        .getRule(rootRule, Optional.of(entry.getKey()))
                                         .getTerm()
                                         .stream()
                                         .map(Term::getKey)
@@ -138,12 +133,12 @@ public class RuleService {
                 })
                 .collect(Collectors.toList());
     }
-    public List<RuleResponse> executeChildRule(String content, Optional<String> ruleName) throws RuleNotFoundException, IOException {
-        return executeChildRule(content, ruleName, regularExpressionAnchorService.find(content, Boolean.FALSE), Collections.emptyList());
+    public List<RuleResponse> executeChildRule(String content, Optional<String> rootRule, Optional<String> ruleName) throws RuleNotFoundException, IOException {
+        return executeChildRule(content, rootRule, ruleName, regularExpressionAnchorService.find(content, Boolean.FALSE), Collections.emptyList());
     }
 
-    public List<RuleResponse> executeChildRuleAlternative(String content, Optional<String> ruleName, List<RuleResponse> rulesFound, boolean allTags) throws RuleNotFoundException, IOException {
-        return executeChildRule(content, ruleName, anchorsWidthJsoup(content, allTags), rulesFound);
+    public List<RuleResponse> executeChildRuleAlternative(String content, Optional<String> rootRule, Optional<String> ruleName, List<RuleResponse> rulesFound, boolean allTags) throws RuleNotFoundException, IOException {
+        return executeChildRule(content, rootRule, ruleName, anchorsWidthJsoup(content, allTags), rulesFound);
     }
 
     private RuleResponse findTermInValues(LuceneSearch luceneSearch, Optional<String> ruleName, Rule rule, Term term) throws RuleNotFoundException {
@@ -152,7 +147,7 @@ public class RuleService {
             if (luceneResult.isPresent()) {
                 log.debug("Term {} - find {} URL: {}", rule.getTerm(),
                         luceneResult.get().getContent(), luceneResult.get().getUrl());
-                final String r = ruleName.orElse(ruleConfiguration.getRulesRoot());
+                final String r = ruleName.orElse(ruleConfiguration.getDefaultRule());
                 return new RuleResponse(
                         luceneResult.get().getUrl(),
                         r,
