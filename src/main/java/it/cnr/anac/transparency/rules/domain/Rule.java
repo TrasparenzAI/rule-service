@@ -26,6 +26,7 @@ import java.util.Map;
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
+@NoArgsConstructor
 @ToString
 public class Rule {
     @EqualsAndHashCode.Include

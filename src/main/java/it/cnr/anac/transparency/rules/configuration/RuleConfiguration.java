@@ -17,6 +17,9 @@
 
 package it.cnr.anac.transparency.rules.configuration;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.cnr.anac.transparency.rules.domain.Rule;
 import it.cnr.anac.transparency.rules.exception.RuleNotFoundException;
 import jakarta.annotation.PostConstruct;
@@ -41,11 +44,21 @@ public class RuleConfiguration {
     protected List<String> tagAttributes;
     private List<Character> searchTokens;
 
+    protected String jsonrules;
+
     protected Map<String, Rule> rules;
     protected Map<String, Map<String, Rule>> flattenRules;
 
     @PostConstruct
     public void postConstruct() {
+        Optional.ofNullable(jsonrules)
+                .ifPresent(s -> {
+                    try {
+                        rules = new ObjectMapper().readValue(jsonrules, new TypeReference<Map<String,Rule>>(){});
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
         flattenRules = new HashMap<String, Map<String, Rule>>();
         rules
                 .entrySet()
