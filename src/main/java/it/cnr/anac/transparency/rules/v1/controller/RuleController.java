@@ -121,6 +121,9 @@ public class RuleController {
             @RequestParam(name = "ruleName") Optional<String> ruleName,
             @RequestParam(name = "allRuleMustBePresent", required = false, defaultValue = "false") Boolean allRuleMustBePresent) {
         try {
+            if (rootRule.isPresent() && ruleName.filter(s -> s.equalsIgnoreCase(ruleConfiguration.getDefaultRule())).isPresent()){
+                ruleName = rootRule;
+            }
             final String contentDecoded = ruleService.base64Decode(content);
             List<RuleResponse> ruleResponses = ruleService.executeChildRule(contentDecoded, rootRule, ruleName);
             List<RuleResponse> rulesFound = ruleResponses
