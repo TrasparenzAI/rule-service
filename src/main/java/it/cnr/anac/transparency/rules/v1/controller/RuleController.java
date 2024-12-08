@@ -91,9 +91,6 @@ public class RuleController {
                     rootRule,
                     ruleName
             );
-            if (rootRule.isPresent() && rootRule.equals(ruleName)) {
-                ruleResponse.setRuleName(ruleConfiguration.getDefaultRule());
-            }
             return ResponseEntity.ok().body(ruleMapper.convert(ruleResponse));
         } catch (RuleException e) {
             return ResponseEntity.status(e.getHttpStatus()).body(e.getMessage());
