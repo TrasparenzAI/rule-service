@@ -12,5 +12,6 @@ public class Oauth2Properties {
      * Name of the roles
      */
     private String[] roles;
+    private boolean enabled;
 
 }

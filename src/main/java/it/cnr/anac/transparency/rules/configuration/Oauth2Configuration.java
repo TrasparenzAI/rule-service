@@ -1,6 +1,5 @@
 package it.cnr.anac.transparency.rules.configuration;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +23,6 @@ import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
-@ConditionalOnProperty(name = "security.oauth2.enabled", havingValue = "true")
 @EnableConfigurationProperties(Oauth2Properties.class)
 public class Oauth2Configuration {
     private final Oauth2Properties properties;
@@ -35,14 +33,16 @@ public class Oauth2Configuration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        if (properties.isEnabled()) {
+            http.authorizeRequests(expressionInterceptUrlRegistry -> {
+                expressionInterceptUrlRegistry
+                        .anyRequest()
+                        .hasAnyRole(properties.getRoles());
+            });
+        }
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
-                .authorizeRequests(expressionInterceptUrlRegistry -> {
-                    expressionInterceptUrlRegistry
-                            .anyRequest()
-                            .hasAnyRole(properties.getRoles());
-                })
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .oauth2ResourceServer(httpSecurityOAuth2ResourceServerConfigurer -> {
                     httpSecurityOAuth2ResourceServerConfigurer.jwt(jwtConfigurer -> {
