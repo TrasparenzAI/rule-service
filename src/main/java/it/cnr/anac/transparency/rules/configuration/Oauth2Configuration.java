@@ -4,6 +4,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.http.HttpMethod;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -35,9 +36,11 @@ public class Oauth2Configuration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         if (properties.isEnabled()) {
             http.authorizeRequests(expressionInterceptUrlRegistry -> {
-                expressionInterceptUrlRegistry
-                        .anyRequest()
-                        .hasAnyRole(properties.getRoles());
+                properties
+                        .getRoles()
+                        .forEach((key, value) ->
+                                expressionInterceptUrlRegistry.requestMatchers(HttpMethod.valueOf(key)).hasAnyRole(value)
+                        );
             });
         }
         http

@@ -36,9 +36,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.math.BigInteger;
-import java.math.RoundingMode;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -56,7 +53,7 @@ public class RuleController {
             summary = "Visualizzazione dell'albero delle regole.",
             description = "Il servizio recupera dalla configurazione l'albero delle regole e lo presenta come json")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Restitutito l'albero delle regole.")
+            @ApiResponse(responseCode = "200", description = "Restituito l'albero delle regole.")
     })
     @GetMapping
     public ResponseEntity<Map<String, RuleDto>> get() {

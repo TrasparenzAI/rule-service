@@ -22,7 +22,10 @@ spring:
 security:
   oauth2:
     enabled: false
-    roles: ADMIN,SUPERUSER
+    roles:
+      POST: ADMIN,SUPERUSER
+      PUT: ADMIN,SUPERUSER
+      DELETE: ADMIN,SUPERUSER
 
 default_rule: amministrazione-trasparente
 anchor_regex: <a[\s]+([^>]+)>((?<text>(.(?!\<\/a\>))*.))<\/a>
