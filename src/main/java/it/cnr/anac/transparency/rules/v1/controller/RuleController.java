@@ -113,13 +113,18 @@ public class RuleController {
             @RequestBody String content,
             @RequestParam(name = "rootRule", required = false) Optional<String> rootRule,
             @RequestParam(name = "ruleName") Optional<String> ruleName,
-            @RequestParam(name = "allRuleMustBePresent", required = false, defaultValue = "false") Boolean allRuleMustBePresent) {
+            @RequestParam(name = "allRuleMustBePresent", required = false, defaultValue = "false") Boolean allRuleMustBePresent,
+            @RequestParam(name = "forceJsoup", required = false, defaultValue = "false") Boolean forceJsoup) {
         try {
             final String contentDecoded = ruleService.base64Decode(content);
-            List<RuleResponse> ruleResponses = ruleService.executeChildRule(contentDecoded, rootRule, ruleName);
-            List<RuleResponse> rulesFound = ruleResponses
-                    .stream()
-                    .filter(ruleResponse -> !ruleResponse.getStatus().equals(HttpStatus.NOT_FOUND)).collect(Collectors.toList());
+            List<RuleResponse> ruleResponses = Collections.emptyList();
+            List<RuleResponse> rulesFound = Collections.emptyList();
+            if (!forceJsoup) {
+                ruleResponses = ruleService.executeChildRule(contentDecoded, rootRule, ruleName);
+                rulesFound = ruleResponses
+                        .stream()
+                        .filter(ruleResponse -> !ruleResponse.getStatus().equals(HttpStatus.NOT_FOUND)).collect(Collectors.toList());
+            }
             if (rulesFound.size() != ruleService.childRules(rootRule, ruleName).size()) {
                 ruleResponses = ruleService.executeChildRuleAlternative(contentDecoded, rootRule, ruleName, rulesFound, Boolean.FALSE);
                 rulesFound = ruleResponses

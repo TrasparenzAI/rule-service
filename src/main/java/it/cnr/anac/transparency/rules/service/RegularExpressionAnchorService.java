@@ -20,12 +20,13 @@ package it.cnr.anac.transparency.rules.service;
 import it.cnr.anac.transparency.rules.configuration.RuleConfiguration;
 import it.cnr.anac.transparency.rules.domain.Anchor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,6 +50,13 @@ public class RegularExpressionAnchorService implements AnchorService{
                 final String href = matcherHref.group(HREF);
                 final String text = matcher.group(TEXT);
                 result.add(Anchor.newInstance(href, StringEscapeUtils.unescapeHtml4(text), "text"));
+                result.add(Anchor.newInstance(
+                        href,
+                        Optional.ofNullable(StringEscapeUtils.unescapeHtml4(
+                                text.replaceAll("\\<[^>]*>","")
+                        )).map(String::trim).orElse(""),
+                        "text"
+                ));
                 log.debug("Find anchor width href: {} and text: {}", href, text);
             } catch (IllegalStateException _ex) {
                 log.debug("No match found in attributes: {}", attributes);

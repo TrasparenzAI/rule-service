@@ -150,7 +150,7 @@ class RuleApplicationTests {
 				.lines()
 				.collect(Collectors.joining("\n")), Optional.empty(), Optional.empty());
 		Assertions.assertEquals(ruleResponse.getStatus(), HttpStatus.OK);
-		Assertions.assertEquals("/prova-apici-singoli4", ruleResponse.getUrl());
+		Assertions.assertEquals("/prova-apici-singoli3", ruleResponse.getUrl());
 	}
 
 	@Test
@@ -189,7 +189,7 @@ class RuleApplicationTests {
 		final ResponseEntity<List<RuleResponseDto>> ruleResponses = ruleController.postChild(Base64.getEncoder().encodeToString(new BufferedReader(
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.empty(), Boolean.FALSE);
+				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.empty(), Boolean.FALSE, Boolean.FALSE);
 
 		Assertions.assertEquals(22, ruleResponses.getBody().size());
 		Assertions.assertEquals(
@@ -221,7 +221,7 @@ class RuleApplicationTests {
 		final ResponseEntity<List<RuleResponseDto>> ruleResponses = ruleController.postChild(Base64.getEncoder().encodeToString(new BufferedReader(
 				new InputStreamReader(this.getClass().getResourceAsStream("/amministrazione_child4.html"), StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.of("disposizioni-generali"), Boolean.FALSE);
+				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.of("disposizioni-generali"), Boolean.FALSE, Boolean.FALSE);
 		Assertions.assertEquals(3, ruleResponses.getBody().size());
 		Assertions.assertEquals(2, ruleResponses.getBody().stream().filter(ruleResponseDto -> ruleResponseDto.getStatus() == 200).count());
 	}
@@ -231,7 +231,7 @@ class RuleApplicationTests {
 		final ResponseEntity<List<RuleResponseDto>> ruleResponses = ruleController.postChild(Base64.getEncoder().encodeToString(new BufferedReader(
 				new InputStreamReader(this.getClass().getResourceAsStream("/amministrazione_child5.html"), StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.of("personale"), Boolean.FALSE);
+				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.of("personale"), Boolean.FALSE, Boolean.FALSE);
 		Assertions.assertEquals(12, ruleResponses.getBody().size());
 		Assertions.assertEquals(12, ruleResponses.getBody().stream().filter(ruleResponseDto -> ruleResponseDto.getStatus() == 200).count());
 	}
@@ -241,7 +241,7 @@ class RuleApplicationTests {
 		final ResponseEntity<List<RuleResponseDto>> ruleResponses = ruleController.postChild(Base64.getEncoder().encodeToString(new BufferedReader(
 				new InputStreamReader(this.getClass().getResourceAsStream("/amministrazione_child6.html"), StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.of("servizi-erogati"), Boolean.FALSE);
+				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.of("servizi-erogati"), Boolean.FALSE, Boolean.FALSE);
 		Assertions.assertEquals(5, ruleResponses.getBody().size());
 		Assertions.assertEquals(2, ruleResponses.getBody().stream().filter(ruleResponseDto -> ruleResponseDto.getStatus() == 200).count());
 	}
@@ -251,7 +251,7 @@ class RuleApplicationTests {
 		final ResponseEntity<List<RuleResponseDto>> ruleResponses = ruleController.postChild(Base64.getEncoder().encodeToString(new BufferedReader(
 				new InputStreamReader(this.getClass().getResourceAsStream("/amministrazione_child7.html"), StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.of("consulenti-collaboratori"), Boolean.FALSE);
+				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.of("consulenti-collaboratori"), Boolean.FALSE, Boolean.FALSE);
 		Assertions.assertEquals(1, ruleResponses.getBody().size());
 		Assertions.assertEquals(1, ruleResponses.getBody().stream().filter(ruleResponseDto -> ruleResponseDto.getStatus() == 200).count());
 	}
@@ -261,7 +261,7 @@ class RuleApplicationTests {
 		final ResponseEntity<List<RuleResponseDto>> ruleResponses = ruleController.postChild(Base64.getEncoder().encodeToString(new BufferedReader(
 				new InputStreamReader(this.getClass().getResourceAsStream("/amministrazione_child8.html"), StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.of("accesso-civico"), Boolean.FALSE);
+				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.of("accesso-civico"), Boolean.FALSE, Boolean.FALSE);
 		Assertions.assertEquals(2, ruleResponses.getBody().size());
 		Assertions.assertEquals(2, ruleResponses.getBody().stream().filter(ruleResponseDto -> ruleResponseDto.getStatus() == 200).count());
 	}
