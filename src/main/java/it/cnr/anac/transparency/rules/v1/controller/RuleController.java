@@ -36,6 +36,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -119,7 +120,7 @@ public class RuleController {
             final String contentDecoded = ruleService.base64Decode(content);
             List<RuleResponse> ruleResponses = Collections.emptyList();
             List<RuleResponse> rulesFound = Collections.emptyList();
-            if (!forceJsoup) {
+            if (!forceJsoup && contentDecoded.getBytes(StandardCharsets.UTF_8).length < ruleConfiguration.getMaxLengthContent()) {
                 ruleResponses = ruleService.executeChildRule(contentDecoded, rootRule, ruleName);
                 rulesFound = ruleResponses
                         .stream()

@@ -89,6 +89,7 @@ public class RuleService {
             return executeRuleAlternative(content, rootRule, ruleName);
         }
     }
+
     public RuleResponse executeRuleAlternative(String content, Optional<String> rootRule, Optional<String> ruleName) throws RuleNotFoundException, IOException, RuleException {
         return executeRule(rootRule, ruleName, anchorsWidthJsoup(content, Boolean.FALSE));
     }
@@ -98,6 +99,7 @@ public class RuleService {
                 .orElseGet(() -> ruleConfiguration.getRootRule())
                 .getChilds();
     }
+
     public List<RuleResponse> executeChildRule(String content, Optional<String> rootRule, Optional<String> ruleName, List<Anchor> anchors, List<RuleResponse> rulesFound) throws RuleNotFoundException, IOException {
         final Map<String, Rule> childs = childRules(rootRule, ruleName);
         log.debug("Founded {} anchor in content for rule {}", anchors.size(), ruleName.orElse("empty"));
@@ -133,6 +135,7 @@ public class RuleService {
                 })
                 .collect(Collectors.toList());
     }
+
     public List<RuleResponse> executeChildRule(String content, Optional<String> rootRule, Optional<String> ruleName) throws RuleNotFoundException, IOException {
         return executeChildRule(content, rootRule, ruleName, regularExpressionAnchorService.find(content, Boolean.FALSE), Collections.emptyList());
     }
