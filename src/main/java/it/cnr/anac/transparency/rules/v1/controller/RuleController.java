@@ -120,7 +120,7 @@ public class RuleController {
             final String contentDecoded = ruleService.base64Decode(content);
             List<RuleResponse> ruleResponses = Collections.emptyList();
             List<RuleResponse> rulesFound = Collections.emptyList();
-            if (!forceJsoup && contentDecoded.getBytes(StandardCharsets.UTF_8).length < ruleConfiguration.getMaxLengthContent()) {
+            if (!forceJsoup && contentDecoded.getBytes(StandardCharsets.UTF_8).length < ruleConfiguration.getMaxLengthContentRegularExpression()) {
                 ruleResponses = ruleService.executeChildRule(contentDecoded, rootRule, ruleName);
                 rulesFound = ruleResponses
                         .stream()

@@ -41,6 +41,7 @@ public class RuleConfiguration {
     protected String hrefRegex;
     protected Integer maxLengthContent;
     protected Integer maxLengthPageByte;
+    protected Integer maxLengthContentRegularExpression;
     protected List<String> tagAttributes;
     private List<Character> searchTokens;
 
