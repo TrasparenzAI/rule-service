@@ -40,7 +40,7 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Upgrade version
         run: |
-          sed -i "s/version = \"$VERSION\"/version = \"$NEW_VERSION\"/" "$GRADLE_PROPERTIES"
+          sed -i "s/version=$VERSION/version=$NEW_VERSION/" "$GRADLE_PROPERTIES"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git config --global user.name "${{ github.actor }}"
           git add "$GRADLE_PROPERTIES" || true
