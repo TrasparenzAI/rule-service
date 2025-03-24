@@ -1,33 +1,9 @@
-version: "3"
 services:
   rule-service:
     image: rule-service:0.0.1-SNAPSHOT
     container_name: rule-service
     environment:
       - LOGGING_LEVEL_IT_CNR=TRACE
-      - SELENIUM_URL=http://se:4444    
-    depends_on:
-      - selenium-hub
-    links:
-      - selenium-hub:se
     ports:
       - "8080:8080"
-  chrome:
-    image: selenium/node-chrome:beta
-    container_name: selenium-chrome
-    shm_size: 2gb
-    links:
-      - selenium-hub:selenium-hub
-    depends_on:
-      - selenium-hub
-    environment:
-      - SE_EVENT_BUS_HOST=selenium-hub
-      - SE_EVENT_BUS_PUBLISH_PORT=4442
-      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-
-  selenium-hub:
-    image: selenium/hub:latest
-    container_name: selenium-hub
-    environment:
-      - SE_NODE_SESSION_TIMEOUT=-1
 

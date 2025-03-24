@@ -1,0 +1,46 @@
+name: Release
+on:
+  release:
+    types: [created]
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  GRADLE_PROPERTIES: "gradle.properties"
+  NEW_VERSION: ${{ github.event.release.tag_name }}_SNAPSHOT
+
+jobs:
+  build:
+    name: Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - name: Build container image
+        run: |          
+          ./gradlew jib  -Djib.to.image=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }} -Djib.to.auth.username=${{ github.actor }} -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}
+      - name: Read current version
+        id: get_version
+        run: |
+          if [ -f "$GRADLE_PROPERTIES" ]; then
+            VERSION=$(grep '^version=' "$GRADLE_PROPERTIES" | cut -d'=' -f2)
+          else
+            echo "No version file found!" && exit 1
+          fi
+          echo "Current version: $VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Upgrade version
+        run: |
+          sed -i "s/version = \"$VERSION\"/version = \"$NEW_VERSION\"/" "$BUILD_GRADLE"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --global user.name "${{ github.actor }}"
+          git add "$GRADLE_PROPERTIES" || true
+          git commit -m "Bump version to $NEW_VERSION" || exit 0
+          git push

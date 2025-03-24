@@ -1,3 +1,20 @@
+/*
+ * Copyright (c) 2025 Consiglio Nazionale delle Ricerche
+ *
+ * 	This program is free software: you can redistribute it and/or modify
+ * 	it under the terms of the GNU Affero General Public License as
+ * 	published by the Free Software Foundation, either version 3 of the
+ * 	License, or (at your option) any later version.
+ *
+ * 	This program is distributed in the hope that it will be useful,
+ * 	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * 	GNU Affero General Public License for more details.
+ *
+ * 	You should have received a copy of the GNU Affero General Public License
+ * 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.cnr.anac.transparency.rules.configuration;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,20 +43,24 @@ import java.util.stream.Collectors;
 @EnableWebSecurity
 @EnableConfigurationProperties(Oauth2Properties.class)
 public class Oauth2Configuration {
-    private final Oauth2Properties properties;
+    private final Oauth2Properties oauth2Properties;
 
     public Oauth2Configuration(Oauth2Properties properties) {
-        this.properties = properties;
+        this.oauth2Properties = properties;
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        if (properties.isEnabled()) {
-            http.authorizeRequests(expressionInterceptUrlRegistry -> {
-                properties
+        if (oauth2Properties.isEnabled()) {
+            http.authorizeHttpRequests(expressionInterceptUrlRegistry -> {
+                oauth2Properties
                         .getRoles()
                         .forEach((key, value) ->
-                                expressionInterceptUrlRegistry.requestMatchers(HttpMethod.valueOf(key)).hasAnyRole(value)
+                                expressionInterceptUrlRegistry
+                                        .requestMatchers(HttpMethod.OPTIONS).permitAll()
+                                        .requestMatchers(HttpMethod.GET, "/actuator/*").permitAll()
+                                        .requestMatchers(HttpMethod.GET,"/api-docs/**","/swagger-ui/**").permitAll()
+                                        .requestMatchers(HttpMethod.valueOf(key)).hasAnyRole(value)
                         );
             });
         }

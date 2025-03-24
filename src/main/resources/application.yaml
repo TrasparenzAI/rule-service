@@ -3,6 +3,10 @@ spring:
     import: optional:configserver:https://dica33.ba.cnr.it/config-service/config
   application:
     name: rule-service
+  cloud:
+    config:
+      username: config-service-user
+      password:
   security:
     oauth2:
       client:

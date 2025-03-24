@@ -1,18 +1,18 @@
 /*
- *  Copyright (C) 2023 Consiglio Nazionale delle Ricerche
+ * Copyright (c) 2025 Consiglio Nazionale delle Ricerche
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * 	This program is free software: you can redistribute it and/or modify
+ * 	it under the terms of the GNU Affero General Public License as
+ * 	published by the Free Software Foundation, either version 3 of the
+ * 	License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
+ * 	This program is distributed in the hope that it will be useful,
+ * 	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * 	GNU Affero General Public License for more details.
  *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * 	You should have received a copy of the GNU Affero General Public License
+ * 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package it.cnr.anac.transparency.rules.search;
@@ -104,7 +104,7 @@ public class LuceneSearch {
         TopDocs topDocs = dirSearcher.search(query, 10);
         final Map<LuceneResult, Long> luceneResultLongMap = Arrays.stream(topDocs.scoreDocs).map(scoreDoc -> {
                     try {
-                        final Document doc = dirSearcher.doc(scoreDoc.doc);
+                        final Document doc = dirSearcher.getIndexReader().storedFields().document(scoreDoc.doc);
                         log.debug("Search document for \"{}\" and find \"{}\" width score: {} and URL: {}", keyword, doc.get(LuceneSearch.CONTENT), scoreDoc.score, doc.get(LuceneSearch.URL));
                         return new LuceneResult(doc.get(LuceneSearch.URL), doc.get(LuceneSearch.CONTENT), doc.get(LuceneSearch.WHERE), scoreDoc.score);
                     } catch (IOException e) {
