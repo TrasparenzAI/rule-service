@@ -31,7 +31,7 @@ con i servizi attraverso **Swagger** alla seguente [URL](http://localhost:8080/s
 
 Oppure verificare la regola _root_ ad esempio attraverso una [cURL](https://it.wikipedia.org/wiki/Curl) con un html di esempio:
 ```bash
-curl -X POST http://localhost:8080/v1/rules -H 'Content-type:application/json' --data 'PGh0bWw+CiAgICA8aGVhZD4KICAgICAgICA8dGl0bGU+R2VuZXJpY2EgQW1taW5pc3RyYXppb25lPC90aXRsZT4KICAgIDwvaGVhZD4KICAgIDxib2R5PgogICAgICAgIDxwPlBhcnNlZCBIVE1MIGludG8gYSBkb2MuPC9wPgogICAgICAgIDxhIGhyZWY9Ii9hbW1pbmlzdHJhemlvbmUiPkFtbWluaXN0cmF6aW9uZSBUcmFzcGFyYW50ZTwvYT4KICAgICAgICA8YSBocmVmPSIvcHJvZ3JhbW1hdHJhc3BhcmVuemEiPlByb2dyYW1tYSBwZXIgbGEgVHJhc3BhcmVuemE8L2E+CiAgICA8L2JvZHk+CjwvaHRtbD4='| jq .
+curl -X POST http://localhost:8080/v1/rules -H 'Content-type:application/json' --data 'PGh0bWw+CiAgICA8aGVhZD4KICAgICAgICA8dGl0bGU+R2VuZXJpY2EgQW1taW5pc3RyYXppb25lPC90aXRsZT4KICAgIDwvaGVhZD4KICAgIDxib2R5PgogICAgICAgIDxwPlBhcnNlZCBIVE1MIGludG8gYSBkb2MuPC9wPgogICAgICAgIDxhIGhyZWY9Ii9hbW1pbmlzdHJhemlvbmUiPkFtbWluaXN0cmF6aW9uZSBUcmFzcGFyZW50ZTwvYT4KICAgICAgICA8YSBocmVmPSIvcHJvZ3JhbW1hdHJhc3BhcmVuemEiPlByb2dyYW1tYSBwZXIgbGEgVHJhc3BhcmVuemE8L2E+CiAgICA8L2JvZHk+CjwvaHRtbD4='| jq .
 ```
 In alternativa scaricare il contenuto del Sito istituzionale di una Pubblica Amministrazione
 ```bash
@@ -43,8 +43,11 @@ La risposta _json_ del servizio:
 {
   "url": "https://www.anticorruzione.it/amministrazione-trasparente",
   "ruleName": "amministrazione-trasparente",
-  "isLeaf": false,
+  "term": "Amministrazione Trasparente",
+  "content": "Amministrazione Trasparente",
+  "where": "text",
+  "leaf": false,
   "status": 200,
-  "score": 3.6377878
+  "score": 4.3884144
 }
 ```
