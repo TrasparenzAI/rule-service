@@ -6,8 +6,7 @@
 [![Build Status](https://github.com/cnr-anac/rule-service/actions/workflows/build.yml/badge.svg)](https://github.com/cnr-anac/rule-service/actions/workflows/build.yml)
 
 ## Introduzione
-Rules Service è parte della suite di servizi per la verifica delle informazioni sulla Trasparenza dei siti web 
-delle Pubbliche amministrazioni italiane.
+Rules Service è parte della suite di servizi per la verifica delle informazioni sulla Trasparenza dei siti web delle Pubbliche amministrazioni italiane.
 Definisce e implementa le regole relative al D.Lgs. n. 33-2013 sulla trasparenza nella PA.
 
 ## Informazioni generali
