@@ -19,7 +19,7 @@ oppure aggiornando la configurazione per poi successivamente invocare l'endpoint
 delle regole in formato _json_, e la verifica di una o più regole su un contenuto _html_  
 
 ## Docker
-Il servizio è dotato del plugi _jib_  che permette di effettuare la _build_ e fornisce l'immagine per l'esecuzione tramite _docker_
+Il servizio è dotato del plugin _jib_  che permette di effettuare la _build_ e fornisce l'immagine per l'esecuzione tramite _docker_
 ```bash
 ./gradlew jibDockerBuild
 docker run -p 8080:8080 -ti rule-service:{version}
