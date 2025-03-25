@@ -1,9 +1,8 @@
 services:
   rule-service:
-    image: rule-service:0.0.1-SNAPSHOT
+    image: rule-service:latest
     container_name: rule-service
     environment:
       - LOGGING_LEVEL_IT_CNR=TRACE
     ports:
       - "8080:8080"
-
