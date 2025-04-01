@@ -53,13 +53,14 @@ public class Oauth2Configuration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         if (oauth2Properties.isEnabled()) {
             http.authorizeHttpRequests(expressionInterceptUrlRegistry -> {
+                expressionInterceptUrlRegistry
+                        .requestMatchers(HttpMethod.OPTIONS).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/actuator/*").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api-docs/**","/swagger-ui/**").permitAll();
                 oauth2Properties
                         .getRoles()
                         .forEach((key, value) ->
                                 expressionInterceptUrlRegistry
-                                        .requestMatchers(HttpMethod.OPTIONS).permitAll()
-                                        .requestMatchers(HttpMethod.GET, "/actuator/*").permitAll()
-                                        .requestMatchers(HttpMethod.GET,"/api-docs/**","/swagger-ui/**").permitAll()
                                         .requestMatchers(HttpMethod.valueOf(key)).hasAnyRole(value)
                         );
             });
