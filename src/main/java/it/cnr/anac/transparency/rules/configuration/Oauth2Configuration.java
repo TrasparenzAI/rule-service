@@ -63,6 +63,9 @@ public class Oauth2Configuration {
                                 expressionInterceptUrlRegistry
                                         .requestMatchers(HttpMethod.valueOf(key)).hasAnyRole(value)
                         );
+                expressionInterceptUrlRegistry
+                        .anyRequest()
+                        .permitAll();
             });
         }
         http
