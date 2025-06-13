@@ -2,7 +2,6 @@ name: Build
 on: [push, pull_request]
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build:
@@ -19,5 +18,8 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+      - name: lowercase github.repository
+        run: |
+          echo "IMAGE_NAME=`echo ${{github.repository}} | tr '[:upper:]' '[:lower:]'`" >>${GITHUB_ENV}
       - name: Build container image
         run: ./gradlew jib  -Djib.to.image=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest -Djib.to.auth.username=${{ github.actor }} -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}
