@@ -89,12 +89,13 @@ public class RuleController {
                     rootRule,
                     ruleName
             );
-            return ResponseEntity.ok().body(ruleMapper.convert(ruleResponse));
+            RuleResponseDto convert = ruleMapper.convert(ruleResponse);
+            return ResponseEntity.ok().body(convert);
         } catch (RuleException e) {
             return ResponseEntity.status(e.getHttpStatus()).body(e.getMessage());
         } catch (RuleNotFoundException e) {
             return ResponseEntity.notFound().build();
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("Cannot execute rule {}", ruleName, e);
             return ResponseEntity.internalServerError().build();
         }
@@ -115,6 +116,7 @@ public class RuleController {
             @RequestParam(name = "rootRule", required = false) Optional<String> rootRule,
             @RequestParam(name = "ruleName") Optional<String> ruleName,
             @RequestParam(name = "allRuleMustBePresent", required = false, defaultValue = "false") Boolean allRuleMustBePresent,
+            @RequestParam(name = "atLeastHalf", required = false, defaultValue = "false") Boolean atLeastHalf,
             @RequestParam(name = "forceJsoup", required = false, defaultValue = "false") Boolean forceJsoup) {
         try {
             final String contentDecoded = ruleService.base64Decode(content);
@@ -136,9 +138,13 @@ public class RuleController {
                 }
             }
             final List<RuleResponse> ruleResponseOK = ruleResponses.stream().filter(
-                    ruleResponse -> Stream.of(HttpStatus.OK, HttpStatus.ACCEPTED)
+                    ruleResponse -> Stream.of(HttpStatus.OK, HttpStatus.ACCEPTED, HttpStatus.MULTI_STATUS)
                             .anyMatch(httpStatus -> httpStatus == ruleResponse.getStatus())).toList();
             if (allRuleMustBePresent && ruleResponseOK.size() < ruleService.childRules(rootRule, ruleName).size()) {
+                log.info("Found {} rules but total are:{}", ruleResponseOK.size(), ruleService.childRules(rootRule, ruleName).size());
+                return ResponseEntity.notFound().build();
+            }
+            if (atLeastHalf && ruleResponseOK.size() < Math.divideExact(ruleService.childRules(rootRule, ruleName).size(), 2)) {
                 log.info("Found {} rules but total are:{}", ruleResponseOK.size(), ruleService.childRules(rootRule, ruleName).size());
                 return ResponseEntity.notFound().build();
             }

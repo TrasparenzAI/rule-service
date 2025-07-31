@@ -26,7 +26,9 @@ import lombok.*;
 @ToString
 public class LuceneResult {
     private String url;
+    @EqualsAndHashCode.Exclude
     private String content;
+    @EqualsAndHashCode.Exclude
     private String where;
     private Float score;
 }

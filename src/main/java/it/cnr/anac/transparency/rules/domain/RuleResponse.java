@@ -17,13 +17,13 @@
 
 package it.cnr.anac.transparency.rules.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.http.HttpStatus;
+
+import java.util.List;
+
 @Getter
 @Setter
-@AllArgsConstructor
 public class RuleResponse {
     private String url;
     private String ruleName;
@@ -33,4 +33,20 @@ public class RuleResponse {
     private Boolean leaf;
     private HttpStatus status;
     private Float score;
+    private List<RuleResponse> multiple;
+
+    public RuleResponse(String url, String ruleName, String term, String content, String where, Boolean leaf, HttpStatus status, Float score) {
+        this.url = url;
+        this.ruleName = ruleName;
+        this.term = term;
+        this.content = content;
+        this.where = where;
+        this.leaf = leaf;
+        this.status = status;
+        this.score = score;
+    }
+
+    public RuleResponse(List<RuleResponse> multiple) {
+        this.multiple = multiple;
+    }
 }

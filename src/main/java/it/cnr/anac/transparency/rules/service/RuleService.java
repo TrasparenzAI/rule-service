@@ -79,7 +79,7 @@ public class RuleService {
                 .orElseGet(() -> ruleConfiguration.getRootRule());
         log.debug("Founded {} anchor in content for rule {}", anchors.size(), ruleName.orElse("empty"));
         LuceneSearch luceneSearch = createLuceneSearch(anchors);
-        return findTermInValues(luceneSearch, ruleName, rule);
+        return findTermInValues(luceneSearch, ruleName, rule, Boolean.TRUE);
     }
 
     public RuleResponse executeRule(String content, Optional<String> rootRule, Optional<String> ruleName) throws RuleNotFoundException, IOException, RuleException {
@@ -114,7 +114,7 @@ public class RuleService {
                         return ruleResponseFound.get();
                     }
                     try {
-                        return findTermInValues(luceneSearch, Optional.of(entry.getKey()), entry.getValue());
+                        return findTermInValues(luceneSearch, Optional.of(entry.getKey()), entry.getValue(), Boolean.FALSE);
                     } catch (RuleNotFoundException _ex) {
                         return new RuleResponse(
                                 null,
@@ -144,23 +144,42 @@ public class RuleService {
         return executeChildRule(content, rootRule, ruleName, anchorsWidthJsoup(content, allTags), rulesFound);
     }
 
-    private RuleResponse findTermInValues(LuceneSearch luceneSearch, Optional<String> ruleName, Rule rule, Term term) throws RuleNotFoundException {
+    private RuleResponse findTermInValues(LuceneSearch luceneSearch, Optional<String> ruleName, Rule rule, Term term, Boolean rootRule) throws RuleNotFoundException {
         try {
-            final Optional<LuceneResult> luceneResult = luceneSearch.search(term.getKey());
-            if (luceneResult.isPresent()) {
+            final List<LuceneResult> luceneResults = luceneSearch.search(term.getKey());
+            final String r = ruleName.orElse(ruleConfiguration.getDefaultRule());
+            Boolean leaf = Optional.ofNullable(rule.getChilds()).map(Map::isEmpty).orElse(Boolean.TRUE);
+            if (!luceneResults.isEmpty() && (luceneResults.size() == 1 || leaf || rootRule)) {
+                LuceneResult luceneResult = luceneResults.getFirst();
                 log.debug("Term {} - find {} URL: {}", rule.getTerm(),
-                        luceneResult.get().getContent(), luceneResult.get().getUrl());
-                final String r = ruleName.orElse(ruleConfiguration.getDefaultRule());
+                        luceneResult.getContent(), luceneResult.getUrl());
                 return new RuleResponse(
-                        luceneResult.get().getUrl(),
+                        luceneResult.getUrl(),
                         r,
                         term.getKey(),
-                        luceneResult.get().getContent(),
-                        luceneResult.get().getWhere(),
-                        Optional.ofNullable(rule.getChilds()).map(c -> c.isEmpty()).orElse(Boolean.TRUE),
+                        luceneResult.getContent(),
+                        luceneResult.getWhere(),
+                        leaf,
                         HttpStatus.valueOf(term.getCode()),
-                        luceneResult.get().getScore()
+                        luceneResult.getScore()
                 );
+            } else if (luceneResults.size() > 1) {
+                RuleResponse ruleResponse = new RuleResponse(luceneResults.stream().map(luceneResult -> {
+                    return new RuleResponse(
+                            luceneResult.getUrl(),
+                            r,
+                            term.getKey(),
+                            luceneResult.getContent(),
+                            luceneResult.getWhere(),
+                            leaf,
+                            HttpStatus.valueOf(term.getCode()),
+                            luceneResult.getScore()
+                    );
+                }).toList());
+                ruleResponse.setStatus(HttpStatus.MULTI_STATUS);
+                ruleResponse.setRuleName(r);
+                ruleResponse.setLeaf(leaf);
+                return ruleResponse;
             }
             throw new RuleNotFoundException();
         } catch (IOException | ParseException e) {
@@ -168,10 +187,10 @@ public class RuleService {
         }
     }
 
-    private RuleResponse findTermInValues(LuceneSearch luceneSearch, Optional<String> ruleName, Rule rule) throws RuleNotFoundException {
+    private RuleResponse findTermInValues(LuceneSearch luceneSearch, Optional<String> ruleName, Rule rule, Boolean rootRule) throws RuleNotFoundException {
         for (Term term: rule.getTerm()) {
             try {
-                return findTermInValues(luceneSearch, ruleName, rule, term);
+                return findTermInValues(luceneSearch, ruleName, rule, term, rootRule);
             } catch (RuleNotFoundException e) {
                 log.trace("Term {} not found on rule {}", term, rule);
             }

@@ -61,7 +61,7 @@ public class LuceneSearch {
                     .stream()
                     .filter(anchor -> Optional.ofNullable(anchor.getHref()).filter(s -> !s.trim().isEmpty()).isPresent())
                     .filter(anchor -> Optional.ofNullable(anchor.getContent())
-                            .filter(s -> s.trim().length() > 0 && s.trim().length() < maxLengthContent).isPresent())
+                            .filter(s -> !s.trim().isEmpty() && s.trim().length() < maxLengthContent).isPresent())
                     .forEach(anchor -> {
                         Document doc = new Document();
                         doc.add(new StoredField(URL, anchor.getHref()));
@@ -96,28 +96,30 @@ public class LuceneSearch {
         log.trace("============= END TOKEN =============");
     }
 
-    public Optional<LuceneResult> search(String keyword) throws ParseException, IOException {
+    public List<LuceneResult> search(String keyword) throws ParseException, IOException {
         IndexSearcher dirSearcher = new IndexSearcher(indexReader);
         QueryParser parser = new QueryParser(CONTENT, this.customAnalyzer);
         parser.setDefaultOperator(QueryParser.Operator.AND);
         Query query = parser.parse(keyword);
         TopDocs topDocs = dirSearcher.search(query, 10);
-        final Map<LuceneResult, Long> luceneResultLongMap = Arrays.stream(topDocs.scoreDocs).map(scoreDoc -> {
-                    try {
-                        final Document doc = dirSearcher.getIndexReader().storedFields().document(scoreDoc.doc);
-                        log.debug("Search document for \"{}\" and find \"{}\" width score: {} and URL: {}", keyword, doc.get(LuceneSearch.CONTENT), scoreDoc.score, doc.get(LuceneSearch.URL));
-                        return new LuceneResult(doc.get(LuceneSearch.URL), doc.get(LuceneSearch.CONTENT), doc.get(LuceneSearch.WHERE), scoreDoc.score);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .collect(Collectors.groupingBy(luceneResult -> {return luceneResult;}, Collectors.counting()));
-        return luceneResultLongMap
-                .entrySet()
+        final List<LuceneResult> luceneResults = Arrays.stream(topDocs.scoreDocs).map(scoreDoc -> {
+            try {
+                final Document doc = dirSearcher.getIndexReader().storedFields().document(scoreDoc.doc);
+                log.debug("Search document for \"{}\" and find \"{}\" width score: {} and URL: {}", keyword, doc.get(LuceneSearch.CONTENT), scoreDoc.score, doc.get(LuceneSearch.URL));
+                return new LuceneResult(doc.get(LuceneSearch.URL), doc.get(LuceneSearch.CONTENT), doc.get(LuceneSearch.WHERE), scoreDoc.score);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        })
+        .toList().stream().distinct().toList();
+
+        return luceneResults
                 .stream()
-                .map(e -> new LuceneResultCount(e.getKey(), e.getValue()))
-                .sorted(compareLuceneResult)
-                .map(LuceneResultCount::getLuceneResult)
-                .findFirst();
+                .collect(Collectors.collectingAndThen(
+                        Collectors.maxBy(Comparator.comparing(LuceneResult::getScore)),
+                        max -> luceneResults.stream()
+                                .filter(p -> p.getScore().equals(max.get().getScore()))
+                                .collect(Collectors.toList())
+                ));
     }
 }

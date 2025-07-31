@@ -22,19 +22,25 @@ import lombok.Data;
 import lombok.ToString;
 import org.springframework.http.HttpStatus;
 
+import java.util.List;
+
 @ToString
 @Data
 public class RuleResponseDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String url;
     private String ruleName;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String term;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String content;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String where;
     private Boolean leaf;
     private int status;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Float score;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<RuleResponseDto> multiple;
 
 }
