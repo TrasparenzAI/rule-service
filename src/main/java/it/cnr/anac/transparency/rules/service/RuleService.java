@@ -95,13 +95,13 @@ public class RuleService {
     }
 
     public Map<String, Rule> childRules(Optional<String> rootRule, Optional<String> ruleName) {
-        return Optional.ofNullable(ruleConfiguration.getRule(rootRule, ruleName))
+        return Optional.ofNullable(Optional.ofNullable(ruleConfiguration.getRule(rootRule, ruleName))
                 .orElseGet(() -> ruleConfiguration.getRootRule())
-                .getChilds();
+                .getChilds()).orElse(Collections.emptyMap());
     }
 
     public List<RuleResponse> executeChildRule(String content, Optional<String> rootRule, Optional<String> ruleName, List<Anchor> anchors, List<RuleResponse> rulesFound) throws RuleNotFoundException, IOException {
-        final Map<String, Rule> childs = childRules(rootRule, ruleName);
+        final Map<String, Rule> childs = Optional.ofNullable(childRules(rootRule, ruleName)).orElse(Collections.emptyMap());
         log.debug("Founded {} anchor in content for rule {}", anchors.size(), ruleName.orElse("empty"));
         LuceneSearch luceneSearch = createLuceneSearch(anchors);
         return childs.entrySet()
