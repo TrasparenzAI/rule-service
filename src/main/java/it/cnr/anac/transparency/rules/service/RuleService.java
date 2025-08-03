@@ -144,9 +144,21 @@ public class RuleService {
         return executeChildRule(content, rootRule, ruleName, anchorsWidthJsoup(content, allTags), rulesFound);
     }
 
+    public List<LuceneResult> removeBannedURLs(List<LuceneResult> luceneResults) {
+        List<LuceneResult> filtered = luceneResults.stream()
+                .filter(luceneResult -> {
+                    return !ruleConfiguration
+                            .getUrlsBanned()
+                            .contains(luceneResult.getUrl().toLowerCase());
+                }).toList();
+        if (!filtered.isEmpty())
+            return filtered;
+        return luceneResults;
+    }
+
     private RuleResponse findTermInValues(LuceneSearch luceneSearch, Optional<String> ruleName, Rule rule, Term term, Boolean rootRule) throws RuleNotFoundException {
         try {
-            final List<LuceneResult> luceneResults = luceneSearch.search(term.getKey());
+            final List<LuceneResult> luceneResults = removeBannedURLs(luceneSearch.search(term.getKey()));
             final String r = ruleName.orElse(ruleConfiguration.getDefaultRule());
             Boolean leaf = Optional.ofNullable(rule.getChilds()).map(Map::isEmpty).orElse(Boolean.TRUE);
             if (!luceneResults.isEmpty() && (luceneResults.size() == 1 || leaf || rootRule)) {

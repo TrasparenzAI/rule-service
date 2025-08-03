@@ -44,6 +44,7 @@ public class RuleConfiguration {
     protected Integer maxLengthContentRegularExpression;
     protected List<String> tagAttributes;
     private List<Character> searchTokens;
+    protected List<String> urlsBanned;
 
     protected String jsonrules;
 

@@ -22,6 +22,7 @@ import it.cnr.anac.transparency.rules.domain.RuleResponse;
 import it.cnr.anac.transparency.rules.domain.Rule;
 import it.cnr.anac.transparency.rules.exception.RuleException;
 import it.cnr.anac.transparency.rules.exception.RuleNotFoundException;
+import it.cnr.anac.transparency.rules.search.LuceneResult;
 import it.cnr.anac.transparency.rules.service.RuleService;
 import it.cnr.anac.transparency.rules.v1.controller.RuleController;
 import it.cnr.anac.transparency.rules.v1.dto.RuleResponseDto;
@@ -39,10 +40,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SpringBootTest
@@ -100,6 +98,22 @@ class RuleApplicationTests {
 					.lines()
 					.collect(Collectors.joining("\n")), Optional.empty(), Optional.empty());
 		});
+	}
+
+	@Test
+	void urlBanned() {
+        Assertions.assertFalse(ruleService.removeBannedURLs(Arrays.asList(
+				new LuceneResult("#", null, null, null),
+				new LuceneResult("https://test.it", null, null, null),
+				new LuceneResult("javascript:void(0);", null, null, null)
+		)).isEmpty());
+		Assertions.assertEquals(2, ruleService.removeBannedURLs(Arrays.asList(
+				new LuceneResult("#", null, null, null),
+				new LuceneResult("https://test.it", null, null, null),
+				new LuceneResult("https://test2.it", null, null, null),
+				new LuceneResult("javascript:void(0);", null, null, null)
+		)).size());
+
 	}
 
 	@Test
@@ -194,8 +208,8 @@ class RuleApplicationTests {
 		Assertions.assertEquals(22, ruleResponses.getBody().size());
 		Assertions.assertEquals(
 				expected,
-				ruleResponses.getBody().stream().filter(r -> !Optional.ofNullable(r.getUrl()).isPresent()).collect(Collectors.toList()).size(),
-				"The rules not satisfied are: " + String.join(",", ruleResponses.getBody().stream().filter(r -> !Optional.ofNullable(r.getUrl()).isPresent())
+				ruleResponses.getBody().stream().filter(r -> !Arrays.asList(HttpStatus.OK.value(),HttpStatus.ACCEPTED.value(), HttpStatus.MULTI_STATUS.value()).contains(r.getStatus())).collect(Collectors.toList()).size(),
+				"The rules not satisfied are: " + String.join(",", ruleResponses.getBody().stream().filter(r -> !Arrays.asList(HttpStatus.OK.value(),HttpStatus.ACCEPTED.value(), HttpStatus.MULTI_STATUS.value()).contains(r.getStatus()))
 						.map(RuleResponseDto::getRuleName)
 						.collect(Collectors.toList()))
 
@@ -213,7 +227,7 @@ class RuleApplicationTests {
 	@Test
 	void localChild5() throws IOException, URISyntaxException {
 		final List<RuleResponseDto> ruleResponseDtos = internalChild(this.getClass().getResourceAsStream("/amministrazione_child3.html"), 2);
-		Assertions.assertEquals(20, ruleResponseDtos.stream().filter(ruleResponseDto -> ruleResponseDto.getStatus() == 200).count());
+		Assertions.assertEquals(19, ruleResponseDtos.stream().filter(ruleResponseDto -> ruleResponseDto.getStatus() == 200).count());
 	}
 
 	@Test
@@ -286,8 +300,8 @@ class RuleApplicationTests {
 		Assertions.assertEquals(22, ruleResponse2.size());
 		Assertions.assertEquals(
 				0,
-				ruleResponse2.stream().filter(r -> !Optional.ofNullable(r.getUrl()).isPresent()).collect(Collectors.toList()).size(),
-				"The rules not satisfied are: " + String.join(",", ruleResponse2.stream().filter(r -> !Optional.ofNullable(r.getUrl()).isPresent())
+				ruleResponse2.stream().filter(r -> !Arrays.asList(HttpStatus.OK,HttpStatus.ACCEPTED, HttpStatus.MULTI_STATUS).contains(r.getStatus())).collect(Collectors.toList()).size(),
+				"The rules not satisfied are: " + String.join(",", ruleResponse2.stream().filter(r -> !Arrays.asList(HttpStatus.OK,HttpStatus.ACCEPTED, HttpStatus.MULTI_STATUS).contains(r.getStatus()))
 						.map(RuleResponse::getRuleName)
 						.collect(Collectors.toList()))
 

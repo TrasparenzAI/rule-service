@@ -40,9 +40,13 @@ springdoc:
     path: /api-docs
 
 tag_attributes:
-    - aria-label
-    - alt
-    - title
+  - aria-label
+  - alt
+  - title
+
+urls_banned:
+  - javascript:void(0);
+  - '#'
 
 search_tokens:
   - ' '
