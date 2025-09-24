@@ -27,9 +27,8 @@ import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.*;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.*;
+import org.apache.lucene.search.similarities.ClassicSimilarity;
 import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.util.BytesRef;
 
@@ -96,22 +95,43 @@ public class LuceneSearch {
         log.trace("============= END TOKEN =============");
     }
 
+    public class BinarySimilarity extends ClassicSimilarity {
+        @Override
+        public float tf(float freq) {
+            // Ignora la frequenza: conta solo presenza (1) o assenza (0)
+            return freq > 0 ? 1.0f : 0.0f;
+        }
+    }
+
     public List<LuceneResult> search(String keyword) throws ParseException, IOException {
+        BooleanQuery.Builder builder = new BooleanQuery.Builder();
         IndexSearcher dirSearcher = new IndexSearcher(indexReader);
+        dirSearcher.setSimilarity(new BinarySimilarity());
+
         QueryParser parser = new QueryParser(CONTENT, this.customAnalyzer);
         parser.setDefaultOperator(QueryParser.Operator.AND);
         Query query = parser.parse(keyword);
-        TopDocs topDocs = dirSearcher.search(query, 10);
+
+        // query di match esatto (frase intera con boost)
+        PhraseQuery exactPhrase = new PhraseQuery(CONTENT, keyword);
+        Query boostedExact = new BoostQuery(exactPhrase, 5.0f);
+
+        builder.add(query, BooleanClause.Occur.SHOULD);
+        builder.add(boostedExact, BooleanClause.Occur.SHOULD);
+
+        Query finalQuery = builder.build();
+
+        TopDocs topDocs = dirSearcher.search(finalQuery, 10);
         final List<LuceneResult> luceneResults = Arrays.stream(topDocs.scoreDocs).map(scoreDoc -> {
-            try {
-                final Document doc = dirSearcher.getIndexReader().storedFields().document(scoreDoc.doc);
-                log.debug("Search document for \"{}\" and find \"{}\" width score: {} and URL: {}", keyword, doc.get(LuceneSearch.CONTENT), scoreDoc.score, doc.get(LuceneSearch.URL));
-                return new LuceneResult(doc.get(LuceneSearch.URL), doc.get(LuceneSearch.CONTENT), doc.get(LuceneSearch.WHERE), scoreDoc.score);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        })
-        .toList().stream().distinct().toList();
+                    try {
+                        final Document doc = dirSearcher.getIndexReader().storedFields().document(scoreDoc.doc);
+                        log.debug("Search document for \"{}\" and find \"{}\" width score: {} and URL: {}", keyword, doc.get(LuceneSearch.CONTENT), scoreDoc.score, doc.get(LuceneSearch.URL));
+                        return new LuceneResult(doc.get(LuceneSearch.URL), doc.get(LuceneSearch.CONTENT), doc.get(LuceneSearch.WHERE), scoreDoc.score);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .toList().stream().distinct().toList();
 
         return luceneResults
                 .stream()
