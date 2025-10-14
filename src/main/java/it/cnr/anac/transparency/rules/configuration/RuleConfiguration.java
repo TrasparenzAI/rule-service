@@ -99,9 +99,11 @@ public class RuleConfiguration {
                     .orElseGet(() -> flattenRules.get(defaultRule))
                     .get(rootRule.orElse(defaultRule));
         } else {
-            return Optional.ofNullable(flattenRules.get(rootRule.orElse(defaultRule)))
-                    .orElseGet(() -> flattenRules.get(defaultRule))
-                    .get(ruleName.orElseThrow(RuleNotFoundException::new));
+            Map<String, Rule> stringRuleMap = Optional.ofNullable(flattenRules.get(rootRule.orElse(defaultRule)))
+                    .orElseGet(() -> flattenRules.get(defaultRule));
+            return Optional.ofNullable(stringRuleMap
+                    .get(ruleName.orElse(rootRule.orElseThrow(RuleNotFoundException::new))))
+                    .orElseGet(() -> stringRuleMap.get(rootRule.orElseThrow(RuleNotFoundException::new)));
         }
     }
 
