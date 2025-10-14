@@ -35,6 +35,12 @@ default_rule: amministrazione-trasparente
 anchor_regex: <a[\s]+([^>]+)>((?<text>(.(?!\<\/a\>))*.))<\/a>
 href_regex: href\s*=\s*(?:["'](?<href>[^"']*)["']|([^>\s]+))
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
 springdoc:
   api-docs:
     path: /api-docs

@@ -85,6 +85,9 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+springBoot {
+    buildInfo()
+}
 jar {
 	enabled = false
 }
