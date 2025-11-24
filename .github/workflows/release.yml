@@ -18,7 +18,6 @@ jobs:
 
     steps:
       - name: 'Checkout del codice (Tag)'
-        # Checkout del Tag specifico che ha attivato l'azione
         uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }} # Usa il riferimento (ref) del tag
@@ -35,7 +34,6 @@ jobs:
         run: echo "RELEASE_VERSION=$(echo ${{ github.ref_name }} | sed 's/^v//')" >> $GITHUB_OUTPUT
 
       - name: 'Modifica gradle.properties per la Release Persistente'
-        # Sostituisce la versione esistente (es. '1.2.3-SNAPSHOT') con la versione del tag (es. '1.2.3')
         run: |
           echo "Aggiorno la versione a: ${{ steps.version.outputs.RELEASE_VERSION }}"
           sed -i -E "s/^(version=).*/\1${{ steps.version.outputs.RELEASE_VERSION}}/" gradle.properties
@@ -65,17 +63,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: jib_release
     permissions:
-      contents: write # Necessario per fare il commit e il push
+      contents: write
 
     steps:
       - name: 'Checkout del branch principale (main)'
-        # Checkout del branch principale per applicare il bump SNAPSHOT
         uses: actions/checkout@v4
         with:
           ref: main
 
       - name: 'Estrai la Versione dal Tag'
-        # Estrai di nuovo la versione dal tag per il calcolo
         id: version
         run: echo "TAG_VERSION=$(echo ${{ github.ref_name }} | sed 's/^v//')" >> $GITHUB_OUTPUT
 
@@ -103,6 +99,5 @@ jobs:
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git config --global user.name "${{ github.actor }}"
           git add gradle.properties
-          # Committa il bump sul branch 'main'
           git commit -m "chore(release): Bump version to ${{ steps.next_version.outputs.NEXT_SNAPSHOT_VERSION }}" || echo "Nessun cambiamento da committare"
           git push origin main
