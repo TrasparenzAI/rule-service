@@ -1,7 +1,8 @@
 name: Release
 on:
-  release:
-    types: [created]
+  push:
+    tags:
+      - 'v*'
 env:
   REGISTRY: ghcr.io
   GRADLE_PROPERTIES: "gradle.properties"
@@ -19,17 +20,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: 'main'
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-      - name: lowercase github.repository
-        run: |
-          echo "IMAGE_NAME=`echo ${{github.repository}} | tr '[:upper:]' '[:lower:]'`" >>${GITHUB_ENV}
-      - name: Build container image
-        run: |          
-          ./gradlew jib  -Djib.to.image=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }} -Djib.to.auth.username=${{ github.actor }} -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}
+
       - name: Read current version
         id: get_version
         run: |
@@ -40,6 +31,7 @@ jobs:
           fi
           echo "Current version: $VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+
       - name: Upgrade version
         run: |
           sed -i "s/version=$VERSION/version=$NEW_VERSION/" "$GRADLE_PROPERTIES"
@@ -48,3 +40,17 @@ jobs:
           git add "$GRADLE_PROPERTIES" || true
           git commit -m "Bump version to $NEW_VERSION" || exit 0
           git push
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: lowercase github.repository
+        run: |
+          echo "IMAGE_NAME=`echo ${{github.repository}} | tr '[:upper:]' '[:lower:]'`" >>${GITHUB_ENV}
+
+      - name: Build container image
+        run: |          
+          ./gradlew jib  -Djib.to.image=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }} -Djib.to.auth.username=${{ github.actor }} -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}
