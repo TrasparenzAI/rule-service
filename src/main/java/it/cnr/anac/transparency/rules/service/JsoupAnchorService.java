@@ -27,10 +27,7 @@ import org.jsoup.parser.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -42,10 +39,10 @@ public class JsoupAnchorService implements AnchorService{
 
     @Override
     public List<Anchor> find(String content, boolean allTags) {
-        if (!Optional.ofNullable(content)
+        if (Optional.ofNullable(content)
                 .map(String::toUpperCase)
                 .filter(s -> s.contains("HTML"))
-                .isPresent()) {
+                .isEmpty()) {
             log.warn("Content '{}' .... is not HTML Page!", content.substring(0, Math.min(50, content.length())));
             return Collections.emptyList();
         }
@@ -68,23 +65,23 @@ public class JsoupAnchorService implements AnchorService{
         return doc.getElementsByTag(AnchorService.ANCHOR)
                 .stream()
                 .map(element -> {
-                    final String href = Optional.ofNullable(element.attr(AnchorService.HREF)).filter(s -> s.trim().length() > 0).orElse("#");
+                    final String href = Optional.of(element.attr(AnchorService.HREF)).filter(s -> !s.trim().isEmpty()).orElse("#");
                     final List<Anchor> firstList = Arrays.asList(
-                            new Anchor(href, "text", element.text()),
+                            new Anchor(href, element.text(), isProbablyVisible(element) ? "text" : "text:none"),
                             new Anchor(href, Optional.ofNullable(element.parent())
                                     .map(Element::text)
                                     .orElse(null), "text::parent")
                     );
                     final List<Anchor> secondList = ruleConfiguration.getTagAttributes().stream().map(s -> {
-                        return new Anchor(href, Optional.ofNullable(element)
-                                .flatMap(element1 -> Optional.ofNullable(element1.attributes().get(s)))
+                        return new Anchor(href, Optional.of(element)
+                                .flatMap(element1 -> Optional.of(element1.attributes().get(s)))
                                 .orElse(null), "attribute::" + s);
-                    }).collect(Collectors.toList());
+                    }).toList();
                     final List<Anchor> thirdList = ruleConfiguration.getTagAttributes().stream().map(s -> {
                         return new Anchor(href, Optional.ofNullable(element.parent())
-                                .flatMap(element1 -> Optional.ofNullable(element1.attributes().get(s)))
+                                .flatMap(element1 -> Optional.of(element1.attributes().get(s)))
                                 .orElse(null), "attribute::parent::" + s);
-                    }).collect(Collectors.toList());
+                    }).toList();
                     return Stream.concat(
                             Stream.concat(
                                     firstList.stream().filter(anchor -> Optional.ofNullable(anchor.getContent()).isPresent()),
@@ -93,5 +90,40 @@ public class JsoupAnchorService implements AnchorService{
                             thirdList.stream().filter(anchor -> Optional.ofNullable(anchor.getContent()).isPresent())
                     ).collect(Collectors.toList());
                 }).flatMap(List::stream).collect(Collectors.toList());
+    }
+
+    private boolean isProbablyVisible(Element el) {
+        if (el == null) return false;
+
+        // 1. Attributo hidden
+        if (el.hasAttr("hidden")) {
+            return false;
+        }
+
+        // 2. Analizza lo stile inline
+        String style = el.attr("style").toLowerCase();
+        if (style.contains("display:none")
+                || style.contains("visibility:hidden")
+                || style.contains("visibility:collapse")
+                || style.contains("opacity:0")
+                || style.contains("height:0")
+                || style.contains("width:0")) {
+            return false;
+        }
+
+        // 3. Classi tipiche usate per nascondere elementi
+        String cls = el.className().toLowerCase();
+        String[] hiddenClasses = {
+                "hidden", "invisible", "sr-only", "d-none", "visually-hidden"
+        };
+
+        for (String c : hiddenClasses) {
+            if (cls.contains(c)) {
+                return false;
+            }
+        }
+
+        // Se nessun indicatore di invisibilità è stato trovato
+        return true;
     }
 }

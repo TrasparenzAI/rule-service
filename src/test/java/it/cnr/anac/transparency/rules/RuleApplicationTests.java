@@ -101,22 +101,6 @@ class RuleApplicationTests {
 	}
 
 	@Test
-	void urlBanned() {
-        Assertions.assertFalse(ruleService.removeBannedURLs(Arrays.asList(
-				new LuceneResult("#", null, null, null),
-				new LuceneResult("https://test.it", null, null, null),
-				new LuceneResult("javascript:void(0);", null, null, null)
-		)).isEmpty());
-		Assertions.assertEquals(2, ruleService.removeBannedURLs(Arrays.asList(
-				new LuceneResult("#", null, null, null),
-				new LuceneResult("https://test.it", null, null, null),
-				new LuceneResult("https://test2.it", null, null, null),
-				new LuceneResult("javascript:void(0);", null, null, null)
-		)).size());
-
-	}
-
-	@Test
 	void local() throws IOException, URISyntaxException, RuleException {
 		Assertions.assertThrows(RuleNotFoundException.class, () -> {
 			final InputStream resourceAsStream = this.getClass().getResourceAsStream("/amministrazione.html");
@@ -227,7 +211,8 @@ class RuleApplicationTests {
 	@Test
 	void localChild5() throws IOException, URISyntaxException {
 		final List<RuleResponseDto> ruleResponseDtos = internalChild(this.getClass().getResourceAsStream("/amministrazione_child3.html"), 2);
-		Assertions.assertEquals(19, ruleResponseDtos.stream().filter(ruleResponseDto -> ruleResponseDto.getStatus() == 200).count());
+		Assertions.assertEquals(4, ruleResponseDtos.stream().filter(ruleResponseDto -> ruleResponseDto.getStatus() == 200).count());
+        Assertions.assertEquals(16, ruleResponseDtos.stream().filter(ruleResponseDto -> ruleResponseDto.getStatus() == 207).count());
 	}
 
 	@Test

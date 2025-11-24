@@ -44,7 +44,6 @@ public class RuleConfiguration {
     protected Integer maxLengthContentRegularExpression;
     protected List<String> tagAttributes;
     private List<Character> searchTokens;
-    protected List<String> urlsBanned;
 
     protected String jsonrules;
 
@@ -101,8 +100,9 @@ public class RuleConfiguration {
         } else {
             Map<String, Rule> stringRuleMap = Optional.ofNullable(flattenRules.get(rootRule.orElse(defaultRule)))
                     .orElseGet(() -> flattenRules.get(defaultRule));
-            return Optional.ofNullable(stringRuleMap
-                    .get(ruleName.orElse(rootRule.orElseThrow(RuleNotFoundException::new))))
+            return Optional.ofNullable(
+                        stringRuleMap.get(ruleName.orElseGet(() -> rootRule.orElseThrow(RuleNotFoundException::new)))
+                    )
                     .orElseGet(() -> stringRuleMap.get(rootRule.orElseThrow(RuleNotFoundException::new)));
         }
     }

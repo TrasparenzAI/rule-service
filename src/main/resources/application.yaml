@@ -50,10 +50,6 @@ tag_attributes:
   - alt
   - title
 
-urls_banned:
-  - javascript:void(0);
-  - '#'
-
 search_tokens:
   - ' '
   - '.'

@@ -116,8 +116,13 @@ public class LuceneSearch {
         PhraseQuery exactPhrase = new PhraseQuery(CONTENT, keyword);
         Query boostedExact = new BoostQuery(exactPhrase, 5.0f);
 
-        builder.add(query, BooleanClause.Occur.SHOULD);
+        // do un peso maggiore a i contenuti presenti nel testo rispetto agli altri
+        PhraseQuery exactText = new PhraseQuery(WHERE, "text");
+        Query boostedText = new BoostQuery(exactText, 1.0f);
+
+        builder.add(query, BooleanClause.Occur.MUST);
         builder.add(boostedExact, BooleanClause.Occur.SHOULD);
+        builder.add(boostedText, BooleanClause.Occur.SHOULD);
 
         Query finalQuery = builder.build();
 
