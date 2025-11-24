@@ -2,55 +2,107 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
 env:
   REGISTRY: ghcr.io
-  GRADLE_PROPERTIES: "gradle.properties"
-  NEW_VERSION: ${{ github.event.release.tag_name }}-SNAPSHOT
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build:
-    name: Release
+
+  jib_release:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      packages: write
+      contents: write # Necessario per il checkout, il commit e il push del Tag modificato
+      packages: write # Permesso necessario per pushare su ghcr.io
 
     steps:
-      - uses: actions/checkout@v4
+      - name: 'Checkout del codice (Tag)'
+        # Checkout del Tag specifico che ha attivato l'azione
+        uses: actions/checkout@v4
         with:
-          ref: 'main'
+          ref: ${{ github.ref }} # Usa il riferimento (ref) del tag
 
-      - name: Read current version
-        id: get_version
-        run: |
-          if [ -f "$GRADLE_PROPERTIES" ]; then
-            VERSION=$(grep '^version=' "$GRADLE_PROPERTIES" | cut -d'=' -f2)
-          else
-            echo "No version file found!" && exit 1
-          fi
-          echo "Current version: $VERSION"
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-      - name: Upgrade version
-        run: |
-          sed -i "s/version=$VERSION/version=$NEW_VERSION/" "$GRADLE_PROPERTIES"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          git config --global user.name "${{ github.actor }}"
-          git add "$GRADLE_PROPERTIES" || true
-          git commit -m "Bump version to $NEW_VERSION" || exit 0
-          git push
-
-      - name: Set up JDK 21
+      - name: 'Setup JDK 21'
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
           distribution: 'temurin'
+          java-version: '21'
+          cache: 'gradle'
+
+      - name: 'Estrai la Versione dal Tag'
+        id: version
+        run: echo "RELEASE_VERSION=$(echo ${{ github.ref_name }} | sed 's/^v//')" >> $GITHUB_OUTPUT
+
+      - name: 'Modifica gradle.properties per la Release Persistente'
+        # Sostituisce la versione esistente (es. '1.2.3-SNAPSHOT') con la versione del tag (es. '1.2.3')
+        run: |
+          echo "Aggiorno la versione a: ${{ steps.version.outputs.RELEASE_VERSION }}"
+          sed -i -E "s/^(version=).*/\1${{ steps.version.outputs.RELEASE_VERSION}}/" gradle.properties
+          cat gradle.properties
+
+      - name: 'Commit e Push della Versione Pulita nel Tag'
+        run: |
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --global user.name "${{ github.actor }}"
+          git add gradle.properties
+          git commit -m "chore(release): Imposta versione pulita a ${{ steps.version.outputs.RELEASE_VERSION }}" || echo "Nessun cambiamento da committare"
+          git push origin ${{ github.ref }} --force
+
+      - name: 'Rendi gradlew eseguibile'
+        run: chmod +x gradlew
 
       - name: lowercase github.repository
         run: |
           echo "IMAGE_NAME=`echo ${{github.repository}} | tr '[:upper:]' '[:lower:]'`" >>${GITHUB_ENV}
 
       - name: Build container image
-        run: |          
+        run: |
           ./gradlew jib  -Djib.to.image=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }} -Djib.to.auth.username=${{ github.actor }} -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}
+
+
+  snapshot_bump:
+    runs-on: ubuntu-latest
+    needs: jib_release
+    permissions:
+      contents: write # Necessario per fare il commit e il push
+
+    steps:
+      - name: 'Checkout del branch principale (main)'
+        # Checkout del branch principale per applicare il bump SNAPSHOT
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: 'Estrai la Versione dal Tag'
+        # Estrai di nuovo la versione dal tag per il calcolo
+        id: version
+        run: echo "TAG_VERSION=$(echo ${{ github.ref_name }} | sed 's/^v//')" >> $GITHUB_OUTPUT
+
+      - name: 'Calcola e Imposta la Versione SNAPSHOT Successiva'
+        id: next_version
+        run: |
+          TAG_VERSION=${{ steps.version.outputs.TAG_VERSION }} # es: 1.2.3
+          # Funzione di incremento: qui incrementiamo solo la patch
+          MAJOR=$(echo $TAG_VERSION | cut -d. -f1)
+          MINOR=$(echo $TAG_VERSION | cut -d. -f2)
+          PATCH=$(echo $TAG_VERSION | cut -d. -f3)
+
+          NEXT_PATCH=$((PATCH + 1))
+          NEXT_SNAPSHOT_VERSION="${MAJOR}.${MINOR}.${NEXT_PATCH}-SNAPSHOT"
+          
+          echo "La prossima versione SNAPSHOT sarà: $NEXT_SNAPSHOT_VERSION"
+          echo "NEXT_SNAPSHOT_VERSION=$NEXT_SNAPSHOT_VERSION" >> $GITHUB_OUTPUT
+          
+          # Aggiorna gradle.properties con la nuova versione SNAPSHOT
+          sed -i -E "s/^(version=).*/\1${NEXT_SNAPSHOT_VERSION}/" gradle.properties
+          cat gradle.properties
+
+      - name: 'Commit e Push della Versione SNAPSHOT'
+        run: |
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --global user.name "${{ github.actor }}"
+          git add gradle.properties
+          # Committa il bump sul branch 'main'
+          git commit -m "chore(release): Bump version to ${{ steps.next_version.outputs.NEXT_SNAPSHOT_VERSION }}" || echo "Nessun cambiamento da committare"
+          git push origin main
