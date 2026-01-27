@@ -33,7 +33,10 @@ import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.util.BytesRef;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -48,7 +51,7 @@ public class LuceneSearch {
     Comparator<LuceneResultCount> compareLuceneResult = Comparator
             .comparing(LuceneResultCount::getScore)
             .reversed()
-            .thenComparing((t1, t2) -> t1.getCount().compareTo(t2.getCount())* -1)
+            .thenComparing((t1, t2) -> t1.getCount().compareTo(t2.getCount()) * -1)
             .thenComparing((t1, t2) -> Integer.valueOf(t1.getLuceneResult().getUrl().length()).compareTo(t2.getLuceneResult().getUrl().length()) * -1);
 
     public LuceneSearch(List<Anchor> values, Analyzer customAnalyzer, Integer maxLengthContent) throws IOException {
@@ -95,14 +98,6 @@ public class LuceneSearch {
         log.trace("============= END TOKEN =============");
     }
 
-    public class BinarySimilarity extends ClassicSimilarity {
-        @Override
-        public float tf(float freq) {
-            // Ignora la frequenza: conta solo presenza (1) o assenza (0)
-            return freq > 0 ? 1.0f : 0.0f;
-        }
-    }
-
     public List<LuceneResult> search(String keyword) throws ParseException, IOException {
         BooleanQuery.Builder builder = new BooleanQuery.Builder();
         IndexSearcher dirSearcher = new IndexSearcher(indexReader);
@@ -126,7 +121,7 @@ public class LuceneSearch {
 
         Query finalQuery = builder.build();
 
-        TopDocs topDocs = dirSearcher.search(finalQuery, 10);
+        TopDocs topDocs = dirSearcher.search(finalQuery, 100);
         final List<LuceneResult> luceneResults = Arrays.stream(topDocs.scoreDocs).map(scoreDoc -> {
                     try {
                         final Document doc = dirSearcher.getIndexReader().storedFields().document(scoreDoc.doc);
@@ -146,5 +141,13 @@ public class LuceneSearch {
                                 .filter(p -> p.getScore().equals(max.get().getScore()))
                                 .collect(Collectors.toList())
                 ));
+    }
+
+    public class BinarySimilarity extends ClassicSimilarity {
+        @Override
+        public float tf(float freq) {
+            // Ignora la frequenza: conta solo presenza (1) o assenza (0)
+            return freq > 0 ? 1.0f : 0.0f;
+        }
     }
 }

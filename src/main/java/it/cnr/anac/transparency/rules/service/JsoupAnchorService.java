@@ -50,46 +50,52 @@ public class JsoupAnchorService implements AnchorService{
         if (allTags) {
             return doc.getAllElements()
                     .stream()
-                    .filter(element -> !element.tag().equals(Tag.valueOf(AnchorService.ANCHOR)))
-                    .map(element -> {
-                        final String href = "#";
-                        final List<Anchor> firstList = Arrays.asList(
-                                new Anchor(href, element.text(),"text")
-                        );
-                        return firstList
-                                .stream()
-                                .filter(anchor -> Optional.ofNullable(anchor.getContent()).isPresent())
-                                .collect(Collectors.toList());
-                    }).flatMap(List::stream).collect(Collectors.toList());
+                    .map(this::convert)
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
         }
         return doc.getElementsByTag(AnchorService.ANCHOR)
                 .stream()
-                .map(element -> {
-                    final String href = Optional.of(element.attr(AnchorService.HREF)).filter(s -> !s.trim().isEmpty()).orElse("#");
-                    final List<Anchor> firstList = Arrays.asList(
-                            new Anchor(href, element.text(), isProbablyVisible(element) ? "text" : "text:none"),
-                            new Anchor(href, Optional.ofNullable(element.parent())
-                                    .map(Element::text)
-                                    .orElse(null), "text::parent")
-                    );
-                    final List<Anchor> secondList = ruleConfiguration.getTagAttributes().stream().map(s -> {
-                        return new Anchor(href, Optional.of(element)
-                                .flatMap(element1 -> Optional.of(element1.attributes().get(s)))
-                                .orElse(null), "attribute::" + s);
-                    }).toList();
-                    final List<Anchor> thirdList = ruleConfiguration.getTagAttributes().stream().map(s -> {
-                        return new Anchor(href, Optional.ofNullable(element.parent())
-                                .flatMap(element1 -> Optional.of(element1.attributes().get(s)))
-                                .orElse(null), "attribute::parent::" + s);
-                    }).toList();
-                    return Stream.concat(
-                            Stream.concat(
-                                    firstList.stream().filter(anchor -> Optional.ofNullable(anchor.getContent()).isPresent()),
-                                    secondList.stream().filter(anchor -> Optional.ofNullable(anchor.getContent()).isPresent())
-                            ),
-                            thirdList.stream().filter(anchor -> Optional.ofNullable(anchor.getContent()).isPresent())
-                    ).collect(Collectors.toList());
-                }).flatMap(List::stream).collect(Collectors.toList());
+                .map(this::convert)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+    }
+
+    private List<Anchor> convert(Element element) {
+        final String href = Optional.of(element.attr(AnchorService.HREF)).filter(s -> !s.trim().isEmpty()).orElse("#");
+        if (!element.tag().getName().equalsIgnoreCase(AnchorService.ANCHOR)) {
+            final List<Anchor> firstList = List.of(
+                    new Anchor(href, element.text(), "text")
+            );
+            return firstList
+                    .stream()
+                    .filter(anchor -> Optional.ofNullable(anchor.getContent()).isPresent())
+                    .collect(Collectors.toList());
+        } else {
+            final List<Anchor> firstList = Arrays.asList(
+                    new Anchor(href, element.text(), isProbablyVisible(element) ? "text" : "text:none"),
+                    new Anchor(href, Optional.ofNullable(element.parent())
+                            .map(Element::text)
+                            .orElse(null), "text::parent")
+            );
+            final List<Anchor> secondList = ruleConfiguration.getTagAttributes().stream().map(s -> {
+                return new Anchor(href, Optional.of(element)
+                        .flatMap(element1 -> Optional.of(element1.attributes().get(s)))
+                        .orElse(null), "attribute::" + s);
+            }).toList();
+            final List<Anchor> thirdList = ruleConfiguration.getTagAttributes().stream().map(s -> {
+                return new Anchor(href, Optional.ofNullable(element.parent())
+                        .flatMap(element1 -> Optional.of(element1.attributes().get(s)))
+                        .orElse(null), "attribute::parent::" + s);
+            }).toList();
+            return Stream.concat(
+                    Stream.concat(
+                            firstList.stream().filter(anchor -> Optional.ofNullable(anchor.getContent()).isPresent()),
+                            secondList.stream().filter(anchor -> Optional.ofNullable(anchor.getContent()).isPresent())
+                    ),
+                    thirdList.stream().filter(anchor -> Optional.ofNullable(anchor.getContent()).isPresent())
+            ).collect(Collectors.toList());
+        }
     }
 
     private boolean isProbablyVisible(Element el) {
