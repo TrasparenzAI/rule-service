@@ -125,15 +125,21 @@ public class LuceneSearch {
         final List<LuceneResult> luceneResults = Arrays.stream(topDocs.scoreDocs).map(scoreDoc -> {
                     try {
                         final Document doc = dirSearcher.getIndexReader().storedFields().document(scoreDoc.doc);
+                        // Applica un boost manuale allo score se l'URL non contiene #
+                        float adjustedScore = scoreDoc.score;
+                        String url = doc.get(LuceneSearch.URL);
+                        if (url != null && !url.contains("#")) {
+                            adjustedScore += 0.5f; // Boost factor per URL senza #
+                        }
                         log.debug("Search document for \"{}\" and find \"{}\" width score: {} and URL: {}", keyword, doc.get(LuceneSearch.CONTENT), scoreDoc.score, doc.get(LuceneSearch.URL));
-                        return new LuceneResult(doc.get(LuceneSearch.URL), doc.get(LuceneSearch.CONTENT), doc.get(LuceneSearch.WHERE), scoreDoc.score);
+                        return new LuceneResult(doc.get(LuceneSearch.URL), doc.get(LuceneSearch.CONTENT), doc.get(LuceneSearch.WHERE), adjustedScore);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 })
                 .toList().stream().distinct().toList();
 
-        return luceneResults
+            return luceneResults
                 .stream()
                 .collect(Collectors.collectingAndThen(
                         Collectors.maxBy(Comparator.comparing(LuceneResult::getScore)),
