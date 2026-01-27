@@ -117,7 +117,8 @@ public class RuleController {
             @RequestParam(name = "ruleName") Optional<String> ruleName,
             @RequestParam(name = "allRuleMustBePresent", required = false, defaultValue = "false") Boolean allRuleMustBePresent,
             @RequestParam(name = "atLeastHalf", required = false, defaultValue = "false") Boolean atLeastHalf,
-            @RequestParam(name = "forceJsoup", required = false, defaultValue = "false") Boolean forceJsoup) {
+            @RequestParam(name = "forceJsoup", required = false, defaultValue = "false") Boolean forceJsoup,
+            @RequestParam(name = "evaluateAnchorsFirst", required = false, defaultValue = "false") Boolean evaluateAnchorsFirst) {
         try {
             final String contentDecoded = ruleService.base64Decode(content);
             List<RuleResponse> ruleResponses = Collections.emptyList();
@@ -129,10 +130,12 @@ public class RuleController {
                         .filter(ruleResponse -> !ruleResponse.getStatus().equals(HttpStatus.NOT_FOUND)).collect(Collectors.toList());
             }
             if (rulesFound.size() != ruleService.childRules(rootRule, ruleName).size()) {
-                ruleResponses = ruleService.executeChildRuleAlternative(contentDecoded, rootRule, ruleName, rulesFound, Boolean.FALSE);
-                rulesFound = ruleResponses
-                        .stream()
-                        .filter(ruleResponse -> !ruleResponse.getStatus().equals(HttpStatus.NOT_FOUND)).collect(Collectors.toList());
+                if(evaluateAnchorsFirst) {
+                    ruleResponses = ruleService.executeChildRuleAlternative(contentDecoded, rootRule, ruleName, rulesFound, Boolean.FALSE);
+                    rulesFound = ruleResponses
+                            .stream()
+                            .filter(ruleResponse -> !ruleResponse.getStatus().equals(HttpStatus.NOT_FOUND)).collect(Collectors.toList());
+                }
                 if (rulesFound.size() != ruleService.childRules(rootRule, ruleName).size()) {
                     ruleResponses = ruleService.executeChildRuleAlternative(contentDecoded, rootRule, ruleName, rulesFound, Boolean.TRUE);
                 }
