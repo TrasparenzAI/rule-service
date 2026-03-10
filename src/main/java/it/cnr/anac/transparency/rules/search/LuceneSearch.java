@@ -128,7 +128,7 @@ public class LuceneSearch {
                         // Applica un boost manuale allo score se l'URL non contiene #
                         float adjustedScore = scoreDoc.score;
                         String url = doc.get(LuceneSearch.URL);
-                        if (url != null && !url.contains("#")) {
+                        if (url != null && !url.equalsIgnoreCase("#")) {
                             adjustedScore += 0.5f; // Boost factor per URL senza #
                         }
                         log.debug("Search document for \"{}\" and find \"{}\" width score: {} and URL: {}", keyword, doc.get(LuceneSearch.CONTENT), scoreDoc.score, doc.get(LuceneSearch.URL));
