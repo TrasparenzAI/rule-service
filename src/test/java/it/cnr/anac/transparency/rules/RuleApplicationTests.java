@@ -187,7 +187,7 @@ class RuleApplicationTests {
 		final ResponseEntity<List<RuleResponseDto>> ruleResponses = ruleController.postChild(Base64.getEncoder().encodeToString(new BufferedReader(
 				new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))
 				.lines()
-				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.empty(), Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE);
+				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.empty(), Boolean.FALSE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE);
 
 		Assertions.assertEquals(22, ruleResponses.getBody().size());
 		Assertions.assertEquals(
@@ -211,8 +211,7 @@ class RuleApplicationTests {
 	@Test
 	void localChild5() throws IOException, URISyntaxException {
 		final List<RuleResponseDto> ruleResponseDtos = internalChild(this.getClass().getResourceAsStream("/amministrazione_child3.html"), 2);
-		Assertions.assertEquals(4, ruleResponseDtos.stream().filter(ruleResponseDto -> ruleResponseDto.getStatus() == 200).count());
-        Assertions.assertEquals(16, ruleResponseDtos.stream().filter(ruleResponseDto -> ruleResponseDto.getStatus() == 207).count());
+		Assertions.assertEquals(20, ruleResponseDtos.stream().filter(ruleResponseDto -> ruleResponseDto.getStatus() == 200).count());
 	}
 
 	@Test
@@ -273,6 +272,28 @@ class RuleApplicationTests {
 				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.of("accesso-civico"), Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE);
 		Assertions.assertEquals(2, ruleResponses.getBody().size());
 		Assertions.assertEquals(2, ruleResponses.getBody().stream().filter(ruleResponseDto -> ruleResponseDto.getStatus() == 200).count());
+	}
+
+	@Test
+	void localChild11() throws IOException, URISyntaxException {
+		final ResponseEntity<List<RuleResponseDto>> ruleResponses = ruleController.postChild(Base64.getEncoder().encodeToString(new BufferedReader(
+				new InputStreamReader(this.getClass().getResourceAsStream("/amministrazione_child10.html"), StandardCharsets.UTF_8))
+				.lines()
+				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.empty(), Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE);
+		Assertions.assertEquals(22, ruleResponses.getBody().size());
+		Assertions.assertEquals(HttpStatus.MULTI_STATUS.value(), ruleResponses.getBody().stream().filter(ruleResponseDto -> ruleResponseDto.getRuleName().equalsIgnoreCase("organizzazione")).map(RuleResponseDto::getStatus).findAny().orElse(HttpStatus.INTERNAL_SERVER_ERROR.value()));
+		Assertions.assertEquals(2, ruleResponses.getBody().stream().filter(ruleResponseDto -> ruleResponseDto.getRuleName().equalsIgnoreCase("organizzazione")).map(RuleResponseDto::getMultiple).map(List::size).findAny().orElse(0));
+	}
+
+	@Test
+	void localChild12() throws IOException, URISyntaxException {
+		final ResponseEntity<List<RuleResponseDto>> ruleResponses = ruleController.postChild(Base64.getEncoder().encodeToString(new BufferedReader(
+				new InputStreamReader(this.getClass().getResourceAsStream("/amministrazione_child11.html"), StandardCharsets.UTF_8))
+				.lines()
+				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.empty(), Boolean.FALSE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE);
+		Assertions.assertEquals(22, ruleResponses.getBody().size());
+		Assertions.assertEquals("#", ruleResponses.getBody().stream().filter(ruleResponseDto -> ruleResponseDto.getRuleName().equalsIgnoreCase("personale")).map(RuleResponseDto::getUrl).findAny().orElse(""));
+
 	}
 
 	@Test
