@@ -50,6 +50,10 @@ tag_attributes:
   - alt
   - title
 
+stop_words_inbox:
+  - Consulta
+  - Vai
+
 search_tokens:
   - ' '
   - '.'

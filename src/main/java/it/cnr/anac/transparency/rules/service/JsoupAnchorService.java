@@ -23,11 +23,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.parser.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -76,6 +76,7 @@ public class JsoupAnchorService implements AnchorService{
                     new Anchor(href, element.text(), isProbablyVisible(element) ? "text" : "text:none"),
                     new Anchor(href, Optional.ofNullable(element.parent())
                             .map(Element::text)
+                            .map(this::removeWords)
                             .orElse(null), "text::parent")
             );
             final List<Anchor> secondList = ruleConfiguration.getTagAttributes().stream().map(s -> {
@@ -131,5 +132,17 @@ public class JsoupAnchorService implements AnchorService{
 
         // Se nessun indicatore di invisibilità è stato trovato
         return true;
+    }
+
+    private String removeWords(String input) {
+        List<Pattern> patterns = ruleConfiguration.getStopWordsInbox().stream()
+                .map(s -> Pattern.compile(Pattern.quote(s), Pattern.CASE_INSENSITIVE))
+                .toList();
+        if (input == null) return null;
+        String result = input;
+        for (Pattern p : patterns) {
+            result = p.matcher(result).replaceAll("");
+        }
+        return result.trim();
     }
 }

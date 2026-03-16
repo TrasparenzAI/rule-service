@@ -297,6 +297,16 @@ class RuleApplicationTests {
 	}
 
 	@Test
+	void localChild13() throws IOException, URISyntaxException {
+		final ResponseEntity<List<RuleResponseDto>> ruleResponses = ruleController.postChild(Base64.getEncoder().encodeToString(new BufferedReader(
+				new InputStreamReader(this.getClass().getResourceAsStream("/amministrazione_child12.html"), StandardCharsets.UTF_8))
+				.lines()
+				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.empty(), Boolean.FALSE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE);
+		Assertions.assertEquals(22, ruleResponses.getBody().size());
+		Assertions.assertEquals("/node?uuid=e0803fb7-1a07-4e68-8c99-5e68d9d85e05", ruleResponses.getBody().stream().filter(ruleResponseDto -> ruleResponseDto.getRuleName().equalsIgnoreCase("organizzazione")).map(RuleResponseDto::getUrl).findAny().orElse(""));
+	}
+
+	@Test
 	void amministrazione1() throws IOException, URISyntaxException, RuleException {
 		Document doc = Jsoup.parse(new URL(AMMINISTRAZIONE1_URL), TIMEOUT_MILLIS);
 		final RuleResponse ruleResponse = ruleService.executeRule(doc.html(), Optional.empty(), Optional.empty());
