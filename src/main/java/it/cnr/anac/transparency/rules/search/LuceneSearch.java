@@ -112,7 +112,7 @@ public class LuceneSearch {
         Query boostedExact = new BoostQuery(exactPhrase, 5.0f);
 
         // do un peso maggiore a i contenuti presenti nel testo e nell'attributo title rispetto agli altri
-        PhraseQuery exactText = new PhraseQuery(WHERE, "text", "attribute::title");
+        PhraseQuery exactText = new PhraseQuery(WHERE, "text", "attribute::title", "attribute::alt");
         Query boostedText = new BoostQuery(exactText, 1.0f);
 
         builder.add(query, BooleanClause.Occur.MUST);
