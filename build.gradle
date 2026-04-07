@@ -64,6 +64,9 @@ dependencies {
 	def lombokGroup = 'org.projectlombok', lombokVersion = '1.18.30'
 	compileOnly group: lombokGroup, name: 'lombok', version: lombokVersion
 	annotationProcessor group: lombokGroup, name: 'lombok', version: lombokVersion
+	// Configurazione per i Test
+	testCompileOnly group: lombokGroup, name: 'lombok', version: lombokVersion
+	testAnnotationProcessor group: lombokGroup, name: 'lombok', version: lombokVersion
 
 	def mapstructGroup = 'org.mapstruct', mapstructVersion = '1.5.5.Final'
 	implementation group: mapstructGroup, name: 'mapstruct', version: mapstructVersion

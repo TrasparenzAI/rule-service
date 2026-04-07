@@ -1,0 +1,643 @@
+
+<!--
+  ~ Copyright (c) 2026 Consiglio Nazionale delle Ricerche
+  ~
+  ~ 	This program is free software: you can redistribute it and/or modify
+  ~ 	it under the terms of the GNU Affero General Public License as
+  ~ 	published by the Free Software Foundation, either version 3 of the
+  ~ 	License, or (at your option) any later version.
+  ~
+  ~ 	This program is distributed in the hope that it will be useful,
+  ~ 	but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ 	GNU Affero General Public License for more details.
+  ~
+  ~ 	You should have received a copy of the GNU Affero General Public License
+  ~ 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<!doctype html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Amministrazione trasparente</title>
+    <link rel="stylesheet" href="https://at.serviziperlapa.it/bootstrap-italia/css/bootstrap-italia.min.css">
+    <link rel="stylesheet" href="https://at.serviziperlapa.it/custom.css">
+    <link rel="shortcut icon" href="https://at.serviziperlapa.it/favicon.ico" type="image/x-icon">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<style>
+    @media (min-width: 992px) {
+        .it-header-center-wrapper {
+            height: 180px;
+            padding-left: 0;
+            padding-right: 0;
+            padding-top: 6px;
+            padding-bottom: 30px;
+        }
+    }
+
+    .it-header-center-wrapper {
+        height: 180px;
+        padding-left: 0;
+        padding-right: 0;
+        padding-top: 6px;
+        padding-bottom: 30px;
+    }
+</style>
+
+<div class="header_content fixed-top">
+    <div class="it-header-wrapper">
+        <div class="it-header-slim-wrapper">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="it-header-slim-wrapper-content">
+                            <a class="d-none d-lg-block navbar-brand" href="https://unidos.cloud/servizi/amministrazione-trasparente/">Powered by Unidos S.R.L. - V2.21.30</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="it-nav-wrapper">
+            <div class="it-header-center-wrapper">
+                <div class="container mt-3">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="it-header-center-content-wrapper">
+                                <div class="it-brand-wrapper">
+                                    <a href="https://www.iccercemaggioresepino.edu.it/site">
+                                        <svg class="icon" aria-hidden="true">
+                                            <use href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-pa"></use>
+                                        </svg>
+                                        <div class="it-brand-text">
+                                            <div class="it-brand-title">Amministrazione trasparente - Istituto Comprensivo Alessandro Manzoni</div>
+                                            <div class="it-brand-tagline  d-md-block mt-1">Via Fonte Peluzzo, Cercemaggiore</div>
+                                            <div class="it-brand-tagline  d-md-block mt-1">Cod.Fiscale: 80002300707, Codice Meccanografico: CBIC83200P </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="container pt-3 pb-2" style="background-color: #ffffff!important;">
+        <div class="col">
+            <nav aria-label="breadcrumb" class="breadcrumb-container">
+                <ol class="breadcrumb" style="overflow-wrap: anywhere">
+                    <li class="breadcrumb-item"> <a href="/80002300707">Home</a><span class="separator">/</span></li><li aria-current="page" class="breadcrumb-item active">Amministrazione Trasparente</li>            </ol>
+            </nav>
+        </div>
+    </div>
+
+</div>
+
+<div style="min-height: 300px"></div>
+
+<div class="container">
+    <div class="row justify-content-between">
+        <style>
+            .it-list li a{
+                color: #0059b3;
+                display: flex;
+                align-items: start;
+                justify-items: center;
+                justify-content: space-between;
+                text-decoration: none;
+            }
+
+            .it-list li a:hover{
+                color: #003366;
+                text-decoration: underline;
+            }
+
+            .it-rounded-icon{
+                color: #0059b3;
+            }
+
+
+        </style>
+
+        <div class="col-12 col-lg-3">
+            <div class="it-list-wrapper">
+                <div class="form-group">
+                    <input type="search" placeholder="Cerca nell'amministrazione..." id="search-file">
+                    <a href="javascript:searchfile();">
+                        <span class="autocomplete-icon" aria-hidden="true">
+                                <svg class="icon icon-sm"><use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-search"></use></svg>
+                        </span>
+                    </a>
+                </div>
+
+                <ul class="it-list" id="main_menu">
+                    <li class="my-3">
+                        <a href="/80002300707/section/disposizioni-generali" title="Disposizioni Generali">
+                            <p title="Disposizioni Generali">
+                                <svg class="icon icon-primary ml-1">
+                                    <use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-folder"></use>
+                                </svg>
+                                <span class="text" title="Disposizioni Generali">Disposizioni Generali</span>
+                            </p>
+                            <span class="badge bg-primary text-white">[4]</span>
+                        </a>
+                    </li>
+                    <li class="my-3">
+                        <a href="/80002300707/section/organizzazione" title="Organizzazione">
+                            <p title="Organizzazione">
+                                <svg class="icon icon-primary ml-1">
+                                    <use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-folder"></use>
+                                </svg>
+                                <span class="text" title="Organizzazione">Organizzazione</span>
+                            </p>
+                            <span class="badge bg-primary text-white">[5]</span>
+                        </a>
+                    </li>
+                    <li class="my-3">
+                        <a href="/80002300707/section/consulenti-e-collaboratori" title="Consulenti e collaboratori">
+                            <p title="Consulenti e collaboratori">
+                                <svg class="icon icon-primary ml-1">
+                                    <use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-folder"></use>
+                                </svg>
+                                <span class="text" title="Consulenti e collaboratori">Consulenti e collaboratori</span>
+                            </p>
+                            <span class="badge bg-primary text-white">[1]</span>
+                        </a>
+                    </li>
+                    <li class="my-3">
+                        <a href="/80002300707/section/personale" title="Personale">
+                            <p title="Personale">
+                                <svg class="icon icon-primary ml-1">
+                                    <use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-folder"></use>
+                                </svg>
+                                <span class="text" title="Personale">Personale</span>
+                            </p>
+                            <span class="badge bg-primary text-white">[12]</span>
+                        </a>
+                    </li>
+                    <li class="my-3">
+                        <a href="/80002300707/section/bandi-di-concorso" title="Bandi di concorso">
+                            <p title="Bandi di concorso">
+                                <svg class="icon icon-primary ml-1">
+                                    <use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-folder"></use>
+                                </svg>
+                                <span class="text" title="Bandi di concorso">Bandi di concorso</span>
+                            </p>
+                            <span class="badge bg-primary text-white">[1]</span>
+                        </a>
+                    </li>
+                    <li class="my-3">
+                        <a href="/80002300707/section/performance" title="Performance">
+                            <p title="Performance">
+                                <svg class="icon icon-primary ml-1">
+                                    <use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-folder"></use>
+                                </svg>
+                                <span class="text" title="Performance">Performance</span>
+                            </p>
+                            <span class="badge bg-primary text-white">[6]</span>
+                        </a>
+                    </li>
+                    <li class="my-3">
+                        <a href="/80002300707/section/enti_controllati" title="Enti controllati">
+                            <p title="Enti controllati">
+                                <svg class="icon icon-primary ml-1">
+                                    <use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-folder"></use>
+                                </svg>
+                                <span class="text" title="Enti controllati">Enti controllati</span>
+                            </p>
+                            <span class="badge bg-primary text-white">[4]</span>
+                        </a>
+                    </li>
+                    <li class="my-3">
+                        <a href="/80002300707/section/attivita-e-procedimenti" title="Attività  e procedimenti">
+                            <p title="Attività  e procedimenti">
+                                <svg class="icon icon-primary ml-1">
+                                    <use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-folder"></use>
+                                </svg>
+                                <span class="text" title="Attività  e procedimenti">Attività  e procedimenti</span>
+                            </p>
+                            <span class="badge bg-primary text-white">[2]</span>
+                        </a>
+                    </li>
+                    <li class="my-3">
+                        <a href="/80002300707/section/provvedimenti" title="Provvedimenti">
+                            <p title="Provvedimenti">
+                                <svg class="icon icon-primary ml-1">
+                                    <use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-folder"></use>
+                                </svg>
+                                <span class="text" title="Provvedimenti">Provvedimenti</span>
+                            </p>
+                            <span class="badge bg-primary text-white">[2]</span>
+                        </a>
+                    </li>
+                    <li class="my-3">
+                        <a href="/80002300707/section/controlli_sulle_imprese" title="Controlli sulle imprese">
+                            <p title="Controlli sulle imprese">
+                                <svg class="icon icon-primary ml-1">
+                                    <use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-folder"></use>
+                                </svg>
+                                <span class="text" title="Controlli sulle imprese">Controlli sulle imprese</span>
+                            </p>
+                            <span class="badge bg-primary text-white">[1]</span>
+                        </a>
+                    </li>
+                    <li class="my-3">
+                        <a href="/80002300707/section/bandi-di-gara-e-contratti" title="Bandi di gara e contratti">
+                            <p title="Bandi di gara e contratti">
+                                <svg class="icon icon-primary ml-1">
+                                    <use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-folder"></use>
+                                </svg>
+                                <span class="text" title="Bandi di gara e contratti">Bandi di gara e contratti</span>
+                            </p>
+                            <span class="badge bg-primary text-white">[3]</span>
+                        </a>
+                    </li>
+                    <li class="my-3">
+                        <a href="/80002300707/section/sovvenzioni-contributi-sussidi-vantaggi-economici" title="Sovvenzioni, contributi, sussidi, vantaggi economici">
+                            <p title="Sovvenzioni, contributi, sussidi, vantaggi economici">
+                                <svg class="icon icon-primary ml-1">
+                                    <use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-folder"></use>
+                                </svg>
+                                <span class="text" title="Sovvenzioni, contributi, sussidi, vantaggi economici">Sovvenzioni, contributi, sussidi, vantaggi economici</span>
+                            </p>
+                            <span class="badge bg-primary text-white">[2]</span>
+                        </a>
+                    </li>
+                    <li class="my-3">
+                        <a href="/80002300707/section/bilanci" title="Bilanci">
+                            <p title="Bilanci">
+                                <svg class="icon icon-primary ml-1">
+                                    <use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-folder"></use>
+                                </svg>
+                                <span class="text" title="Bilanci">Bilanci</span>
+                            </p>
+                            <span class="badge bg-primary text-white">[2]</span>
+                        </a>
+                    </li>
+                    <li class="my-3">
+                        <a href="/80002300707/section/informazioni-ambientali" title="Informazioni ambientali">
+                            <p title="Informazioni ambientali">
+                                <svg class="icon icon-primary ml-1">
+                                    <use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-folder"></use>
+                                </svg>
+                                <span class="text" title="Informazioni ambientali">Informazioni ambientali</span>
+                            </p>
+                            <span class="badge bg-primary text-white">[1]</span>
+                        </a>
+                    </li>
+                    <li class="my-3">
+                        <a href="/80002300707/section/beni-immobili-e-gestione-del-patrimonio" title="Beni immobili e gestione patrimonio">
+                            <p title="Beni immobili e gestione patrimonio">
+                                <svg class="icon icon-primary ml-1">
+                                    <use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-folder"></use>
+                                </svg>
+                                <span class="text" title="Beni immobili e gestione patrimonio">Beni immobili e gestione patrimonio</span>
+                            </p>
+                            <span class="badge bg-primary text-white">[2]</span>
+                        </a>
+                    </li>
+                    <li class="my-3">
+                        <a href="/80002300707/section/controlli-e-rilievi-sull-amministrazione" title="Controlli e rilievi sull&#039;amministrazione">
+                            <p title="Controlli e rilievi sull&#039;amministrazione">
+                                <svg class="icon icon-primary ml-1">
+                                    <use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-folder"></use>
+                                </svg>
+                                <span class="text" title="Controlli e rilievi sull&#039;amministrazione">Controlli e rilievi sull&#039;amministrazione</span>
+                            </p>
+                            <span class="badge bg-primary text-white">[3]</span>
+                        </a>
+                    </li>
+                    <li class="my-3">
+                        <a href="/80002300707/section/servizi-erogati" title="Servizi erogati">
+                            <p title="Servizi erogati">
+                                <svg class="icon icon-primary ml-1">
+                                    <use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-folder"></use>
+                                </svg>
+                                <span class="text" title="Servizi erogati">Servizi erogati</span>
+                            </p>
+                            <span class="badge bg-primary text-white">[5]</span>
+                        </a>
+                    </li>
+                    <li class="my-3">
+                        <a href="/80002300707/section/pagamenti-dell-amministrazione" title="Pagamenti dell&#039;amministrazione">
+                            <p title="Pagamenti dell&#039;amministrazione">
+                                <svg class="icon icon-primary ml-1">
+                                    <use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-folder"></use>
+                                </svg>
+                                <span class="text" title="Pagamenti dell&#039;amministrazione">Pagamenti dell&#039;amministrazione</span>
+                            </p>
+                            <span class="badge bg-primary text-white">[4]</span>
+                        </a>
+                    </li>
+                    <li class="my-3">
+                        <a href="/80002300707/section/opere_pubbliche" title="Opere pubbliche">
+                            <p title="Opere pubbliche">
+                                <svg class="icon icon-primary ml-1">
+                                    <use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-folder"></use>
+                                </svg>
+                                <span class="text" title="Opere pubbliche">Opere pubbliche</span>
+                            </p>
+                            <span class="badge bg-primary text-white">[4]</span>
+                        </a>
+                    </li>
+                    <li class="my-3">
+                        <a href="/80002300707/section/pianificazione_e_governo_del_territorio" title="Pianificazione e governo del territorio">
+                            <p title="Pianificazione e governo del territorio">
+                                <svg class="icon icon-primary ml-1">
+                                    <use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-folder"></use>
+                                </svg>
+                                <span class="text" title="Pianificazione e governo del territorio">Pianificazione e governo del territorio</span>
+                            </p>
+                            <span class="badge bg-primary text-white">[1]</span>
+                        </a>
+                    </li>
+                    <li class="my-3">
+                        <a href="/80002300707/section/interventi-straordinari-e-di-emergenza" title="Interventi straordinari e di emergenza">
+                            <p title="Interventi straordinari e di emergenza">
+                                <svg class="icon icon-primary ml-1">
+                                    <use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-folder"></use>
+                                </svg>
+                                <span class="text" title="Interventi straordinari e di emergenza">Interventi straordinari e di emergenza</span>
+                            </p>
+                            <span class="badge bg-primary text-white">[1]</span>
+                        </a>
+                    </li>
+                    <li class="my-3">
+                        <a href="/80002300707/section/altri-contenuti" title="Altri contenuti">
+                            <p title="Altri contenuti">
+                                <svg class="icon icon-primary ml-1">
+                                    <use xlink:href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-folder"></use>
+                                </svg>
+                                <span class="text" title="Altri contenuti">Altri contenuti</span>
+                            </p>
+                            <span class="badge bg-primary text-white">[4]</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-12 col-lg-8 ml-2">
+
+            <!-- welcome section -->
+            <div class="row">
+                <h2>Benvenuti</h2>
+            </div>
+            <p></p>
+            <h4>Cos'è Amministrazione Trasparente?</h4>
+            <p></p>
+            <p>
+                Il principio della trasparenza, inteso come <b>"accessibilità totale"</b> alle informazioni che riguardano
+                l'organizzazione e l'attività delle pubbliche amministrazioni, è stato affermato con <a href="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legislativo:2013-03-14;33" target="_blank">Decreto Legislativo n. 33 del 14 marzo 2013</a>, revisionato e semplificato dal <a href="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legislativo:2016-05-25;97" target="_blank">Decreto Legislativo n. 97 del 25 maggio 2016</a>.
+            </p>
+            <p>
+                Obiettivo della norma è quello di favorire <b>un controllo
+                diffuso da parte del cittadino sull'operato delle istituzioni e
+                sull'utilizzo delle risorse pubbliche</b>.
+            </p>
+            <p>
+                I dati pubblicati in questa sezione sono riutilizzabili solo alle condizioni previste dalla normativa vigente sul
+                riuso dei dati pubblici, in termini compatibili con gli scopi per i quali sono stati raccolti e registrati, e nel
+                rispetto della normativa in materia di protezione dei dati personali. Più nello specifico, con il <a href="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legislativo:2021;200" target="_blank">Decreto
+                Legislativo n. 200/2021</a> è stata recepita in Italia la <a href="https://eur-lex.europa.eu/legal-content/IT/TXT/?uri=CELEX%3A32019L1024" target="_blank">Direttiva UE n.
+                2019/1024</a>, la cosiddetta "Direttiva Open Data". Tale decreto modifica, in alcuni casi sostanzialmente, il
+                <a href="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legislativo:2006-01-24;36!vig=" target="_blank">Decreto Legislativo n. 36/2006</a>, divenuto da tempo il
+                riferimento normativo in tema di <b>apertura dei dati e riutilizzo dell’informazione del settore pubblico</b>.
+            </p>
+            <p>
+                Con <a href="https://trasparenza.agid.gov.it/archivio28_provvedimenti-amministrativi_0_123621_725_1.html" target="_blank">Determinazione n. 183/2023</a>, AgID ha poi adottato e pubblicato le "Linee Guida recanti regole
+                tecniche per l'apertura dei dati e il riutilizzo dell'informazione del settore pubblico”, ai sensi dell’art. 12 del
+                D.Lgs. n. 36/2006.
+            </p>
+            <p>
+                Le Linee Guida hanno l’obiettivo di supportare le pubbliche amministrazioni e gli altri soggetti interessati al
+                processo di apertura dei dati e di riutilizzo dell’informazione del settore pubblico, attraverso indicazioni volte
+                ad implementare le disposizioni e le modalità disciplinate dalle norme indicate.
+            </p>
+            <p>
+                La sezione Amministrazione Trasparente consente di avere immediatamente a disposizione anche le informazioni
+                previste dalla norma ai fini dell'"<b><a href="/80002300707/category/accesso-civico">accesso
+                civico</a></b>". Tramite l'accesso civico, semplice o generalizzato, chiunque può conoscere dati e
+                informazioni detenuti dall'amministrazione, nel rispetto dei limiti previsti a tutela di interessi pubblici e
+                privati giuridicamente rilevanti.
+            </p>
+            <p>
+                Figura di rilievo nel settore della Trasparenza è quella del <b>Responsabile per la prevenzione della corruzione e
+                della trasparenza</b>, il quale svolge attività di controllo sull'adempimento da parte dell'amministrazione
+                degli obblighi di pubblicazione assicurando completezza, chiarezza e aggiornamento delle informazioni pubblicate.
+                Con il <a href=" https://www.istruzione.it/allegati/2016/DM303_11052016.pdf" target="_blank">Decreto n.
+                303/2016</a>, il MIUR ha incaricato i Direttori Generali degli uffici scolastici regionali quali Responsabili
+                della prevenzione della corruzione e della trasparenza nelle scuole: nel testo, con precisione, l’amministrazione
+                centrale indica l’individuazione “quali Responsabili della Prevenzione della Corruzione, per tutte le istituzioni
+                scolastiche statali di rispettiva competenza territoriale, i Direttori Generali degli Uffici Scolastici regionali,
+                o, laddove previsti, i Coordinatori regionali”.
+            </p>
+            <p>
+                Si sottolinea come ogni pubblicazione non solo debba essere a norma sotto il profilo degli obblighi di trasparenza
+                ma anche sotto il profilo Privacy. Per tale ragione è sempre necessaria l'applicazione delle specifiche <b><a href="https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/3134436" target="_blank">Linee
+                Guida</a> adottate dall'Autorità Garante per la Protezione dei Dati personali il 15 maggio 2014</b>.
+            </p>
+            <p>
+                Per ulteriori approfondimenti in tema di Trasparenza si consiglia la pagina ANAC dedicata alle <b><a href="https://www.anticorruzione.it/chiedilo-ad-anac/-/categories/119067" target="_blank">FAQ</a></b>.
+            </p>
+            <p></p>
+            <p>
+                Ulteriori riferimenti normativi e regolamentari:
+            </p>
+            <p></p>
+            <ul>
+                <li><a href="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:legge:2012-11-06;190" target="_blank">Legge n.
+                    190/2012</a></li>
+                <li><a href="https://www.anticorruzione.it/-/determinazione-n.-1310-del-28/12/2016-rif.-1" target="_blank">Delibera
+                    ANAC n. 1310/2016</a></li>
+                <li><a href="https://www.funzionepubblica.gov.it/articolo/dipartimento/01-06-2017/circolare-n-2-2017-attuazione-delle-norme-sull%E2%80%99accesso-civico" target="_blank">Circolare n. 2/2017 del Ministro per la Pubblica Amministrazione</a></li>
+                <li><a href="https://www.garanteprivacy.it/documents/10160/0/La+scuola+a+prova+di+privacy+-+Vademecum+ed.+2023.pdf/9a0d5767-6dc3-35fe-6312-7bfe45ee0160?version=1.0" target="_blank">Vademecum Garante Privacy "Privacy a scuola" 2023</a></li>
+            </ul>
+            <p></p>
+            <h4>Nota</h4>
+            <p></p>
+            <p>
+                <a href="https://www.unidoscloud.it/guide/ALTRO/Dichiarazione_modalita_di_idicizzazione.pdf" target="_blank">
+                    La piattaforma Amministrazione Trasparente non ha filtri e/o soluzioni tecniche atte ad impedire ai motori di
+                    ricerca web di indicizzare ed effettuare ricerche al suo interno.
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .cookie-consent-bar {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background-color: #343a40;
+        color: white;
+        padding: 10px;
+        z-index: 1000;
+    }
+    .cookie-consent-bar .btn {
+        color: #343a40;
+    }
+    .cookie-icon {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #343a40;
+        color: white;
+        border-radius: 50%;
+        padding: 10px;
+        cursor: pointer;
+        display: none;
+        z-index: 1001;
+    }
+</style>
+
+<footer class="it-footer">
+    <div class="it-footer-main">
+        <div class="container">
+            <section>
+                <div class="row clearfix">
+                    <div class="col-sm-12">
+                        <div class="it-brand-wrapper">
+                            <a href="https://www.iccercemaggioresepino.edu.it/site">
+                                <svg class="icon" aria-hidden="true">
+                                    <use href="https://at.serviziperlapa.it/bootstrap-italia/svg/sprites.svg#it-pa"></use>
+                                </svg>
+                                <div class="it-brand-text">
+                                    <div class="it-brand-title">Amministrazione trasparente - Istituto Comprensivo Alessandro Manzoni</div>
+                                    <div class="it-brand-tagline d-none d-md-block mt-1">Via Fonte Peluzzo, Cercemaggiore</div>
+                                    <div class="it-brand-tagline d-none d-md-block mt-1">Cod.Fiscale: 80002300707, Codice Meccanografico: CBIC83200P </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="py-4 border-white border-top">
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 pb-2">
+                        <h4><a href="#" title="Number visitatori">Totale visitatori: 9649</a></h4>
+                        <a class="d-block navbar-brand" href="https://unidos.cloud/servizi/amministrazione-trasparente/">Powered by Unidos S.R.L. - V2.21.30</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <div class="it-footer-small-prints clearfix">
+        <div class="container">
+            <h3 class="visually-hidden">Sezione Link Utili</h3>
+            <ul class="it-footer-small-prints-list list-inline mb-0 d-flex flex-column flex-md-row">
+                <li class="list-inline-item"><a href="https://iccercemaggiore.serviziperlapa.it" title="">Link alla precedente amministrazione</a></li>
+                <li class="list-inline-item"><a href="/80002300707/sitemap.xml" title="Sitemap XML">Sitemap XML</a></li>
+                <li class="list-inline-item"><a href="http://www.serviziperlapa.it/download/Decreto_Trasparenza_PA_2013.pdf" title="D.Lgs. n.33 del 14 marzo 2013">D.Lgs. n.33 del 14 marzo 2013</a></li>
+                <li class="list-inline-item"><a href="http://www.istruzione.it/" title="Ministero pubblica istruzione e del merito">Ministero pubblica istruzione e del merito</a></li>
+                <li class="list-inline-item"><a href="https://unidos.cloud/servizi/amministrazione-trasparente/" title="Unidos Informatica e Consulenza">Unidos S.R.L. Informatica e Consulenza</a></li>
+            </ul>
+        </div>
+    </div>
+</footer>
+
+
+<div class="cookie-consent-bar" id="cookieConsentBar">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+
+                <p class="mb-0">Questo sito utilizza cookie di tipo tecnico, per cui le informazioni raccolte non saranno utilizzate per finalità commerciali nè comunicate a terze parti. Potrebbero essere presenti collegamenti esterni (esempio social, youtube, maps) per le cui policy si rimanda ai portali collegati, in quanto tali cookie non vengono trattati da questo sito.
+                    <br>Proseguendo nella navigazione accetti l’uso dei cookie.</p>
+            </div>
+            <div class="col-md-4 text-md-right mt-3 mt-md-0">
+                <button type="button" class="btn btn-light" onclick="acceptCookies()">Ok ho capito</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cookie Icon -->
+<div class="cookie-icon" id="cookieIcon" onclick="showCookieConsentBar()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+        <path d="M9.405 1.05a1 1 0 0 1 1.17.866c.08.603.258 1.185.523 1.722a1 1 0 0 1-.291 1.25l-.37.374a4.992 4.992 0 0 1 0 2.936l.37.374a1 1 0 0 1 .291 1.25 7.004 7.004 0 0 1-.523 1.722 1 1 0 0 1-1.17.866 6.99 6.99 0 0 1-1.725-.346 1 1 0 0 1-.622-.91V12.45a5.012 5.012 0 0 1-1.246 0v-.04a1 1 0 0 1-.622-.91 6.99 6.99 0 0 1-1.725-.346 1 1 0 0 1-1.17.866 7.004 7.004 0 0 1-.523-1.722 1 1 0 0 1 .291-1.25l.37-.374a4.992 4.992 0 0 1 0-2.936l-.37-.374a1 1 0 0 1-.291-1.25 7.004 7.004 0 0 1 .523-1.722 1 1 0 0 1 1.17-.866 6.99 6.99 0 0 1 1.725.346 1 1 0 0 1 .622.91v.04a5.012 5.012 0 0 1 1.246 0v.04a1 1 0 0 1 .622.91 6.99 6.99 0 0 1 1.725.346zM6 8a2 2 0 1 0 4 0 2 2 0 0 0-4 0z"/>
+    </svg>
+</div>
+
+<script src="https://at.serviziperlapa.it/bootstrap-italia/js/bootstrap-italia.bundle.min.js"></script>
+
+
+<script>
+    bootstrap.loadFonts('https://at.serviziperlapa.it/bootstrap-italia/fonts');
+</script>
+
+<script>
+    function acceptCookies() {
+        // Logic to set a cookie indicating acceptance
+        document.cookie = "cookies_accepted=true; path=/; max-age=" + (60*60*24*365); // 1 year
+        hideCookieConsentBar();
+        showCookieIcon();
+    }
+
+
+
+    function hideCookieConsentBar() {
+        document.getElementById('cookieConsentBar').style.display = 'none';
+    }
+
+    function showCookieConsentBar() {
+        document.getElementById('cookieConsentBar').style.display = 'block';
+    }
+
+    function showCookieIcon() {
+        document.getElementById('cookieIcon').style.display = 'block';
+    }
+
+    function hideCookieIcon() {
+        document.getElementById('cookieIcon').style.display = 'none';
+    }
+
+    // Check if the cookie consent has already been given
+    window.onload = function() {
+        if (document.cookie.split('; ').find(row => row.startsWith('cookies_accepted'))) {
+            hideCookieConsentBar();
+            showCookieIcon();
+        } else if (document.cookie.split('; ').find(row => row.startsWith('cookies_declined'))) {
+            showCookieConsentBar();
+        }
+    }
+</script>
+
+<script>
+
+    $(document).ready(function(){
+        $('#search-file').on('keypress', function(e) {
+            if(e.which == 13) { // 13 è il codice del tasto "Enter"
+                searchfile();
+            }
+        });
+
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
+
+
+    function searchfile(){
+        let string = $("#search-file").val();
+        window.location.href = "/80002300707/search/"+encodeURIComponent(string);
+    }
+</script>
+
+
+
+</body>
+</html>
+

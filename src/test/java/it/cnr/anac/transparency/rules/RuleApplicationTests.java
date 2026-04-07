@@ -26,6 +26,7 @@ import it.cnr.anac.transparency.rules.search.LuceneResult;
 import it.cnr.anac.transparency.rules.service.RuleService;
 import it.cnr.anac.transparency.rules.v1.controller.RuleController;
 import it.cnr.anac.transparency.rules.v1.dto.RuleResponseDto;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.Assertions;
@@ -44,6 +45,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @SpringBootTest
+@Slf4j
 class RuleApplicationTests {
 	private static final String TIPOLOGIE_PROCEDIMENTO = "tipologie-procedimento";
 	public static final String AMMINISTRAZIONE1_URL = "https://www.cnr.it";
@@ -211,7 +213,18 @@ class RuleApplicationTests {
 	@Test
 	void localChild5() throws IOException, URISyntaxException {
 		final List<RuleResponseDto> ruleResponseDtos = internalChild(this.getClass().getResourceAsStream("/amministrazione_child3.html"), 2);
-		Assertions.assertEquals(20, ruleResponseDtos.stream().filter(ruleResponseDto -> ruleResponseDto.getStatus() == 200).count());
+		Assertions.assertEquals(1,
+				ruleResponseDtos
+				.stream()
+				.filter(ruleResponseDto -> ruleResponseDto.getStatus() == HttpStatus.MULTI_STATUS.value())
+				.peek(ruleResponseDto -> log.info(ruleResponseDto.getRuleName()))
+				.count());
+		Assertions.assertEquals(19,
+				ruleResponseDtos
+						.stream()
+						.filter(ruleResponseDto -> ruleResponseDto.getStatus() == HttpStatus.OK.value())
+						.peek(ruleResponseDto -> log.info(ruleResponseDto.getRuleName()))
+						.count());
 	}
 
 	@Test
@@ -304,6 +317,16 @@ class RuleApplicationTests {
 				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.empty(), Boolean.FALSE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE);
 		Assertions.assertEquals(22, ruleResponses.getBody().size());
 		Assertions.assertEquals("/node?uuid=e0803fb7-1a07-4e68-8c99-5e68d9d85e05", ruleResponses.getBody().stream().filter(ruleResponseDto -> ruleResponseDto.getRuleName().equalsIgnoreCase("organizzazione")).map(RuleResponseDto::getUrl).findAny().orElse(""));
+	}
+
+	@Test
+	void localChild14() throws IOException, URISyntaxException {
+		final ResponseEntity<List<RuleResponseDto>> ruleResponses = ruleController.postChild(Base64.getEncoder().encodeToString(new BufferedReader(
+				new InputStreamReader(this.getClass().getResourceAsStream("/amministrazione_child13.html"), StandardCharsets.UTF_8))
+				.lines()
+				.collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8)), Optional.empty(), Optional.empty(), Boolean.FALSE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE);
+		Assertions.assertEquals(22, ruleResponses.getBody().size());
+		Assertions.assertEquals("/80002300707/section/disposizioni-generali", ruleResponses.getBody().stream().filter(ruleResponseDto -> ruleResponseDto.getRuleName().equalsIgnoreCase("disposizioni-generali")).map(RuleResponseDto::getUrl).findAny().orElse(""));
 	}
 
 	@Test
