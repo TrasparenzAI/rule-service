@@ -29,6 +29,7 @@ import it.cnr.anac.transparency.rules.service.RuleService;
 import it.cnr.anac.transparency.rules.v1.dto.RuleDto;
 import it.cnr.anac.transparency.rules.v1.dto.RuleMapper;
 import it.cnr.anac.transparency.rules.v1.dto.RuleResponseDto;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -68,6 +69,27 @@ public class RuleController {
                         ))
         );
     }
+
+    @Operation(
+            summary = "Numero totale delle regole.",
+            description = "Il servizio recupera dalla configurazione l'albero delle regole e ritorna il numero totale delle regole definite")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Restituito il numero totale delle regole.")
+    })
+    @GetMapping("/{root_rule_name}/count")
+    public ResponseEntity<Integer> count(@PathVariable("root_rule_name") String root_rule_name) {
+        return ruleConfiguration.getFlattenRules()
+                        .entrySet()
+                        .stream()
+                        .filter(stringRuleEntry -> {
+                            return stringRuleEntry.getKey().equalsIgnoreCase(root_rule_name);
+                        })
+                        .map(stringMapEntry -> stringMapEntry.getValue().size())
+                        .findAny()
+                        .map(i -> ResponseEntity.ok().body(i))
+                        .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @Operation(
             summary = "Applicazione di una singola regola allo stream in base64 passato in input.",
             description = "Il servizio accetta in input una stringa in base64 contenente la pagina html e il nome logico" +
