@@ -55,7 +55,7 @@ public class Oauth2Configuration {
             http.authorizeHttpRequests(expressionInterceptUrlRegistry -> {
                 expressionInterceptUrlRegistry
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/actuator/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/actuator/health", "/actuator/health/**", "/actuator/info").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api-docs/**","/swagger-ui/**").permitAll();
                 oauth2Properties
                         .getRoles()
@@ -63,7 +63,9 @@ public class Oauth2Configuration {
                                 expressionInterceptUrlRegistry
                                         .requestMatchers(HttpMethod.valueOf(key)).hasAnyRole(value)
                         );
+                // Gli altri endpoint dell'actuator sono accessibili solo da utenti autenticati
                 expressionInterceptUrlRegistry
+                        .requestMatchers("/actuator/**").authenticated()
                         .anyRequest()
                         .permitAll();
             });
