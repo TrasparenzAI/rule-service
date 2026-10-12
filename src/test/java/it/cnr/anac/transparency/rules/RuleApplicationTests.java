@@ -44,7 +44,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@SpringBootTest
+@SpringBootTest(properties = "spring.cloud.config.enabled=false")
 @Slf4j
 class RuleApplicationTests {
 	private static final String TIPOLOGIE_PROCEDIMENTO = "tipologie-procedimento";
